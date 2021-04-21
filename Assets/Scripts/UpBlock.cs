@@ -9,6 +9,7 @@ public class UpBlock : MonoBehaviour
     public int pointer = 0;
     public Material[] materialArray;
     private bool isUp = false;
+    public bool IsUp {get => isUp;}
     private GameObject parent;
     private GameObject answer;
     // Start is called before the first frame update
