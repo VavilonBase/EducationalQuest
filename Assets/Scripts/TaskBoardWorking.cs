@@ -42,7 +42,7 @@ public class TaskBoardWorking : MonoBehaviour
     void Start()
     {
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
-        //поиск всех прикреплённых запчастей
+        //пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         attachedFrontPlane = transform.Find("frontPlane").gameObject;
         attachedAnswerPlates = new GameObject[3];
         attachedAnswerPlates_FrontPlates = new GameObject[3];
@@ -53,7 +53,7 @@ public class TaskBoardWorking : MonoBehaviour
             attachedAnswerPlates_FrontPlates[i] = attachedAnswerPlates[i].transform.Find("FrontPlate").gameObject;
         }
 
-        // далее будет обертка - проверка наличия сохранения
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         thisBoardInformation = new TaskBoardInformation(roomName);
         thisBoardObjectMaterials = new ObjectMaterials();
         thisPlatesObjectMaterials = new ObjectMaterials[3];
@@ -67,13 +67,13 @@ public class TaskBoardWorking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {       
-        // Взаимодействие с доской с платформы
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (isStandingOnPlatform)
         {
             if (thisBoardInformation.WelcomeMessageMode)
             {
-                // запуск теста
-                gl.textUI_pressF.SetActive(true); // --- можно заменить менюшкой из нескольких кнопок
+                // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+                gl.textUI_pressF.SetActive(true); // --- пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 if (Input.GetKeyDown(KeyCode.F))
                 {
                     thisBoardInformation.WelcomeMessageMode = false;
@@ -83,7 +83,7 @@ public class TaskBoardWorking : MonoBehaviour
             }
             else
             {
-                // предложение пропустить вопрос / начать сначала...
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ / пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ...
                 gl.textUI_pressF.SetActive(true);                
                 if (Input.GetKeyDown(KeyCode.F))
                 {
@@ -95,7 +95,7 @@ public class TaskBoardWorking : MonoBehaviour
         {
             if (isAnswerUp && Input.GetKeyDown(KeyCode.F))
             {
-                // Зафиксировать, какой именно выбран ответ
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                 bool answerFound = false;
                 byte answerNum = 0; byte i = 0;
                 while (!answerFound)
@@ -105,12 +105,12 @@ public class TaskBoardWorking : MonoBehaviour
                     else i++;
                 }
 
-                // Проверить ответ              
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ              
                 if (thisBoardInformation.CheckAnswer(answerNum, thisBoardInformation.CurrentQuestion))
                 {
-                    Debug.Log("Correct Answer");
+                    Debug.Log("Correct Answer!*");
                 }
-                else Debug.Log("Wrong Answer");
+                else Debug.Log("Wrong Answer!-");
 
                 AttachNextQandA(false);
             }
