@@ -108,9 +108,9 @@ public class TaskBoardWorking : MonoBehaviour
                 // Проверить ответ              
                 if (thisBoardInformation.CheckAnswer(answerNum, thisBoardInformation.CurrentQuestion))
                 {
-                    Debug.Log("Correct Answer");
+                    Debug.Log("Correct Answer!");
                 }
-                else Debug.Log("Wrong Answer");
+                else Debug.Log("Wrong Answer!");
 
                 AttachNextQandA(false);
             }
