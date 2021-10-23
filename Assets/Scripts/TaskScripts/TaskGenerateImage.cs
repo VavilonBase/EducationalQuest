@@ -1,14 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
+using System.IO;
 
 public class TaskGenerateImage : MonoBehaviour
 {
     private Texture2D _texture; //Основная текстура
 
-    public string pathBackgroundFromAssets = "/Materials/Materials/Materials2/background_question.png"; //Путь до картинки заднего фона от папки Assets
+    public string pathBackgroundFromAssets; //Путь до картинки заднего фона от папки Assets
     private string _pathBackground; //Путь до картинки заднего фона
     private string _path; //Переменная для внутренней работы срипта (ее использую всегда, когда нужен путь)
 
@@ -21,6 +20,7 @@ public class TaskGenerateImage : MonoBehaviour
     private Toggle _toggle; //Переключатель выбора ввода через текст или картинка
     public RawImage renderImage; //Картинка для генерации в случае ввода через текст
     private Text _renderText; //Текст для генерации в случае ввода через текст
+    public RenderImage scriptRenderImage; //Скрипт для генерации текстуры в случае текстового ввода
     void Start()
     {
         //Получение gameObject текущего объекта
@@ -29,7 +29,7 @@ public class TaskGenerateImage : MonoBehaviour
         _pathBackground = Application.dataPath + pathBackgroundFromAssets;
 
         //Создание текстуры размером 500x500
-        _texture = new Texture2D(500, 500);
+        _texture = new Texture2D(2048, 1024);
 
         //Получение всех UI-объектов
         _toggle = _field.GetComponentInChildren<Toggle>();
@@ -61,7 +61,11 @@ public class TaskGenerateImage : MonoBehaviour
     //Открывает проводник и при выборе картинки, обновляет изображение
     void OpenExplorer()
     {
-        _path = EditorUtility.OpenFilePanel("Выберите картинку", "", "png");
+        OpenFileName openFileName = new OpenFileName();
+        if (LocalDialog.GetOpenFileName(openFileName))
+        {
+            _path = openFileName.file;
+        };
         GetImage();
     }
 
@@ -114,5 +118,17 @@ public class TaskGenerateImage : MonoBehaviour
         {
             _image.texture = _texture;
         }
+    }
+
+    public void GeneratePng(string fileSave)
+    {
+        //Смотрим, надо ли генерировать текстуру или нет
+        if (_toggle.isOn)
+        {
+            //Генерируем текстуру
+            _texture = scriptRenderImage.GenerateTexture();
+        }
+        byte[] pngBytes = _texture.EncodeToPNG();
+        File.WriteAllBytes(fileSave, pngBytes);
     }
    }

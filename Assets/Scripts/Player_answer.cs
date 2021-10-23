@@ -50,9 +50,9 @@ public class Player_answer : MonoBehaviour
 
         //GetComponent<Renderer>().material.mainTexture = _texture;
 
-        //var texture = Resources.Load<Texture2D>(board.MaterialWelcome);
+        //var _texture = Resources.Load<Texture2D>(board.MaterialWelcome);
 
-        //newMaterial.SetTexture("_W", texture);        
+        //newMaterial.SetTexture("_W", _texture);        
         gameObject.GetComponent<Renderer>().material.mainTexture = _texture;
 
         
