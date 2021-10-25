@@ -27,7 +27,7 @@ public class TaskAddManager : MonoBehaviour
     private byte step = 0; //Этап на котором сейчас находится добавление
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
 
         //Начальная инициализация

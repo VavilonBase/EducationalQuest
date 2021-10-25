@@ -9,6 +9,7 @@ namespace Assets.Scripts.TaskScripts
         [Header("Components")]
         [SerializeField] private GameObject _taskAddUI;
         [SerializeField] private GameObject _taskListUI;
+        [SerializeField] private GameObject _taskEditUI;
 
         /// <summary>
         /// Показывает окно с добавлением задания
@@ -28,11 +29,21 @@ namespace Assets.Scripts.TaskScripts
             _taskListUI.SetActive(true);
         }
 
+        /// <summary>
+        /// Показывает окно с изменением задания
+        /// </summary>
+        public void ViewTaskEdit()
+        {
+            CloseAllUI();
+            _taskEditUI.SetActive(true);
+        }
+
         //------------ДОП. МЕТОДЫ-------------
         void CloseAllUI()
         {
             _taskAddUI.SetActive(false);
             _taskListUI.SetActive(false);
+            _taskEditUI.SetActive(false);
         }
     }
 }
