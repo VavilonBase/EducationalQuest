@@ -12,6 +12,40 @@ namespace Assets.Scripts.TaskScripts
         [SerializeField] private RawImage _image;
         [Space]
         [SerializeField] private Text _title;
+        [Space]
+        [SerializeField] private Button _editBtn;
+        [Space]
+        [SerializeField] private Button _deleteBtn;
+        [Space]
+        [SerializeField] private TaskListManger _taskListManager;
+        private string _direction;
+        private int _numberQuestion;
+        private void Awake()
+        {
+            SetListenerButtons();
+        }
+
+        //-----------------МЕТОДЫ НАЗНАЧЕНИЯ СОБЫТИЙ--------------
+        void SetListenerButtons()
+        {
+            //Назначаем событие для кнопки Далее
+            Button editBtnComponent = _editBtn.GetComponent<Button>();
+            editBtnComponent.onClick.AddListener(ClickEditBtn);
+            //Назначаем событие для кнопки Далее
+            Button deleteBtnComponent = _deleteBtn.GetComponent<Button>();
+            deleteBtnComponent.onClick.AddListener(ClickDeleteBtn);
+        }
+
+        //------------------------СОБЫТИЯ-------------------------
+        void ClickEditBtn()
+        {
+            _taskListManager.EditTask(_direction, _numberQuestion);
+        }
+
+        void ClickDeleteBtn()
+        {
+            Debug.Log(_title.text);
+        }
         /// <summary>
         /// Возвращает ширину элемета
         /// </summary>
@@ -34,5 +68,23 @@ namespace Assets.Scripts.TaskScripts
         /// </summary>
         /// <param name="image"></param>
         public void SetImage(Texture2D texture) => _image.texture = texture;
+
+        /// <summary>
+        /// Установка направления
+        /// </summary>
+        /// <param name="direction"></param>
+        public void SetDirection(string direction) => _direction = direction;
+
+        /// <summary>
+        /// Установка номера вопроса
+        /// </summary>
+        /// <param name="numberQestion"></param>
+        public void SetNumberQuestion(int numberQestion) => _numberQuestion = numberQestion;
+
+        /// <summary>
+        /// Получает главный скрипт родителя
+        /// </summary>
+        /// <param name="taskListManger"></param>
+        public void SetTaskManagerSript(TaskListManger taskListManger) => _taskListManager = taskListManger;
     }
 }

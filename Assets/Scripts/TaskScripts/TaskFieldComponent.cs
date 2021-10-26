@@ -1,9 +1,8 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
-using System.IO;
 
-public class TaskGenerateImage : MonoBehaviour
+public class TaskFieldComponent : MonoBehaviour
 {
     [Header("Settings")]
     public Texture2D baseBackgroundTexture; //Основная текстура заднего фона
@@ -16,16 +15,14 @@ public class TaskGenerateImage : MonoBehaviour
     [SerializeField] private TextureGenerator _scriptTextureGenerator; //Скрипт для генерации текстуры в случае текстового ввода
 
     private Texture2D _texture; //Основная текстура
-    private string _pathBackground; //Путь до картинки заднего фона
     private string _path; //Переменная для внутренней работы срипта (ее использую всегда, когда нужен путь)
-    private Texture2D _baseBackgroundTexture; //Основная текстура заднего фона
     private GameObject _field; //Поле с которым работает данный скрипт
     private Button _openExplorerBtn; //Кнопка открытия проводника
     private InputField _input; //Поля ввода текста
     private RawImage _image; //Картинка результата
     private Text _text; //Текст результата
     private Toggle _toggle; //Переключатель выбора ввода через текст или картинка
-    void Start()
+    void Awake()
     {
         //Получение gameObject текущего объекта
         _field = this.gameObject;
@@ -55,6 +52,19 @@ public class TaskGenerateImage : MonoBehaviour
         SetBaseTexture();
     }
 
+
+    //-------------МЕТОД ИНИЦИАЛИЗАЦИИ ПРИ ИЗМЕНЕНИЕ ЗАДАНИЯ---------------------
+    public void Initialized(Texture2D texture)
+    {
+        this.gameObject.SetActive(true);
+        //Сбрасываю переключатель Ввода текста
+        _toggle.isOn = false;
+        //Задаем текстуру картинки
+        _texture = texture;
+        //Обновляем картинку
+        UpdateImage();
+        this.gameObject.SetActive(false);
+    }
 
     //---------------СОБЫТИЯ-----------------
     //Открывает проводник и при выборе картинки, обновляет изображение
@@ -117,8 +127,13 @@ public class TaskGenerateImage : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Генерирует png картинку на основен текстуры, или текста, или текстуры и текста
+    /// </summary>
+    /// <param name="fileSave">Путь и название файла в который необходимо сохранить картинку, если такого файла не существует, он создается автоматически</param>
     public void GeneratePng(string fileSave)
     {
+        Debug.Log(_texture);
         //Смотрим, надо ли генерировать текстуру или нет
         if (_toggle.isOn)
         {
@@ -131,5 +146,16 @@ public class TaskGenerateImage : MonoBehaviour
             byte[] pngBytes = _texture.EncodeToPNG();
             File.WriteAllBytes(fileSave, pngBytes);
         }
+    }
+
+    /// <summary>
+    /// Сбрасывает поле к исходному состоянию
+    /// </summary>
+    public void ResetField()
+    {
+        //Сбрасываем переключатель Ввода текстом, при этом вызовется событие при переключении
+        _toggle.isOn = false;
+        //Удаляем текст с input, при этом вызовется событие при смене текста в input
+        _input.text = "";
     }
    }

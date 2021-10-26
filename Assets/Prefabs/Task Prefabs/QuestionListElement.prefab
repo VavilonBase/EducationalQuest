@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 8819546073864655056}
   - component: {fileID: 4234198533804179293}
   m_Layer: 5
-  m_Name: Question
+  m_Name: QuestionListElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -324,6 +324,8 @@ MonoBehaviour:
   _transform: {fileID: 8819546073864655056}
   _image: {fileID: 7941752011180368222}
   _title: {fileID: 8819546074165697011}
+  _editBtn: {fileID: 8819546073841818928}
+  _deleteBtn: {fileID: 8819546074599102172}
 --- !u!1 &8819546074044858034
 GameObject:
   m_ObjectHideFlags: 0

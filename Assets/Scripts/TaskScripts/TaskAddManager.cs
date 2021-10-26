@@ -1,6 +1,4 @@
-using Assets.Scripts.TaskScripts;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -8,23 +6,27 @@ using UnityEngine.UI;
 
 public class TaskAddManager : MonoBehaviour
 {
-    [Header("Components")]
-    public Button nextBtn; //Кнопка Далее
-    public Button backBtn; //Кнопка Назаж
-    public Button addBtn; //Кнопка Добавить
-    public Text errorText; // Текст с ошибкой
+    [Header("Fields")]
+    [SerializeField] private GameObject _directionField; //Окно с выбором раздела
+    [SerializeField] private GameObject _addQuestionField; // Окно с добавлением вопроса
+    [SerializeField] private GameObject[] _answersField; //Окна с добавлением ответов 
     [Space]
-    public GameObject directionField; //Окно с выбором раздела
-    public GameObject addQuestionField; // Окно с добавлением вопроса
-    public GameObject[] answersField; //Окна с добавлением ответов 
-    public Toggle[] answerTrueToggles; //Переключатели выбора правильного ответа
-    private Dropdown _directionDropdown; //Выпадающее поле для выбора направления
+    [Header("Buttons")]
+    [SerializeField] private Button _nextBtn; //Кнопка Далее
+    [SerializeField] private Button _backBtn; //Кнопка Назаж
+    [SerializeField] private Button _addBtn; //Кнопка Добавить
+    [SerializeField] private Button _taskListBtn; //Кнопка для перехода к списку заданий
+    [Header("Components")]
+    [SerializeField] private Text _errorText; // Текст с ошибкой
+    [SerializeField] private Toggle[] _answerTrueToggles; //Переключатели выбора правильного ответа
     [Space]
     [Header("Scripts")]
     [SerializeField] private TaskManager _scriptTaskManager;
-    private TaskGenerateImage _scriptGenerateQuestionImage; //Скрипт для генерации вопроса 
-    private TaskGenerateImage[] _scriptsGenerateAnswerImage; //Скрипт для генерации ответа
-    private byte step = 0; //Этап на котором сейчас находится добавление
+
+    private TaskFieldComponent _scriptGenerateQuestionImage; //Скрипт для генерации вопроса 
+    private TaskFieldComponent[] _scriptsGenerateAnswerImage; //Скрипт для генерации ответа
+    private Dropdown _directionDropdown; //Выпадающее поле для выбора направления
+    private byte _step = 0; //Этап на котором сейчас находится добавление
 
     // Start is called before the first frame update
     void Awake()
@@ -47,15 +49,15 @@ public class TaskAddManager : MonoBehaviour
         SetListenerAnswerTrueToggles();
 
         //Скрываем все поля
-        directionField.SetActive(false);
-        addQuestionField.SetActive(false);
+        _directionField.SetActive(false);
+        _addQuestionField.SetActive(false);
         HideAnswersField();
-        errorText.gameObject.SetActive(false);
+        _errorText.gameObject.SetActive(false);
 
         //Скрываем кнопку Добавить и показываем кнопки Далее и Назад
-        addBtn.gameObject.SetActive(false);
-        nextBtn.gameObject.SetActive(true);
-        backBtn.gameObject.SetActive(false);
+        _addBtn.gameObject.SetActive(false);
+        _nextBtn.gameObject.SetActive(true);
+        _backBtn.gameObject.SetActive(false);
         //Начальная перерисовка окон
         RedrawWindow();
        
@@ -66,21 +68,21 @@ public class TaskAddManager : MonoBehaviour
     void GetObjectsFromDirectionField()
     {
         //Получение направления
-        _directionDropdown = directionField.GetComponentInChildren<Dropdown>();
+        _directionDropdown = _directionField.GetComponentInChildren<Dropdown>();
     }
     //Получение скриптов из поля добавления вопроса
     void GetScriptFromQuestionAddField()
     {
-        _scriptGenerateQuestionImage = addQuestionField.GetComponent<TaskGenerateImage>();
+        _scriptGenerateQuestionImage = _addQuestionField.GetComponent<TaskFieldComponent>();
     }
 
     //Получение скриптов из полей добавления ответа
     void GetScriptsFromAnswersAddFields()
     {
-        _scriptsGenerateAnswerImage = new TaskGenerateImage[answersField.Length];
-        for (int i = 0; i < answersField.Length; i++)
+        _scriptsGenerateAnswerImage = new TaskFieldComponent[_answersField.Length];
+        for (int i = 0; i < _answersField.Length; i++)
         {
-            _scriptsGenerateAnswerImage[i] = answersField[i].GetComponent<TaskGenerateImage>();
+            _scriptsGenerateAnswerImage[i] = _answersField[i].GetComponent<TaskFieldComponent>();
         }
     }
 
@@ -88,70 +90,81 @@ public class TaskAddManager : MonoBehaviour
     void SetListenerCommonAllField()
     {
         //Назначаем событие для кнопки Далее
-        Button nextBtnComponent = nextBtn.GetComponent<Button>();
+        Button nextBtnComponent = _nextBtn.GetComponent<Button>();
         nextBtnComponent.onClick.AddListener(ClickNextBtn);
 
         //Назначаем событие для кнопки Назад
-        Button backBtnComponent = backBtn.GetComponent<Button>();
+        Button backBtnComponent = _backBtn.GetComponent<Button>();
         backBtnComponent.onClick.AddListener(ClickBackBtn);
 
         //Назначаем событие для кнопки Добавить
-        Button addBtnComponent = addBtn.GetComponent<Button>();
+        Button addBtnComponent = _addBtn.GetComponent<Button>();
         addBtnComponent.onClick.AddListener(ClickAddBtn);
+
+        //Назначаем событие для кнопки К списку заданий
+        Button taskListBtnComponent = _taskListBtn.GetComponent<Button>();
+        taskListBtnComponent.onClick.AddListener(ClickTaskListBtn);
     }
-    
-    //----------------------НАЗНАЧЕНИЕ И И УДАЛЕНИЕ СОБЫТИЙ------------------
     //Назначение событий для переключателей правильного ответа
     void SetListenerAnswerTrueToggles()
     {
-        foreach (Toggle answerTrueToggle in answerTrueToggles)
+        foreach (Toggle answerTrueToggle in _answerTrueToggles)
         {
             answerTrueToggle.onValueChanged.AddListener(delegate { ChangedValueAnswerTrueToggle(answerTrueToggle); });
         }
     }
 
+    //----------------------УДАЛЕНИЕ СОБЫТИЙ------------------
+
     //Выключить обработку событий с переключателей правильного ответа
     void OffListnerAnswerTrueToggles()
     {
-        foreach (Toggle answerTrueToggle in answerTrueToggles)
+        foreach (Toggle answerTrueToggle in _answerTrueToggles)
         {
             answerTrueToggle.onValueChanged.RemoveAllListeners();
         }
     }
 
+
     //----------------------СОБЫТИЯ--------------------
     //Событие для кнопки Дальше
     void ClickNextBtn()
     {
-        step++;
+        _step++;
         //Если этап больше чем кол-во ответов + 1 (не +2, так как отсчет с 0), то скрываем кнопку Далее и показываем кнопку Добавить
-        if (step >= (answersField.Length + 1))
+        if (_step >= (_answersField.Length + 1))
         {
-            nextBtn.gameObject.SetActive(false); //Скрываем кнопку Далее
-            addBtn.gameObject.SetActive(true); //Показываем кнопку Добавить
+            _nextBtn.gameObject.SetActive(false); //Скрываем кнопку Далее
+            _addBtn.gameObject.SetActive(true); //Показываем кнопку Добавить
         }
         else
         {
-            addBtn.gameObject.SetActive(false); //Скрываем кнопку Добавить
+            _addBtn.gameObject.SetActive(false); //Скрываем кнопку Добавить
         }
         //Если этап больше 0, то показываем кнопку Назад
-        backBtn.gameObject.SetActive(step > 0);
+        _backBtn.gameObject.SetActive(_step > 0);
         RedrawWindow();
     }
 
     //Событие для кнопки Назад
     void ClickBackBtn()
     {
-        step--;
+        _step--;
         //Если этап меньше или равен 0, то скрываем кнопку Назад
-        if (step <= 0)
+        if (_step <= 0)
         {
-            backBtn.gameObject.SetActive(false);
+            _backBtn.gameObject.SetActive(false);
         }
         //Если этап больше нуля, то показываем кнопку Вперед
-        nextBtn.gameObject.SetActive(step >= 0);
+        _nextBtn.gameObject.SetActive(_step >= 0);
         RedrawWindow();
         
+    }
+
+    //Событие для кнопки К списку заданий
+    void ClickTaskListBtn()
+    {
+        ViewTaskList();
     }
 
     //Событие клика для кнопки Добавить
@@ -160,58 +173,26 @@ public class TaskAddManager : MonoBehaviour
         if (CheckExistTrueToggle())
         {
             //Скрываем текст с ошибкой
-            errorText.text = "";
-            errorText.gameObject.SetActive(false);
+            HideErrorText();
             //Получаем направление
             string direction = _directionDropdown.options[_directionDropdown.value].text;
-            //Переменная для хранения папки полученного направления
-            string pathFolder = "";
-            //Поиск папки полученного направления для генерации png, если ее нет, то создаем
-            switch (direction)
-            {
-                case "Механика":
-                    pathFolder = Application.dataPath + "/Resources/Mechanics";
-                    if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
-                    break;
-                case "Молекулярная физика":
-                    pathFolder = Application.dataPath + "/Resources/Molecular";
-                    if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
-                    break;
-                case "Электричество":
-                    pathFolder = Application.dataPath + "/Resources/Electricity";
-                    if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
-                    break;
-                default:
-                    break;
-            }
+            //Получаем путь до папки нужного направления
+            string pathFolder = GetOrCreateDirectionDirectory(direction);
             //Если папка есть, то добавляем файлы
             if (pathFolder != "")
             {
-                //Выясняем номер вопроса
-                //Получаем все файлы
-                string[] allFiles = Directory.GetFiles(pathFolder);
-                List<int> questionNumbers = new List<int>();
-                //Вместо файлов делаем числа из номера вопроса
-                foreach (string file in allFiles)
-                {
-                    //Если файл кончается на .png
-                    if (file.Substring(file.Length - 3, 3) == "png")
-                    {
-                        //Поиск последнего вхождения обратного слеша \
-                        int indexSlash = file.LastIndexOf("\\", file.Length - 1, file.Length);
-                        //Поиск последнего вхождения точки .
-                        int indexDote = file.LastIndexOf(".", file.Length - 1, file.Length);
-                        questionNumbers.Add(Convert.ToInt32(file.Substring(indexSlash + 2, indexDote - indexSlash - 2)));
-                    }
-                }
+                //Выясняем номера вопросов
+                List<int> questionNumbersList = GetTasksNumbersListFromDirectory(pathFolder);
+
                 int nextQuestionNumber = 1;//Номер следующего вопроса, в случае если вопросов не будет в папке, то это значит, что это первый вопрос
-                                           //Смотрим, если ли вообще вопросы
-                if (questionNumbers.Count != 0)
+
+                //Смотрим, если ли вообще вопросы
+                if (questionNumbersList.Count != 0)
                 {
                     //Сортируем массив по возрастанию
-                    questionNumbers.Sort();
+                    questionNumbersList.Sort();
                     //Получаем номер следующего вопроса
-                    nextQuestionNumber = questionNumbers[questionNumbers.Count - 1] + 1;
+                    nextQuestionNumber = questionNumbersList[questionNumbersList.Count - 1] + 1;
                 }
                 //Создаем путь до папки со следующем вопросом
                 string pathAnswersFolder = pathFolder + "/Q" + nextQuestionNumber.ToString();
@@ -225,14 +206,14 @@ public class TaskAddManager : MonoBehaviour
                     _scriptsGenerateAnswerImage[i].GeneratePng(pathAnswersFolder + "/answer" + (i + 1).ToString() + ".png");
                 }
             }
-            this._scriptTaskManager.ViewTaskList();
+            ViewTaskList();
         }
         else
         {
-            errorText.text = "Выберите правильный ответ!";
-            errorText.gameObject.SetActive(true);
+            //Выводим текст с ошибкой
+            ViewErrorText("Выберите правильный ответ!");
         }
-        
+
     }
 
     //Изменение значения переключателя правильного ответа
@@ -249,38 +230,37 @@ public class TaskAddManager : MonoBehaviour
         //Если выключатель выключили, показаываем ошибку, что надо выбрать правильный ответ
         if (!isOn)
         {
-            errorText.text = "Выберите правильный ответ!";
-            errorText.gameObject.SetActive(true);
+            //Выводим текст с ошибкой
+            ViewErrorText("Выберите правильный ответ!");
         }
         else
         {
             //Иначе убираем текст с ошибкой
-            errorText.text = "";
-            errorText.gameObject.SetActive(false);
+            HideErrorText();
         }
         //Включаю обработку события изменения значения переключателей
         SetListenerAnswerTrueToggles();
     }
 
     //---------------------ПЕРЕРИСОВКА-------------------
-    //Перерисовка окна в зависомости от значения переменной step
+    //Перерисовка окна в зависомости от значения переменной _step
     void RedrawWindow()
     {
-        switch (step)
+        switch (_step)
         {
             case 0:
-                directionField.SetActive(true);
-                addQuestionField.SetActive(false);
+                _directionField.SetActive(true);
+                _addQuestionField.SetActive(false);
                 break;
             case 1:
-                directionField.SetActive(false);
-                addQuestionField.SetActive(true);
+                _directionField.SetActive(false);
+                _addQuestionField.SetActive(true);
                 HideAnswersField();
                 break;
             default: //Обработка полей с ответами
-                    addQuestionField.SetActive(false);
+                    _addQuestionField.SetActive(false);
                     HideAnswersField();
-                    answersField[step - 2].SetActive(true);
+                    _answersField[_step - 2].SetActive(true);
                 break;
         }
     }
@@ -289,7 +269,7 @@ public class TaskAddManager : MonoBehaviour
     //Сокрытие всех полей с ответами
     void HideAnswersField()
     {
-        foreach (GameObject answerField in answersField)
+        foreach (GameObject answerField in _answersField)
         {
             answerField.SetActive(false);
         }
@@ -298,7 +278,7 @@ public class TaskAddManager : MonoBehaviour
     //Убрать галочки с переключателей правильного ответа
     void OffAnswerTrueToggles()
     {
-        foreach (Toggle answerTrueToggle in answerTrueToggles)
+        foreach (Toggle answerTrueToggle in _answerTrueToggles)
         {
             answerTrueToggle.isOn = false;
         }
@@ -307,7 +287,7 @@ public class TaskAddManager : MonoBehaviour
     //Проверка стоит ли галочка вообще
     bool CheckExistTrueToggle()
     {
-        foreach (Toggle answerTrueToggle in answerTrueToggles)
+        foreach (Toggle answerTrueToggle in _answerTrueToggles)
         {
             if (answerTrueToggle.isOn)
             {
@@ -315,5 +295,129 @@ public class TaskAddManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// Сброс всех полей
+    /// </summary>
+    void ResetAllFields()
+    {
+        //Сброс текущего этапа
+        _step = 0;
+        //Сброс directionField
+        _directionDropdown.value = 0;
+
+        //Сброс QuestionField
+        _addQuestionField.gameObject.SetActive(true);
+        _addQuestionField.GetComponent<TaskFieldComponent>().ResetField();
+        _addQuestionField.gameObject.SetActive(false);
+        
+        //Сброс AnswersField
+        foreach (GameObject _answerField in _answersField)
+        {
+            _answerField.gameObject.SetActive(true);
+            _answerField.GetComponent<TaskFieldComponent>().ResetField();
+            _answerField.gameObject.SetActive(false);
+        }
+        //Выключаю все переключатели Правильного ответа
+        //Выключаю обработку события изменения значения переключателей
+        OffListnerAnswerTrueToggles();
+        //Сбрасываю все переключатели
+        OffAnswerTrueToggles();
+        //Включаю обработку события изменения значения переключателей
+        SetListenerAnswerTrueToggles();
+
+        //Скрываем кнопку Добавить и Назад и показываем кнопки Далее
+        _addBtn.gameObject.SetActive(false);
+        _nextBtn.gameObject.SetActive(true);
+        _backBtn.gameObject.SetActive(false);
+
+        //Перерисовка окна
+        RedrawWindow();
+    }
+
+    /// <summary>
+    /// Сбрасывает все поля и переходит к окну Список заданий
+    /// </summary>
+    void ViewTaskList()
+    {
+        ResetAllFields();
+        this._scriptTaskManager.ViewTaskList();
+    }
+
+    /// <summary>
+    /// Скрываем текст с ошибкой
+    /// </summary>
+    void HideErrorText()
+    {
+        _errorText.text = "";
+        _errorText.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Показываем текст с ошибкой
+    /// </summary>
+    /// <param name="errorText">Текст ошибки</param>
+    void ViewErrorText(string errorText)
+    {
+        _errorText.text = errorText;
+        _errorText.gameObject.SetActive(true);
+    }
+
+   /// <summary>
+   /// По названию направления вычисляет есть ли для него папка и если нет создает ее
+   /// </summary>
+   /// <param name="direction">Направление</param>
+   /// <returns>Возвращает путь до папки</returns>
+    string GetOrCreateDirectionDirectory(string direction)
+    {
+        //Переменная для хранения папки полученного направления
+        string pathFolder;
+        //Поиск папки полученного направления для генерации png, если ее нет, то создаем
+        switch (direction)
+        {
+            case "Механика":
+                pathFolder = Application.dataPath + "/Resources/Mechanics";
+                if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
+                break;
+            case "Молекулярная физика":
+                pathFolder = Application.dataPath + "/Resources/Molecular";
+                if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
+                break;
+            case "Электричество":
+                pathFolder = Application.dataPath + "/Resources/Electricity";
+                if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
+                break;
+            default:
+                pathFolder = "";
+                break;
+        }
+        return pathFolder;
+    }
+
+    /// <summary>
+    /// Возврщает все номера заданий из директории
+    /// </summary>
+    /// <param name="pathFolder">Путь до директории с заданиями</param>
+    /// <returns>Возвращает список номеров заданий для нужной директории</returns>
+    List<int> GetTasksNumbersListFromDirectory(string pathFolder)
+    {
+        //Получаем все файлы
+        string[] allFiles = Directory.GetFiles(pathFolder);
+        List<int> questionNumbersList = new List<int>();
+        //Вместо файлов делаем числа из номера вопроса
+        foreach (string file in allFiles)
+        {
+            //Если файл кончается на .png
+            if (file.Substring(file.Length - 3, 3) == "png")
+            {
+                //Поиск последнего вхождения обратного слеша \
+                int indexSlash = file.LastIndexOf("\\", file.Length - 1, file.Length);
+                //Поиск последнего вхождения точки .
+                int indexDote = file.LastIndexOf(".", file.Length - 1, file.Length);
+                questionNumbersList.Add(Convert.ToInt32(file.Substring(indexSlash + 2, indexDote - indexSlash - 2)));
+            }
+        }
+        return questionNumbersList;
     }
 }
