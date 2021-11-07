@@ -9,15 +9,16 @@ public class Saving : MonoBehaviour
 {
     [Serializable]
     class SaveData
-    {
-        public float[] playerPosition;        
+    {        
         public PlayerInfo playerInfo;
+        public TaskBoardInformation taskInfo;
     }
 
     public class SaveSerial: MonoBehaviour
-    {
-        float[] playerPosition;
+    {        
         PlayerInfo playerInfo;
+        TaskBoardInformation taskInfo;
+
         public void SaveGame()
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -25,7 +26,7 @@ public class Saving : MonoBehaviour
               + "/MySaveData.dat");
             SaveData data = new SaveData();
 
-            data.playerPosition = playerPosition;
+            
             data.playerInfo = playerInfo;
             
             bf.Serialize(file, data);
@@ -45,7 +46,7 @@ public class Saving : MonoBehaviour
                 SaveData data = (SaveData)bf.Deserialize(file);
                 file.Close();
 
-                data.playerPosition = playerPosition;
+                taskInfo = data.taskInfo;
                 playerInfo = data.playerInfo;
 
                 Debug.Log("Game data loaded!");
@@ -72,21 +73,15 @@ public class Saving : MonoBehaviour
                 Debug.LogError("No save data to delete.");
         }
 
-        public Vector3 GetPlayerPosition()
-        {            
-            return new Vector3(playerPosition[0], playerPosition[1], playerPosition[2]);
-        }
+        
         public PlayerInfo GetPlayerInfo()
         {
             return playerInfo;
         }
-        public SaveSerial(Vector3 pPos, PlayerInfo pInf)
-        {
-            playerPosition = new float[3];
-            playerPosition[0] = pPos.x;
-            playerPosition[1] = pPos.y;
-            playerPosition[2] = pPos.z;
+        public SaveSerial(PlayerInfo pInf, TaskBoardInformation tbInf)
+        {            
             playerInfo = pInf;
+            taskInfo = tbInf;
         }
     }
 
@@ -96,20 +91,19 @@ public class Saving : MonoBehaviour
     void Start()
     {
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
-        saveSerial = new SaveSerial(gl.player.transform.position, gl.playerInfo);
+        saveSerial = new SaveSerial(gl.playerInfo, gl.boardsInfo[0]);
     }
 
     public void onClickToSave()
     {        
-        saveSerial = new SaveSerial(gl.player.transform.position, gl.playerInfo);        
+        saveSerial = new SaveSerial(gl.playerInfo, gl.boardsInfo[0]);        
         saveSerial.SaveGame();
     }
 
     public void onClickToLoad()
     {
         if (saveSerial.LoadGame())
-        {
-            gl.player.transform.position = saveSerial.GetPlayerPosition();
+        {            
             gl.playerInfo = saveSerial.GetPlayerInfo();
         }
     }

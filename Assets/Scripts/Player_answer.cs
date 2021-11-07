@@ -29,16 +29,20 @@ public class Player_answer : MonoBehaviour
     void Start()
     {
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
+
+        byte[] answ = new byte[10] { 1, 0, 0, 2, 1, 1, 0, 1, 2, 0 };
+        board = new TaskBoardInformation(0, "Mechanics", answ);
+
         
-        board = new TaskBoardInformation("Mechanics");
-        materialArray = new Material[board.NumberOfQuestions];
+        /*
+        materialArray = new Material[board.numberOfQuestions];
         
         for (int i=0; i < materialArray.Length; i++)
         {
             Debug.Log("loading..." + board.MaterialBoardPaths[i]);
             materialArray[i] = Resources.Load<Material>(board.MaterialBoardPaths[i]);
         }
-
+        */
         Material newMaterial = new Material(Shader.Find("Standard"));
         //Debug.Log(board.MaterialWelcome);
 
@@ -79,6 +83,7 @@ public class Player_answer : MonoBehaviour
         }
         if (k == 0) answer_up = false; else answer_up = true;
 
+        /*
         if (answer_up && INPUT == 0 && Input.GetKeyDown(KeyCode.F))
         {
             if (answers[right_answers[stage_number]].transform.Find("trigger").GetComponent<UpBlock>().isUp)
@@ -115,7 +120,10 @@ public class Player_answer : MonoBehaviour
                 INPUT = DELAY; //задержка после неправильного ответа
                 answer_false = true;
             }
-        }        
+        
+
+        }  
+        */
     }
 
     private byte Check_rank(int points)

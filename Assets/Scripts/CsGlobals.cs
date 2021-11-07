@@ -5,121 +5,32 @@ using UnityEngine;
 using TMPro;
 
 [System.Serializable]
-public class TaskBoardInformation
-{
-    private bool welcomeMessageMode;
-    public bool WelcomeMessageMode { get { return welcomeMessageMode; } set { welcomeMessageMode = value; } }
-
-    byte numberOfQuestions;
-    string materialWelcome;
-    string[] materialBoardPaths;
-    string[,] materialQuestionsPaths;
-    byte[] rightAnswers;
-    bool[] questionsRightAnswered;
-    private byte countQuestionsRightAnswered;
-    public byte CountQuestionsRightAnswered { get { return currentQuestion; } }
-    private byte currentQuestion;
-    public byte CurrentQuestion { get { return currentQuestion; } }
-    bool keyWasGiven;
-
-    public TaskBoardInformation(string room)
-    {
-        welcomeMessageMode = true;
-        numberOfQuestions = 10;
-        materialWelcome = "W.png";
-        materialBoardPaths = new string[10];
-        for (int i = 0; i < 10; i++)
-        {
-            materialBoardPaths[i] = room + "/Q" + (i + 1) + ".png";            
-        }
-        materialQuestionsPaths = new string[10, 3];
-        for (int i = 0; i < 10; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                materialQuestionsPaths[i, j] = room + "/Q" + (i + 1) + "/" + (j + 1) + ".png";                
-            }
-        }
-        rightAnswers = new byte[10] { 1, 0, 0, 2, 1, 1, 0, 1, 2, 0 };
-        questionsRightAnswered = new bool[10]; // по умолчанию false
-        countQuestionsRightAnswered = 0;
-        currentQuestion = 0;
-        keyWasGiven = false;
-    }
-
-    public bool NextQuestion(bool isFirstQuestion, ref ObjectMaterials board, ref ObjectMaterials[] plates)
-    {
-        try
-        {
-            if (currentQuestion == numberOfQuestions-1) return false;
-            if (!isFirstQuestion) currentQuestion++;            
-
-            board.SetTexture(materialBoardPaths[currentQuestion]);
-            for (int i = 0; i < plates.Length; i++)
-            {                
-                plates[i].SetTexture(materialQuestionsPaths[currentQuestion, i]);
-            }            
-            return true;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e);
-            return false;
-        }
-    }
-
-    public bool CheckAnswer(byte answerNum, byte questionNum)
-    {
-        if (rightAnswers[questionNum] == answerNum)
-        {
-            questionsRightAnswered[questionNum] = true;
-            countQuestionsRightAnswered++;
-            return true;
-        }
-        else
-        {
-            questionsRightAnswered[questionNum] = false;
-            return false;
-        }
-    }
-
-    public byte NumberOfQuestions { get { return numberOfQuestions; } }
-    public string[] MaterialBoardPaths { get { return materialBoardPaths; } }
-    public string MaterialWelcome { get { return materialWelcome; } }
-    
-}
-
-public class ObjectMaterials
-{
-    Material frontMaterial;
-    public Material FrontMaterial { get { return frontMaterial; } }
-    Texture frontTexture;
-
-    public ObjectMaterials()
-    {
-        frontMaterial = new Material(Shader.Find("Standard"));
-    }
-
-    public void SetTexture(string pathFromResources)
-    {        
-        string fullPath = Application.dataPath + "/Resources/" + pathFromResources;
-        WWW www = new WWW("file://" + fullPath);
-        Texture _texture = www.texture;
-        frontMaterial.mainTexture = _texture;
-    }
-}
-
-
-[System.Serializable]
 public class PlayerInfo
 {
     // "инвентарь" - наличие или отсутствие у игрока ключа
-    public bool active_key = false;
+    private bool activeKey = false;
+    public bool ActiveKey { get { return activeKey; } }
 
     // прогресс игры    
-    public int rightAnswersGivenCount; // дано верных ответов
-    public bool[] roomsOpen; // флаги открытых комнат
-    public bool[,] rightAnswersGiven; //флаги верных ответов в каждой комнате
+    private byte[] numRightAnswersGiven; // дано верных ответов
+    public byte[] NumRightAnswersGiven { get { return numRightAnswersGiven; } }
+    public void SetNumOfRightAnswers(byte numRoom, byte numRightAnsw)
+    {
+        numRightAnswersGiven[numRoom] = numRightAnsw;
+    }
+    
+    public byte NumRightAnswersTotal 
+    { 
+        get 
+        {
+            byte sum = 0;
+            for (int i = 0; i < numRightAnswersGiven.Length; i++) sum += numRightAnswersGiven[i];
+            return sum;
+        } 
+    }
+
+    
+    public bool[] roomsOpen; // флаги открытых комнат    
 
 
 
@@ -129,9 +40,18 @@ public class PlayerInfo
 
     public PlayerInfo()
     {
-        rightAnswersGivenCount = 0;
+        numRightAnswersGiven = new byte[3];        
         roomsOpen = new bool[3] {true, false, false};
-        rightAnswersGiven = new bool[3, 10];
+        //rightAnswersGiven = new bool[3, 10];
+    }
+    public void GetKey()
+    {
+        activeKey = true;
+    }
+    public void PutAwayKey(byte numRoom)
+    {
+        activeKey = false;
+        roomsOpen[numRoom] = true;
     }
 }
 
@@ -139,15 +59,18 @@ public class PlayerInfo
 
 
 public class CsGlobals : MonoBehaviour
-{
-    public TaskBoardInformation b1;
+{    
     public GameObject player; // игровой объект - игрок
+    public PlayerInfo playerInfo;    
+    
+    public TaskBoardInformation[] boardsInfo;
+
     public int rooms = 3; // количество доступных в игре комнат с вопросами
     public int max_answers = 30; // максимально возможное число ответов
     public string[] ranks; // перечень всех титулов - массив строк
 
 
-    public PlayerInfo playerInfo;
+    
 
     public Vector3 null_position = new Vector3(-100, -100, -100); // нулевая позиция - координаты за пределами видимой сцены
                                                                   // туда отправляются все объекты, которым нужно "исчезнуть"
@@ -163,7 +86,16 @@ public class CsGlobals : MonoBehaviour
     public GameObject keyIcon;
     public GameObject crownIcon;
     
-    
+    public void PrintLabel(string text)
+    {
+        textUI_pressF.GetComponent<UnityEngine.UI.Text>().text = text;
+        textUI_pressF.SetActive(true);
+    }
+
+    public void HideLabel()
+    {
+        textUI_pressF.SetActive(false);
+    }
 
     
 
@@ -176,10 +108,22 @@ public class CsGlobals : MonoBehaviour
     }
     */
 
-    void Start()
+    void Awake()
     {
+        // ------- возможность загрузки здесь
         playerInfo = new PlayerInfo(); //начальная инициализация игрока
-        // b1 = new TaskBoard("Mechanics");
+
+        boardsInfo = new TaskBoardInformation[3];
+        
+        byte[] answ = new byte[10] { 1, 0, 0, 2, 1, 1, 0, 1, 2, 0 };
+        boardsInfo[0] = new TaskBoardInformation(0,"Mechanics", answ);
+        answ = new byte[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        boardsInfo[1] = new TaskBoardInformation(1, "Electricity", answ);
+        answ = new byte[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        boardsInfo[2] = new TaskBoardInformation(2, "Molecular", answ);
+
+        //answ = new byte[10] { 1, 0, 0, 2, 1, 1, 0, 1, 2, 0 };
+        //boardInfo1 = new TaskBoardInformation(0, "Mechanics", answ);
 
         textUI_startMessage.SetActive(true);
         textUI_question.SetActive(false);
@@ -200,7 +144,8 @@ public class CsGlobals : MonoBehaviour
             textUI_question.SetActive(true);
         }
 
-        if (playerInfo.active_key && playerInfo.rightAnswersGivenCount >= rooms*7)
+        /*
+        if (playerInfo.ActiveKey && playerInfo.rightAnswersGivenCount >= rooms*7)
         {
             if (playerInfo.points >= rooms*70)
             {
@@ -209,7 +154,7 @@ public class CsGlobals : MonoBehaviour
             }
             textUI_question.SetActive(false);
             endMessageIsShowing = true;
-            playerInfo.active_key = false;
+            playerInfo.PutAwayKey(0);
             keyIcon.SetActive(false);
             textUI_endMessage.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = 
                 "Молодец! Ты ответил на много вопросов, в результате набрал " + playerInfo.points + 
@@ -218,6 +163,8 @@ public class CsGlobals : MonoBehaviour
                 "\n\nНажми F, чтобы закрыть окно.";
             textUI_endMessage.SetActive(true);            
         }
+
+        */
 
         if (endMessageIsShowing && Input.GetKeyDown(KeyCode.F))
         {

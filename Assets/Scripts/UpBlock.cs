@@ -30,7 +30,7 @@ public class UpBlock : MonoBehaviour
             isPlateUp = true;
             parentBoard.GetComponent<TaskBoardWorking>().IsAnswerUp = isPlateUp;
 
-            gl.textUI_pressF.SetActive(true);
+            gl.PrintLabel("Нажми F, чтобы выбрать ответ");
         }
     }
     
@@ -42,7 +42,20 @@ public class UpBlock : MonoBehaviour
             isPlateUp = false;
             parentBoard.GetComponent<TaskBoardWorking>().IsAnswerUp = isPlateUp;
 
-            gl.textUI_pressF.SetActive(false);
+            gl.HideLabel();
+        }
+    }
+    private void OnDisable()
+    {
+        if (isPlateUp)
+        {
+            Vector3 newPosition = transform.parent.position;
+            newPosition.y -= height;
+            transform.parent.transform.position = newPosition;
+            isPlateUp = false;
+            parentBoard.GetComponent<TaskBoardWorking>().IsAnswerUp = isPlateUp;
+
+            gl.HideLabel();
         }
     }
 }

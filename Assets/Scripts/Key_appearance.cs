@@ -20,8 +20,7 @@ public class Key_appearance : MonoBehaviour
     {
         if (playerIsCloseEnough && Input.GetKeyDown(KeyCode.F))
         {
-            gl.playerInfo.active_key = true; // теперь ключ в инвентаре
-            gl.keyIcon.SetActive(true); // показываем иконку, чтобы отобразить наличие ключа
+            gl.playerInfo.GetKey(); // теперь ключ в инвентаре            
             parentKey.ChangeKeyPosition(gl.null_position); // убираем ключ из области видимости игрока
         }
     }
@@ -30,7 +29,7 @@ public class Key_appearance : MonoBehaviour
     {
         if (other.gameObject == gl.player)
         {
-            gl.textUI_pressF.SetActive(true); // выводим сообщение: доступно взаимодействие
+            gl.PrintLabel("Нажми F, чтобы взять ключ"); // выводим сообщение: доступно взаимодействие
             playerIsCloseEnough = true;
         }
     }
@@ -39,7 +38,7 @@ public class Key_appearance : MonoBehaviour
     {
         if (other.gameObject == gl.player)
         {
-            gl.textUI_pressF.SetActive(false); // убираем сообщение: взаимодействие больше недоступно
+            gl.HideLabel(); // убираем сообщение: взаимодействие больше недоступно
             playerIsCloseEnough = false;
         }
     }

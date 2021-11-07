@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class PlatformTrigger : MonoBehaviour
 {
+    CsGlobals gl;
     GameObject parent;
     // Start is called before the first frame update
     void Start()
     {
         parent = transform.parent.gameObject;
+        gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -19,5 +21,6 @@ public class PlatformTrigger : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         parent.GetComponent<TaskBoardWorking>().IsStandingOnPlatform = false;
+        gl.HideLabel();
     }
 }

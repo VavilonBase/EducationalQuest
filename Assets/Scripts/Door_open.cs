@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Door_open : MonoBehaviour
 {
+    public byte numDoor;
     private CsGlobals gl;
 
     public bool isLocked = false;
@@ -38,7 +39,7 @@ public class Door_open : MonoBehaviour
         if (use_key && Input.GetKeyDown(KeyCode.F))
         {
             isLocked = false;
-            gl.playerInfo.active_key = false;
+            gl.playerInfo.PutAwayKey(numDoor);
             gl.keyIcon.SetActive(false);
             gl.textUI_pressF.SetActive(false);
             //Сброс триггера
@@ -70,12 +71,12 @@ public class Door_open : MonoBehaviour
         }
         else
         {
-            if (gl.playerInfo.active_key)
+            if (gl.playerInfo.ActiveKey)
             {
                 use_key = true;
-                gl.textUI_pressF.SetActive(true);
+                gl.PrintLabel("Нажми F, чтобы использовать ключ");
             }
-            else gl.textUI_lockedDoor.SetActive(true);
+            else gl.PrintLabel("Дверь заперта. Нужен ключ");
         }
     }
 
@@ -87,7 +88,6 @@ public class Door_open : MonoBehaviour
             action = true;
         }
         use_key = false;
-        gl.textUI_pressF.SetActive(false);
-        gl.textUI_lockedDoor.SetActive(false);
+        gl.HideLabel();
     }
 }
