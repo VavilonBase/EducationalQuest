@@ -64,6 +64,9 @@ public class Door_open : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (gl.playerInfo.roomsOpen[numDoor] == true) isLocked = false;
+        else isLocked = true;
+
         if (!isLocked)
         {
             isOpen = true;

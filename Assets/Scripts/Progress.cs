@@ -21,8 +21,8 @@ public class Progress : MonoBehaviour
 
     void Update()
     {
-        textPoints.GetComponent<TextMeshProUGUI>().text = "Набранные очки: " + gl.playerInfo.points;
-        textProgress.GetComponent<TextMeshProUGUI>().text = "Прогресс: " + gl.playerInfo.NumRightAnswersTotal + " из ///" + 0;
-        textRank.GetComponent<TextMeshProUGUI>().text = "Звание: " + gl.ranks[gl.playerInfo.cur_rank];
+        textPoints.GetComponent<TextMeshProUGUI>().text = "Набранные очки: " + gl.playerInfo.NumRightAnswersTotal*10;
+        textProgress.GetComponent<TextMeshProUGUI>().text = "Прогресс: " + gl.playerInfo.NumRightAnswersTotal + " из " + gl.QuestionsCount;
+        //textRank.GetComponent<TextMeshProUGUI>().text = "Звание: " + gl.ranks[gl.playerInfo.cur_rank];
     }
 }

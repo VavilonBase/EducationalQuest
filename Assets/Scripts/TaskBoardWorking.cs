@@ -12,6 +12,7 @@ public class TaskBoardWorking : MonoBehaviour
     GameObject[] attachedAnswerPlates_FrontPlates;
     GameObject attachedBoardText;
     private Key attachedKey;
+    
 
     TaskBoardInformation thisBoardInformation;
     ObjectMaterials thisBoardObjectMaterials;
@@ -30,6 +31,7 @@ public class TaskBoardWorking : MonoBehaviour
 
     public void WriteOnBoard(string text)
     {
+        thisBoardInformation.CurrentString = text;
         thisBoardObjectMaterials.SetTexture(thisBoardInformation.MaterialWelcome);
         AttachMaterial(attachedFrontPlane, thisBoardObjectMaterials.FrontMaterial);
         attachedBoardText.transform.GetComponent<TextMeshPro>().text = text;
@@ -41,9 +43,28 @@ public class TaskBoardWorking : MonoBehaviour
         attachedBoardText.SetActive(false);
     }
 
-    public bool AttachNextQandA(bool start)
+    public void AttachCurrentMaterials()
     {
-        if (thisBoardInformation.NextQuestion(start, thisBoardInformation.OnlyMistakesMode, ref thisBoardObjectMaterials, ref thisPlatesObjectMaterials))
+        if (thisBoardInformation.MessageMode == 1)
+        {
+            CleanBoard();
+            thisBoardInformation.CurrentQuestionMaterials(ref thisBoardObjectMaterials, ref thisPlatesObjectMaterials);
+            AttachMaterial(attachedFrontPlane, thisBoardObjectMaterials.FrontMaterial);
+            foreach (GameObject plate in attachedAnswerPlates) { plate.SetActive(true); }
+            for (int i = 0; i < thisPlatesObjectMaterials.Length; i++)
+            {
+                AttachMaterial(attachedAnswerPlates_FrontPlates[i], thisPlatesObjectMaterials[i].FrontMaterial);
+            }
+        }
+        else
+        {
+            WriteOnBoard(thisBoardInformation.CurrentString);
+            foreach (GameObject plate in attachedAnswerPlates) { plate.SetActive(false); }
+        }      
+    }
+    public bool AttachNextQandA()
+    {
+        if (thisBoardInformation.NextQuestion(thisBoardInformation.OnlyMistakesMode, ref thisBoardObjectMaterials, ref thisPlatesObjectMaterials))
         {
             AttachMaterial(attachedFrontPlane, thisBoardObjectMaterials.FrontMaterial);            
             for (int i = 0; i < thisPlatesObjectMaterials.Length; i++)
@@ -102,7 +123,15 @@ public class TaskBoardWorking : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {      
+    {
+        if (gl.RELOAD)
+        {
+            gl.RELOADcount++;
+            Debug.Log("Reloading..." + thisBoardInformation.RoomNumber);
+            thisBoardInformation = gl.boardsInfo[boardNum];
+            AttachCurrentMaterials();            
+        }
+
         if (isStandingOnPlatform)
         {
             switch (thisBoardInformation.MessageMode)
@@ -114,7 +143,7 @@ public class TaskBoardWorking : MonoBehaviour
                     {
                         CleanBoard();
                         thisBoardInformation.MessageMode = 1;
-                        AttachNextQandA(true);
+                        AttachNextQandA();
                         foreach (GameObject plate in attachedAnswerPlates) plate.SetActive(true);
                     }
                     break;
@@ -123,7 +152,7 @@ public class TaskBoardWorking : MonoBehaviour
                     gl.PrintLabel("Нажми F, чтобы пропустить вопрос");
                     if (Input.GetKeyDown(KeyCode.F))
                     {
-                        AttachNextQandA(false);
+                        AttachNextQandA();
                     }
                     break;
                 // Test completed mode
@@ -134,6 +163,7 @@ public class TaskBoardWorking : MonoBehaviour
                         WriteOnBoard("Верных ответов: 0.");
                         thisBoardInformation.OnlyMistakesMode = false;
                         thisBoardInformation.Restart();
+                        gl.playerInfo.SetNumOfRightAnswers(thisBoardInformation.RoomNumber, thisBoardInformation.NumberOfCorrectAnswers);
                     }
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
@@ -141,7 +171,7 @@ public class TaskBoardWorking : MonoBehaviour
                         thisBoardInformation.OnlyMistakesMode = true;
                         thisBoardInformation.MessageMode = 1;
                         thisBoardInformation.CurrentQuestion = 0;
-                        if (AttachNextQandA(true))
+                        if (AttachNextQandA())
                             foreach (GameObject plate in attachedAnswerPlates) plate.SetActive(true);
                         else
                             WriteOnBoard("Ответы на все вопросы даны верно!");
@@ -170,7 +200,7 @@ public class TaskBoardWorking : MonoBehaviour
                 }
                 else Debug.Log("Wrong Answer!");
 
-                AttachNextQandA(false);
+                AttachNextQandA();
             }
         }
         

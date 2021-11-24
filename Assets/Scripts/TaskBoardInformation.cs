@@ -13,7 +13,8 @@ public class TaskBoardInformation
     public byte MessageMode { get { return messageMode; } set { messageMode = value; } }
     private bool onlyMistakesMode = false;
     public bool OnlyMistakesMode { get { return onlyMistakesMode; } set { onlyMistakesMode = value; } }
-
+    private string currentString;
+    public string CurrentString { get { return currentString; } set { currentString = value; } }
     //byte numberOfQuestions;
 
     string materialWelcome;
@@ -26,19 +27,19 @@ public class TaskBoardInformation
     bool[] questionsRightAnswered;
     private byte numberOfCorrectAnswers;
     public byte NumberOfCorrectAnswers { get { return numberOfCorrectAnswers; } set { numberOfCorrectAnswers = value; } }
-    private byte currentQuestion;
-    public byte CurrentQuestion { get { return currentQuestion; } set { currentQuestion = value; } }
+    private int currentQuestion;
+    public int CurrentQuestion { get { return currentQuestion; } set { currentQuestion = value; } }
     bool keyWasGiven;
     public bool KeyWasGiven { get { return keyWasGiven; } set { keyWasGiven = value; } }
 
 
-    public string MaterialBoardPath(byte qNum)
+    public string MaterialBoardPath(int qNum)
     {
         string path = roomTitle + "/Q" + (qNum + 1) + ".png";
         return path;
     }
 
-    public string[] MaterialQuestionPaths(byte qNum)
+    public string[] MaterialQuestionPaths(int qNum)
     {
         string[] paths = new string[3];
         for (int i = 0; i < 3; i++)
@@ -63,11 +64,20 @@ public class TaskBoardInformation
         rightAnswers = rightAnsw;
         questionsRightAnswered = new bool[rightAnswers.Length]; // по умолчанию false
         numberOfCorrectAnswers = 0;
-        currentQuestion = 0;
+        currentQuestion = -1;
         keyWasGiven = false;
     }
 
-    public bool NextQuestion(bool isFirstQuestion, bool onlyMistakesMode, ref ObjectMaterials board, ref ObjectMaterials[] plates)
+    public void CurrentQuestionMaterials(ref ObjectMaterials board, ref ObjectMaterials[] plates)
+    {
+        board.SetTexture(MaterialBoardPath(currentQuestion));
+        for (int i = 0; i < plates.Length; i++)
+        {
+            plates[i].SetTexture(MaterialQuestionPaths(currentQuestion)[i]);
+        }
+    }
+
+    public bool NextQuestion(bool onlyMistakesMode, ref ObjectMaterials board, ref ObjectMaterials[] plates)
     {
         try
         {
@@ -75,11 +85,11 @@ public class TaskBoardInformation
             switch (onlyMistakesMode)
             {
                 case false:
-                    if (!isFirstQuestion) currentQuestion++;
+                    currentQuestion++;
                     break;
                 case true:
                     bool wa = true;
-                    if (!isFirstQuestion) currentQuestion++;
+                    currentQuestion++;
                     while (wa && currentQuestion < NumberOfQuestions)
                     {
                         if (questionsRightAnswered[currentQuestion]) currentQuestion++;
@@ -103,7 +113,7 @@ public class TaskBoardInformation
         }
     }
 
-    public bool CheckAnswer(byte answerNum, byte questionNum)
+    public bool CheckAnswer(int answerNum, int questionNum)
     {
         if (rightAnswers[questionNum] == answerNum)
         {
@@ -126,7 +136,7 @@ public class TaskBoardInformation
 
     public void Restart()
     {
-        currentQuestion = 0;
+        currentQuestion = -1;
         messageMode = 0;
         for (int i = 0; i < questionsRightAnswered.Length; i++) questionsRightAnswered[i] = false;
         numberOfCorrectAnswers = 0;
@@ -136,9 +146,17 @@ public class TaskBoardInformation
     //add new question to the end of the array
     public bool AddQuestion(byte rightAnswerNum)
     {
-        Array.Resize(ref rightAnswers, rightAnswers.Length + 1);
-        rightAnswers[NumberOfQuestions - 1] = rightAnswerNum;
-        return true;
+        try
+        {
+            Array.Resize(ref rightAnswers, rightAnswers.Length + 1);
+            rightAnswers[rightAnswers.Length - 1] = rightAnswerNum;
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return false;
+        }
     }
 
     //public byte NumberOfQuestions { get { return numberOfQuestions; } }
