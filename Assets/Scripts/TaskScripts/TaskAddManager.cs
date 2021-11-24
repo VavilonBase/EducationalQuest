@@ -22,6 +22,9 @@ public class TaskAddManager : MonoBehaviour
     [Space]
     [Header("Task Manager")]
     [SerializeField] private TaskManager _taskManager;
+
+    private TaskBoardInformation _taskBoardInformation;
+    private CsGlobals _globalOptions;
     private Dropdown _directionDropdown; //Выпадающее поле для выбора направления
     private byte _step = 0; //Этап на котором сейчас находится добавление
 
@@ -34,6 +37,8 @@ public class TaskAddManager : MonoBehaviour
         GetObjectsFromDirectionField();
         //Выключаем переключатели выбора правильного ответа
         OffAnswerTrueToggles();
+        //Поиск глобального объекта
+        _globalOptions = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
 
         //Присвоение событий
         SetListenerCommonAllField();
@@ -167,7 +172,6 @@ public class TaskAddManager : MonoBehaviour
                     questionNumbersList.Sort();
                     //Получаем номер следующего вопроса
                     nextQuestionNumber = questionNumbersList[questionNumbersList.Count - 1] + 1;
-                    Debug.Log(nextQuestionNumber);
                 }
                 //Создаем путь до папки со следующем вопросом
                 string pathAnswersFolder = pathFolder + "/Q" + nextQuestionNumber.ToString();
@@ -178,7 +182,15 @@ public class TaskAddManager : MonoBehaviour
                 //Генерируем png для ответов
                 for (int i = 0; i < _addAnswersWindows.Length; i++)
                 {
-                   _addAnswersWindows[i].GeneratePng(_taskManager.textureGenerator, pathAnswersFolder + "/answer" + (i + 1).ToString() + ".png");
+                   _addAnswersWindows[i].GeneratePng(_taskManager.textureGenerator, pathAnswersFolder + "/" + (i + 1).ToString() + ".png");
+                }
+            }
+            byte rightAnswer = this.GetRightAnswer();
+            if (this._taskBoardInformation != null)
+            {
+                if (!this._taskBoardInformation.AddQuestion(rightAnswer))
+                {
+                    Debug.Log("Нифига не добавилось!");
                 }
             }
             ViewTaskList();
@@ -259,6 +271,18 @@ public class TaskAddManager : MonoBehaviour
         }
     }
     
+    byte GetRightAnswer()
+    {
+        for (byte i = 0; i < this._answerTrueToggles.Length; i++)
+        {
+            if (this._answerTrueToggles[i].isOn)
+            {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     //Проверка стоит ли галочка вообще
     bool CheckExistTrueToggle()
     {
@@ -350,14 +374,17 @@ public class TaskAddManager : MonoBehaviour
             case "Механика":
                 pathFolder = Application.dataPath + "/Resources/Mechanics";
                 if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
+                this._taskBoardInformation = this._globalOptions.boardsInfo[0];
                 break;
             case "Молекулярная физика":
                 pathFolder = Application.dataPath + "/Resources/Molecular";
                 if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
+                this._taskBoardInformation = this._globalOptions.boardsInfo[2];
                 break;
             case "Электричество":
                 pathFolder = Application.dataPath + "/Resources/Electricity";
                 if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
+                this._taskBoardInformation = this._globalOptions.boardsInfo[1];
                 break;
             default:
                 pathFolder = "";

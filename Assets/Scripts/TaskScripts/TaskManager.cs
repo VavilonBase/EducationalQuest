@@ -51,6 +51,11 @@ public class TaskManager : MonoBehaviour
         _taskEditManager.Initialized(textures, direction, numberQuestion);
     }
 
+    public void CloseTaskEditor()
+    {
+        this.gameObject.SetActive(false);
+    }
+
     //------------ДОП. МЕТОДЫ-------------
     void CloseAllUI()
     {

@@ -13,6 +13,8 @@ public class TaskListManger : MonoBehaviour
     [SerializeField] private GameObject _prefab;
     [SerializeField] private Dropdown _directionDropdown;
     [SerializeField] private Button _addNewTaskBtn;
+    [SerializeField] private Button _exitMenuBtn;
+    [SerializeField] private GameObject _menuGameObject;
 
     [Header("Settings")]
     [SerializeField] private string _title = "Вопрос ";
@@ -25,6 +27,7 @@ public class TaskListManger : MonoBehaviour
     {
         this.SetListenerDirectionDropdown();
         this.SetListenerAddNewTaskBtn();
+        this.SetListenerExitMenuBtn();
         this.OnValueChangeDirectionDropdown();
     }
 
@@ -37,6 +40,10 @@ public class TaskListManger : MonoBehaviour
     {
         this._addNewTaskBtn.onClick.AddListener(this.ClickAddNewTaskBtn);
     }
+    void SetListenerExitMenuBtn()
+    {
+        this._exitMenuBtn.onClick.AddListener(this.ClickExitMenuBtn);
+    }
 
     //--------------------СОБЫТИЯ------------------------------
     void OnValueChangeDirectionDropdown()
@@ -47,6 +54,12 @@ public class TaskListManger : MonoBehaviour
     void ClickAddNewTaskBtn()
     {
         this._taskManager.ViewTaskAdd();
+    }
+
+    void ClickExitMenuBtn()
+    {
+        this._menuGameObject.SetActive(true);
+        this._taskManager.CloseTaskEditor();
     }
     //------------------ДОП. МЕТОДЫ---------------------
     void ClearTexturesList()

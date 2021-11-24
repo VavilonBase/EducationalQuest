@@ -154,6 +154,7 @@ public class TaskWindowComponent : MonoBehaviour
     /// </summary>
     public void ResetWindow()
     {
+        this.SetActive();
         //Сбрасываем переключатель Ввода текстом, при этом вызовется событие при переключении
         this._toggle.isOn = false;
         //Удаляем текст с input, при этом вызовется событие при смене текста в input
