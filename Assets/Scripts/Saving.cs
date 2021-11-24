@@ -4,29 +4,40 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class Saving : MonoBehaviour
 {
     [Serializable]
     class SaveData
-    {
-        public float[] playerPosition;        
+    {        
         public PlayerInfo playerInfo;
+        public TaskBoardInformation[] boardsInfo;
+        public float[] keyPosition;
     }
 
+    
+
     public class SaveSerial: MonoBehaviour
-    {
-        float[] playerPosition;
+    {        
         PlayerInfo playerInfo;
+        public PlayerInfo PlayerInfo { get { return playerInfo; } }
+
+        TaskBoardInformation[] boardsInfo;
+        public TaskBoardInformation[] BoardsInfo { get { return boardsInfo; } }
+        float[] keyPosition;
+        public float[] KeyPosition { get { return keyPosition; } }
+
         public void SaveGame()
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Create(Application.persistentDataPath
               + "/MySaveData.dat");
             SaveData data = new SaveData();
-
-            data.playerPosition = playerPosition;
+            
             data.playerInfo = playerInfo;
+            data.boardsInfo = boardsInfo;
+            data.keyPosition = keyPosition;
             
             bf.Serialize(file, data);
             file.Close();
@@ -34,7 +45,7 @@ public class Saving : MonoBehaviour
         }
 
         public bool LoadGame()
-        {
+        {            
             if (File.Exists(Application.persistentDataPath
               + "/MySaveData.dat"))
             {
@@ -45,9 +56,10 @@ public class Saving : MonoBehaviour
                 SaveData data = (SaveData)bf.Deserialize(file);
                 file.Close();
 
-                data.playerPosition = playerPosition;
                 playerInfo = data.playerInfo;
-
+                boardsInfo = data.boardsInfo;                
+                keyPosition = data.keyPosition; 
+                
                 Debug.Log("Game data loaded!");
                 return true;
             }
@@ -56,6 +68,8 @@ public class Saving : MonoBehaviour
                 Debug.LogError("There is no save data!");
                 return false;
             }
+            
+            return true;
         }
 
         public static void ResetGame()
@@ -72,21 +86,15 @@ public class Saving : MonoBehaviour
                 Debug.LogError("No save data to delete.");
         }
 
-        public Vector3 GetPlayerPosition()
+        //конструктор
+        public SaveSerial(PlayerInfo pInf, TaskBoardInformation[] tbInf, Vector3 keyPos)
         {            
-            return new Vector3(playerPosition[0], playerPosition[1], playerPosition[2]);
-        }
-        public PlayerInfo GetPlayerInfo()
-        {
-            return playerInfo;
-        }
-        public SaveSerial(Vector3 pPos, PlayerInfo pInf)
-        {
-            playerPosition = new float[3];
-            playerPosition[0] = pPos.x;
-            playerPosition[1] = pPos.y;
-            playerPosition[2] = pPos.z;
             playerInfo = pInf;
+            boardsInfo = tbInf;
+            keyPosition = new float[3];
+            keyPosition[0] = keyPos.x;            
+            keyPosition[1] = keyPos.y;
+            keyPosition[2] = keyPos.z;
         }
     }
 
@@ -96,12 +104,25 @@ public class Saving : MonoBehaviour
     void Start()
     {
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
-        saveSerial = new SaveSerial(gl.player.transform.position, gl.playerInfo);
+        saveSerial = new SaveSerial(gl.playerInfo, gl.boardsInfo, gl.key.transform.position);
+    }
+
+    public void Update()
+    {
+        if (gl.RELOAD)
+        {
+            Debug.Log("Reloading...");
+            if (gl.RELOADcount == gl.boardsInfo.Length)
+            {
+                gl.RELOAD = false;
+                gl.RELOADcount = 0;
+            }
+        }
     }
 
     public void onClickToSave()
-    {        
-        saveSerial = new SaveSerial(gl.player.transform.position, gl.playerInfo);        
+    {
+        saveSerial = new SaveSerial(gl.playerInfo, gl.boardsInfo, gl.key.transform.position);
         saveSerial.SaveGame();
     }
 
@@ -109,8 +130,11 @@ public class Saving : MonoBehaviour
     {
         if (saveSerial.LoadGame())
         {
-            gl.player.transform.position = saveSerial.GetPlayerPosition();
-            gl.playerInfo = saveSerial.GetPlayerInfo();
+            gl.playerInfo = saveSerial.PlayerInfo;
+            gl.boardsInfo = saveSerial.BoardsInfo;
+            Vector3 newKeyPos = new Vector3(saveSerial.KeyPosition[0], saveSerial.KeyPosition[1], saveSerial.KeyPosition[2]);            
+            gl.key.transform.position = newKeyPos;
+            gl.RELOAD = true;            
         }
     }
 
