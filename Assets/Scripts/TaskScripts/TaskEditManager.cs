@@ -7,8 +7,8 @@ public class TaskEditManager : MonoBehaviour
 {
     [Header("Fields")]
     [SerializeField] private GameObject _directionField; //Окно с выбором раздела
-    [SerializeField] private GameObject _addQuestionField; // Окно с добавлением вопроса
-    [SerializeField] private GameObject[] _answersField; //Окна с добавлением ответов 
+    [SerializeField] private TaskWindowComponent _editQuestionWindow; // Окно с добавлением вопроса
+    [SerializeField] private TaskWindowComponent[] _editAnswersWindows; //Окна с добавлением ответов 
     [Space]
     [Header("Buttons")]
     [SerializeField] private Button _nextBtn; //Кнопка Далее
@@ -20,10 +20,7 @@ public class TaskEditManager : MonoBehaviour
     [SerializeField] private Toggle[] _answerTrueToggles; //Переключатели выбора правильного ответа
     [Space]
     [Header("Scripts")]
-    [SerializeField] private TaskManager _scriptTaskManager;
-
-    private TaskFieldComponent _scriptQuestionField; //Скрипт для генерации вопроса 
-    private TaskFieldComponent[] _scriptsAnswersFields; //Скрипт для генерации ответа
+    [SerializeField] private TaskManager _taskManager;
     private Dropdown _directionDropdown; //Выпадающее поле для выбора направления
     private int _numberQuestion; //Номер вопроса
     private byte _step = 0; //Этап на котором сейчас находится добавление
@@ -36,13 +33,7 @@ public class TaskEditManager : MonoBehaviour
         //Получаем объекты поля Направление
         GetObjectsFromDirectionField();
         //Выключаем переключатели выбора правильного ответа
-        OffAnswerTrueToggles();
-
-        //Получения скрипта для генерации вопроса
-        GetScriptFromQuestionAddField();
-
-        //Получение скриптов для генерации ответов
-        GetScriptsFromAnswersAddFields();
+        DisableAnswerTrueToggles();
 
         //Присвоение событий
         SetListenerCommonAllField();
@@ -50,7 +41,7 @@ public class TaskEditManager : MonoBehaviour
 
         //Скрываем все поля
         _directionField.SetActive(false);
-        _addQuestionField.SetActive(false);
+        _editQuestionWindow.SetInactive();
         HideAnswersField();
         _errorText.gameObject.SetActive(false);
 
@@ -81,15 +72,15 @@ public class TaskEditManager : MonoBehaviour
         //Выключаю обработку события изменения значения переключателей
         OffListnerAnswerTrueToggles();
         //Сбрасываю все переключатели
-        OffAnswerTrueToggles();
+        DisableAnswerTrueToggles();
         //Включаю обработку события изменения значения переключателей
         SetListenerAnswerTrueToggles();
         //Инициализируем поля
-        _scriptQuestionField.Initialized(textures[0]);
+        _editQuestionWindow.Initialized(textures[0]);
         byte i = 1;
-        foreach (TaskFieldComponent _scriptAnswerField in _scriptsAnswersFields)
+        foreach (TaskWindowComponent _editAnswerWinow in _editAnswersWindows)
         {
-            _scriptAnswerField.Initialized(textures[i]);
+            _editAnswerWinow.Initialized(textures[i]);
             i++;
         }
     }
@@ -100,21 +91,6 @@ public class TaskEditManager : MonoBehaviour
     {
         //Получение направления
         _directionDropdown = _directionField.GetComponentInChildren<Dropdown>();
-    }
-    //Получение скриптов из поля добавления вопроса
-    void GetScriptFromQuestionAddField()
-    {
-        _scriptQuestionField = _addQuestionField.GetComponent<TaskFieldComponent>();
-    }
-
-    //Получение скриптов из полей добавления ответа
-    void GetScriptsFromAnswersAddFields()
-    {
-        _scriptsAnswersFields = new TaskFieldComponent[_answersField.Length];
-        for (int i = 0; i < _answersField.Length; i++)
-        {
-            _scriptsAnswersFields[i] = _answersField[i].GetComponent<TaskFieldComponent>();
-        }
     }
 
     //---------------------МЕТОДЫ НАЗНАЧЕНИЯ СОБЫТИЙ-------------------------------
@@ -163,7 +139,7 @@ public class TaskEditManager : MonoBehaviour
     {
         _step++;
         //Если этап больше чем кол-во ответов + 1 (не +2, так как отсчет с 0), то скрываем кнопку Далее и показываем кнопку Добавить
-        if (_step >= (_answersField.Length + 1))
+        if (_step >= (_editAnswersWindows.Length + 1))
         {
             _nextBtn.gameObject.SetActive(false); //Скрываем кнопку Далее
             _editBtn.gameObject.SetActive(true); //Показываем кнопку Добавить
@@ -222,11 +198,11 @@ public class TaskEditManager : MonoBehaviour
                     return;
                 }
                 //Генерируем png для вопроса
-                _scriptQuestionField.GeneratePng(pathFolder + "/Q" + _numberQuestion.ToString() + ".png");
+                _editQuestionWindow.GeneratePng(_taskManager.textureGenerator, pathFolder + "/Q" + _numberQuestion.ToString() + ".png");
                 //Генерируем png для ответов
-                for (int i = 0; i < _scriptsAnswersFields.Length; i++)
+                for (int i = 0; i < _editAnswersWindows.Length; i++)
                 {
-                    _scriptsAnswersFields[i].GeneratePng(pathAnswersFolder + "/answer" + (i + 1).ToString() + ".png");
+                    _editAnswersWindows[i].GeneratePng(_taskManager.textureGenerator, pathAnswersFolder + "/answer" + (i + 1).ToString() + ".png");
                 }
             }
             ViewTaskList();
@@ -247,7 +223,7 @@ public class TaskEditManager : MonoBehaviour
         //Выключаю обработку события изменения значения переключателей
         OffListnerAnswerTrueToggles();
         //Сбрасываю все переключатели
-        OffAnswerTrueToggles();
+        DisableAnswerTrueToggles();
         //Возвращаю переключателю его исходное состояние
         toggle.isOn = isOn;
         //Если выключатель выключили, показаываем ошибку, что надо выбрать правильный ответ
@@ -273,17 +249,17 @@ public class TaskEditManager : MonoBehaviour
         {
             case 0:
                 _directionField.SetActive(true);
-                _addQuestionField.SetActive(false);
+                _editQuestionWindow.SetInactive();
                 break;
             case 1:
                 _directionField.SetActive(false);
-                _addQuestionField.SetActive(true);
+                _editQuestionWindow.SetActive();
                 HideAnswersField();
                 break;
             default: //Обработка полей с ответами
-                _addQuestionField.SetActive(false);
+                _editQuestionWindow.SetInactive();
                 HideAnswersField();
-                _answersField[_step - 2].SetActive(true);
+                _editAnswersWindows[_step - 2].SetActive();
                 break;
         }
     }
@@ -292,14 +268,14 @@ public class TaskEditManager : MonoBehaviour
     //Сокрытие всех полей с ответами
     void HideAnswersField()
     {
-        foreach (GameObject answerField in _answersField)
+        foreach (TaskWindowComponent _editAnswerWinow in _editAnswersWindows)
         {
-            answerField.SetActive(false);
+            _editAnswerWinow.SetInactive();
         }
     }
 
     //Убрать галочки с переключателей правильного ответа
-    void OffAnswerTrueToggles()
+    void DisableAnswerTrueToggles()
     {
         foreach (Toggle answerTrueToggle in _answerTrueToggles)
         {
@@ -331,22 +307,19 @@ public class TaskEditManager : MonoBehaviour
         _directionDropdown.value = 0;
 
         //Сброс QuestionField
-        _addQuestionField.gameObject.SetActive(true);
-        _addQuestionField.GetComponent<TaskFieldComponent>().ResetField();
-        _addQuestionField.gameObject.SetActive(false);
+        _editQuestionWindow.ResetWindow();
 
         //Сброс AnswersField
-        foreach (GameObject _answerField in _answersField)
+        foreach (TaskWindowComponent _editAnswerWinow in _editAnswersWindows)
         {
-            _answerField.gameObject.SetActive(true);
-            _answerField.GetComponent<TaskFieldComponent>().ResetField();
-            _answerField.gameObject.SetActive(false);
+            _editAnswerWinow.ResetWindow();
         }
+
         //Выключаю все переключатели Правильного ответа
         //Выключаю обработку события изменения значения переключателей
         OffListnerAnswerTrueToggles();
         //Сбрасываю все переключатели
-        OffAnswerTrueToggles();
+        DisableAnswerTrueToggles();
         //Включаю обработку события изменения значения переключателей
         SetListenerAnswerTrueToggles();
 
@@ -365,7 +338,7 @@ public class TaskEditManager : MonoBehaviour
     void ViewTaskList()
     {
         ResetAllFields();
-        this._scriptTaskManager.ViewTaskList();
+        this._taskManager.ViewTaskList();
     }
 
     /// <summary>

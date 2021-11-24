@@ -1968,7 +1968,6 @@ MonoBehaviour:
   baseBackgroundTexture: {fileID: 2800000, guid: f45a1f04d188c4b4c8fb362a6dc7ae8b, type: 3}
   textAnchor: 4
   textColor: {r: 0, g: 0, b: 0, a: 1}
-  _scriptTextureGenerator: {fileID: 517294223}
 --- !u!1001 &78981810
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2631,7 +2630,6 @@ MonoBehaviour:
   baseBackgroundTexture: {fileID: 2800000, guid: f45a1f04d188c4b4c8fb362a6dc7ae8b, type: 3}
   textAnchor: 4
   textColor: {r: 0.11320752, g: 0, b: 0, a: 1}
-  _scriptTextureGenerator: {fileID: 517294223}
 --- !u!1 &112670378
 GameObject:
   m_ObjectHideFlags: 0
@@ -9486,7 +9484,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C"
+  m_Text: "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C"
 --- !u!222 &379588720
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10093,7 +10091,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00076325063}
+  m_AnchoredPosition: {x: 0, y: -0.000002254932}
   m_SizeDelta: {x: 0, y: 400}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &411200491
@@ -14021,7 +14019,6 @@ MonoBehaviour:
   baseBackgroundTexture: {fileID: 2800000, guid: f45a1f04d188c4b4c8fb362a6dc7ae8b, type: 3}
   textAnchor: 4
   textColor: {r: 0, g: 0, b: 0, a: 1}
-  _scriptTextureGenerator: {fileID: 517294223}
 --- !u!1 &574493974
 GameObject:
   m_ObjectHideFlags: 0
@@ -23453,7 +23450,6 @@ MonoBehaviour:
   baseBackgroundTexture: {fileID: 2800000, guid: f45a1f04d188c4b4c8fb362a6dc7ae8b, type: 3}
   textAnchor: 0
   textColor: {r: 0, g: 0, b: 0, a: 0}
-  _scriptTextureGenerator: {fileID: 517294223}
 --- !u!1 &924205543
 GameObject:
   m_ObjectHideFlags: 0
@@ -25744,7 +25740,6 @@ MonoBehaviour:
   baseBackgroundTexture: {fileID: 2800000, guid: 66957b289b2c5d64fa57470bb010ae0f, type: 3}
   textAnchor: 1
   textColor: {r: 1, g: 1, b: 1, a: 1}
-  _scriptTextureGenerator: {fileID: 517294223}
 --- !u!1 &1008736428
 GameObject:
   m_ObjectHideFlags: 0
@@ -31941,11 +31936,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _directionField: {fileID: 294309265}
-  _addQuestionField: {fileID: 1345902536}
-  _answersField:
-  - {fileID: 1893303243}
-  - {fileID: 1663698810}
-  - {fileID: 923899060}
+  _editQuestionWindow: {fileID: 1345902538}
+  _editAnswersWindows:
+  - {fileID: 1893303245}
+  - {fileID: 1663698812}
+  - {fileID: 923899062}
   _nextBtn: {fileID: 1885303475}
   _backBtn: {fileID: 1743579098}
   _editBtn: {fileID: 28972293}
@@ -31955,7 +31950,7 @@ MonoBehaviour:
   - {fileID: 877573578}
   - {fileID: 366542039}
   - {fileID: 130555306}
-  _scriptTaskManager: {fileID: 1722024117}
+  _taskManager: {fileID: 1722024117}
 --- !u!114 &1249561737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34496,9 +34491,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseBackgroundTexture: {fileID: 2800000, guid: 66957b289b2c5d64fa57470bb010ae0f, type: 3}
-  textAnchor: 0
+  textAnchor: 1
   textColor: {r: 0, g: 0, b: 0, a: 0}
-  _scriptTextureGenerator: {fileID: 517294223}
 --- !u!1001 &1348198291
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44430,7 +44424,6 @@ MonoBehaviour:
   baseBackgroundTexture: {fileID: 2800000, guid: f45a1f04d188c4b4c8fb362a6dc7ae8b, type: 3}
   textAnchor: 0
   textColor: {r: 0, g: 0, b: 0, a: 0}
-  _scriptTextureGenerator: {fileID: 517294223}
 --- !u!1 &1669294927
 GameObject:
   m_ObjectHideFlags: 0
@@ -44635,7 +44628,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0418\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u0430"
+  m_Text: "\u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u0430"
 --- !u!222 &1670011609
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -46171,6 +46164,7 @@ MonoBehaviour:
   _taskAddUI: {fileID: 2054335421}
   _taskListUI: {fileID: 2091697607}
   _taskEditUI: {fileID: 1249561734}
+  textureGenerator: {fileID: 517294223}
 --- !u!1 &1727929093
 GameObject:
   m_ObjectHideFlags: 0
@@ -50080,7 +50074,6 @@ MonoBehaviour:
   baseBackgroundTexture: {fileID: 2800000, guid: f45a1f04d188c4b4c8fb362a6dc7ae8b, type: 3}
   textAnchor: 0
   textColor: {r: 0, g: 0, b: 0, a: 0}
-  _scriptTextureGenerator: {fileID: 517294223}
 --- !u!1 &1893707880
 GameObject:
   m_ObjectHideFlags: 0
@@ -54579,11 +54572,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _directionField: {fileID: 789239194}
-  _addQuestionField: {fileID: 1008595849}
-  _answersField:
-  - {fileID: 77408374}
-  - {fileID: 564566050}
-  - {fileID: 109247463}
+  _addQuestionWindow: {fileID: 1008595851}
+  _addAnswersWindows:
+  - {fileID: 77408376}
+  - {fileID: 564566052}
+  - {fileID: 109247465}
   _nextBtn: {fileID: 1388074313}
   _backBtn: {fileID: 1135400938}
   _addBtn: {fileID: 658335608}
@@ -54593,7 +54586,7 @@ MonoBehaviour:
   - {fileID: 1358887603}
   - {fileID: 1404483483}
   - {fileID: 1418423330}
-  _scriptTaskManager: {fileID: 1722024117}
+  _taskManager: {fileID: 1722024117}
 --- !u!1 &2054380716
 GameObject:
   m_ObjectHideFlags: 0
@@ -55635,7 +55628,7 @@ MonoBehaviour:
   _addNewTaskBtn: {fileID: 851679322}
   _title: "\u0412\u043E\u043F\u0440\u043E\u0441 "
   _textures: []
-  _scriptTaskManager: {fileID: 1722024117}
+  _taskManager: {fileID: 1722024117}
 --- !u!1 &2092353624
 GameObject:
   m_ObjectHideFlags: 0

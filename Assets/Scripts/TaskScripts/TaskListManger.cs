@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.TaskScripts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -17,8 +18,8 @@ public class TaskListManger : MonoBehaviour
     [SerializeField] private string _title = "Вопрос ";
     [SerializeField] public List<Texture2D> _textures;
 
-    [Header("Sripts")]
-    [SerializeField] private TaskManager _scriptTaskManager;
+    [Header("Task Manager")]
+    [SerializeField] private TaskManager _taskManager;
 
     private void Awake()
     {
@@ -45,7 +46,7 @@ public class TaskListManger : MonoBehaviour
 
     void ClickAddNewTaskBtn()
     {
-        this._scriptTaskManager.ViewTaskAdd();
+        this._taskManager.ViewTaskAdd();
     }
     //------------------ДОП. МЕТОДЫ---------------------
     void ClearTexturesList()
@@ -110,7 +111,7 @@ public class TaskListManger : MonoBehaviour
                 texturesList.Add(www.texture);
             }
         }
-        _scriptTaskManager.ViewTaskEdit(texturesList.ToArray(), direction, numberQuestion);
+        _taskManager.ViewTaskEdit(texturesList.ToArray(), direction, numberQuestion);
     }
 
     public void RedrawList()
@@ -134,19 +135,42 @@ public class TaskListManger : MonoBehaviour
         if (!Directory.Exists(pathFolder)) return;
 
         //Получаем все файлы
-        string[] allFiles = Directory.GetFiles(pathFolder);
+       string[] allFiles = this.SortFiles(Directory.GetFiles(pathFolder));
         //Вместо файлов делаем числа из номера вопроса
         foreach (string file in allFiles)
         {
-            //Если файл кончается на .png
-            if (file.Substring(file.Length - 3, 3) == "png")
+            WWW www = new WWW("file://" + file);
+            _textures.Add(www.texture);
+
+        }
+
+        this.CreateElements(direction);
+    }
+    
+    string[] SortFiles(string[] files)
+    {
+        //Убираю все файлы, которые не кончаются на png
+        List<string> newFiles = new List<string>();
+        for (int i = 0; i < files.Length; i++)
+        {
+            if (files[i].Substring(files[i].Length - 3, 3) == "png")
             {
-                WWW www = new WWW("file://" + file);
-                _textures.Add(www.texture);
+                newFiles.Add(files[i]);
             }
         }
 
-
-        this.CreateElements(direction);
+        //Создаю отсортированный массив
+        string[] sortFiles = new string[newFiles.Count];
+        foreach (string file in newFiles)
+        {
+            //Поиск последнего вхождения обратного слеша \
+            int indexSlash = file.LastIndexOf("\\", file.Length - 1, file.Length);
+            //Поиск последнего вхождения точки .
+            int indexDote = file.LastIndexOf(".", file.Length - 1, file.Length);
+            //Поиск номера вопроса
+            int numberQuestion = Convert.ToInt32(file.Substring(indexSlash + 2, indexDote - indexSlash - 2));
+            sortFiles[numberQuestion - 1] = file;
+        }
+        return sortFiles;
     }
 }

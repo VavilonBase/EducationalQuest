@@ -7,6 +7,9 @@ public class TaskManager : MonoBehaviour
     [SerializeField] private GameObject _taskAddUI;
     [SerializeField] private GameObject _taskListUI;
     [SerializeField] private GameObject _taskEditUI;
+    [Space]
+    [Header("Task Generator")]
+    public TextureGenerator textureGenerator;
 
     private TaskEditManager _taskEditManager;
     private TaskListManger _taskListManager;
