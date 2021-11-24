@@ -149,7 +149,7 @@ public class TaskBoardInformation
         try
         {
             Array.Resize(ref rightAnswers, rightAnswers.Length + 1);
-            Array.Resize(ref questionsRightAnswered, questionsRightAnswered.Length + 1);
+            Array.Resize(ref rightAnswers, rightAnswers.Length + 1);
             rightAnswers[rightAnswers.Length - 1] = rightAnswerNum;
             return true;
         }
