@@ -10,13 +10,13 @@ public class Saving : MonoBehaviour
 {
     [Serializable]
     class SaveData
-    {        
+    {  
+        //Test comment
         public PlayerInfo playerInfo;
         public TaskBoardInformation[] boardsInfo;
         public float[] keyPosition;
     }
-
-    
+       
 
     public class SaveSerial: MonoBehaviour
     {        
@@ -67,9 +67,7 @@ public class Saving : MonoBehaviour
             {
                 Debug.LogError("There is no save data!");
                 return false;
-            }
-            
-            return true;
+            }       
         }
 
         public static void ResetGame()
