@@ -1,11 +1,25 @@
 ﻿public enum Message
 {
+    // Общие
     NotError, // Нет ошибки
-    IncorrectPassword, // Неверный пароль
-    NotFoundUser, // Пользователь не найден
-    CanNotGetUsers, // Не удается получить пользователей из базы данных
-    CanNotRegistrationUser, // Не удалось добавить пользователя в базу данных
     AccessDenied, // Доступ запрещен,
-    CanNotActivateUser, // Не получилось активировать пользователя,
-    NotAuthorization, // Пользователь не авторизован
+    InternalServer, // Ошибка сервера
+
+    // Пользователи
+    IncorrectPassword, // Неверный пароль
+    UserExist, // Такой пользователь уже существует
+    NotFoundUser, // Пользователь не найден
+    NotAuthorization, // Пользователь не авторизован,
+    IsNotTeacher, // Пользователь не является учителем
+    IsNotStudent, // Пользователь не является учеником
+    UserNotExist, // Такого пользователя не существует
+
+    // Группы
+    CanNotGetGroups, // Не удается получить группы из базы данных
+    CanNotGetGroup, // Не удается получить группу из базы данных
+    NotFoundGroup, // Группы не найдена
+    CanNotCreateGroup, // Не удалось добавить группу в БД
+    CanNotUpdateGroup, // Не удалось обновиь группу
+    IncorrectCodeWord, // Неверное кодовое слово,
+    IsNotCreator, // Пользователь не является создателем группы
 }
