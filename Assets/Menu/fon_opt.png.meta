@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: c6f203e222b9cf340bc04d8264691b8d
+=======
+guid: f13df9825d75cb849a59615fd63684bb
+>>>>>>> remotes/origin/Artem
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
