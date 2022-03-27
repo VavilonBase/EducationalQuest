@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: f13df9825d75cb849a59615fd63684bb
+=======
+guid: c6f203e222b9cf340bc04d8264691b8d
+>>>>>>> remotes/origin/Katya
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
