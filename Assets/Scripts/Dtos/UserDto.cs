@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-
-public class UserDto
+﻿public class UserDto
 {
-	public int userId; // Идентификатор пользователя
-	public string firstName; // Имя пользователя
-	public string lastName; // Фамилия пользователя
-	public string middleName; // Отчество пользователя
-	public string role; // Роль пользователя
-	public bool isActivated; // Активирован ли пользователь
+	public int userId { get; set; } // Идентификатор пользователя
+	public string firstName { get; set; } // Имя пользователя
+	public string lastName { get; set; } // Фамилия пользователя
+	public string middleName { get; set; } // Отчество пользователя
+	public string role { get; set; } // Роль пользователя
+	public bool isActivated { get; set; } // Активирован ли пользователь
 
 	//Конструктор класса
 	public UserDto(int _userId, string _firstName, string _lastName,
@@ -19,18 +17,5 @@ public class UserDto
 		middleName = _middleName;
 		role = _role;
 		isActivated = _isActivated;
-	}
-
-	// Вывод объекта класса в строке
-	public string printUserDto()
-    {
-		string isActivateString = isActivated ? "Да" : "Нет";
-		return "ID: " + userId +
-			"\nИмя: " + firstName +
-			"\nФамилия: " + lastName +
-			"\nОтчество: " + middleName +
-			"\nРоль: " + role +
-			"\nПользователь активирован: " + isActivateString;
-
 	}
 }
