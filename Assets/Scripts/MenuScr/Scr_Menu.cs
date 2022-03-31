@@ -5,52 +5,60 @@ using UnityEngine.Audio;
 
 public class Scr_Menu : MonoBehaviour
 {
-    public GameObject Main_menu;
-    public GameObject Menu_Student;
-    public GameObject Menu_Teacher;
-    public GameObject Opt;
-    public GameObject BackGround;
-    public GameObject EditWindow;
-    public GameObject Canvas;
-    public GameObject School;
+    public GameObject Input;
+    public GameObject Registration;
+    public GameObject Menu_start;
+    public GameObject About;
 
-    public void opt () {
-       Opt.SetActive(true);
-    }
-    public void student()
+    public void Input_in()
     {
-        Main_menu.SetActive(false);
-        Menu_Student.SetActive(true);
+        Input.SetActive(true);
     }
-    public void teacher()
+    public void Input_out()
     {
-        Main_menu.SetActive(false);
-        Menu_Teacher.SetActive(true);
+        Input.SetActive(false);
     }
-    public void close_opt()
+
+    public void Registration_in()
     {
-        Opt.SetActive(false);
+        Registration.SetActive(true);
     }
+    public void Registration_out()
+    {
+        Registration.SetActive(false);
+    }
+
+    public void Menu_start_in()
+    {
+        Menu_start.SetActive(true);
+    }
+    public void Menu_start_out()
+    {
+        Menu_start.SetActive(false);
+    }
+
     public void exit()
     {
         Application.Quit();
     }
-    public void exit_menu_st()
+
+    public void About_in()
     {
-        Menu_Student.SetActive(false);
-        Main_menu.SetActive(true);
+        About.SetActive(true);
     }
-    public void exit_menu_tech()
+    public void About_out()
     {
-        Menu_Teacher.SetActive(false);
-        Main_menu.SetActive(true);
+        About.SetActive(false);
     }
-    public void Game()
-    {
-        this.Canvas.SetActive(true);
-        this.School.SetActive(true);
-        BackGround.SetActive(false);
-    }
+
+
+
+
+
+
+
+   
+
     public AudioMixer audioMixer;
     public void SetVolume(float volume)
     {
@@ -59,11 +67,5 @@ public class Scr_Menu : MonoBehaviour
     public void Sound ()
     {
         AudioListener.pause = !AudioListener.pause;
-    }
-
-    public void ShowEditWindow()
-    {
-        this.EditWindow.SetActive(true);
-        this.gameObject.SetActive(false);
     }
 }
