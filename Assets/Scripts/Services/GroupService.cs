@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿/*using System.Collections.Generic;
 using System.IO;
 
 public static class GroupService
@@ -30,15 +30,15 @@ public static class GroupService
                 {
                     groupsDto.Add(groups[i]);
                 }
-                return new Response<List<GroupDto>>(false, Message.NotError, groupsDto);
+                return new Response<List<GroupDto>>(false, message.NotError, groupsDto);
             } else
             {
-                return new Response<List<GroupDto>>(true, Message.AccessDenied, null);
+                return new Response<List<GroupDto>>(true, message.AccessDenied, null);
             }
         }
         catch
         {
-            return new Response<List<GroupDto>>(true, Message.InternalServer, null);
+            return new Response<List<GroupDto>>(true, message.InternalServer, null);
         }
     }
     
@@ -56,15 +56,15 @@ public static class GroupService
         {
             if (groupExist)
             {
-                return new Response<GroupDto>(false, Message.NotError, new Group(2, 1, "Unity", "fsdfewed"));
+                return new Response<GroupDto>(false, message.NotError, new Group(2, 1, "Unity", "fsdfewed"));
             } else
             {
-                return new Response<GroupDto>(true, Message.InternalServer, null);
+                return new Response<GroupDto>(true, message.InternalServer, null);
             }
         }
         catch
         {
-            return new Response<GroupDto>(true, Message.CanNotGetGroup, null);
+            return new Response<GroupDto>(true, message.CanNotGetGroup, null);
         }
     }
 
@@ -86,23 +86,23 @@ public static class GroupService
             {
                 if (isTeacher)
                 {
-                    return new Response<List<GroupDto>>(false, Message.NotError, new List<GroupDto>() {
+                    return new Response<List<GroupDto>>(false, message.NotError, new List<GroupDto>() {
                         new Group(0, 1, "Информатика", "dsqfew141"),
                         new Group(1, 3, "Базы данных", "gdwewegwd"),
                         new Group(2, 1, "Unity", "fsdfewed")
                 });
                 } else
                 {
-                    return new Response<List<GroupDto>>(true, Message.IsNotTeacher, null);
+                    return new Response<List<GroupDto>>(true, message.IsNotTeacher, null);
                 }
             } else
             {
-                return new Response<List<GroupDto>>(true, Message.NotFoundUser, null);
+                return new Response<List<GroupDto>>(true, message.NotFoundUser, null);
             }
         }
         catch
         {
-            return new Response<List<GroupDto>>(true, Message.CanNotGetGroups, null);
+            return new Response<List<GroupDto>>(true, message.CanNotGetGroups, null);
         }
     }
 
@@ -124,19 +124,19 @@ public static class GroupService
             {
                 if (isCreator)
                 {
-                    return new Response<string>(false, Message.NotError, "dsqfew141");
+                    return new Response<string>(false, message.NotError, "dsqfew141");
                 } else
                 {
-                    return new Response<string>(true, Message.IsNotCreator, null);
+                    return new Response<string>(true, message.IsNotCreator, null);
                 }
             } else
             {
-                return new Response<string>(true, Message.NotFoundGroup, null);
+                return new Response<string>(true, message.NotFoundGroup, null);
             }
         }
         catch
         {
-            return new Response<string>(true, Message.CanNotGetGroup, null);
+            return new Response<string>(true, message.CanNotGetGroup, null);
         }
     }
 
@@ -154,10 +154,10 @@ public static class GroupService
         {
             // Генерируем кодовое слово
             string _codeWord = Path.GetRandomFileName();
-            return new Response<Group>(false, Message.NotError, new Group(0, 1, _title, _codeWord));
+            return new Response<Group>(false, message.NotError, new Group(0, 1, _title, _codeWord));
         } catch
         {
-            return new Response<Group>(true, Message.InternalServer, null);
+            return new Response<Group>(true, message.InternalServer, null);
         }
     }
 
@@ -179,18 +179,18 @@ public static class GroupService
             {
                 if (groupExist)
                 {
-                    return new Response<Group>(false, Message.NotError, new Group(0, 1, _title, "dsfsdfs"));
+                    return new Response<Group>(false, message.NotError, new Group(0, 1, _title, "dsfsdfs"));
                 } else
                 {
-                    return new Response<Group>(true, Message.NotFoundGroup, null);
+                    return new Response<Group>(true, message.NotFoundGroup, null);
                 }
             } else
             {
-                return new Response<Group>(true, Message.AccessDenied, null);
+                return new Response<Group>(true, message.AccessDenied, null);
             }
         } catch
         {
-            return new Response<Group>(true, Message.InternalServer, null);
+            return new Response<Group>(true, message.InternalServer, null);
         }
     }
 
@@ -211,7 +211,7 @@ public static class GroupService
             {
                 if (isStudent)
                 {
-                    return new Response<List<GroupDto>>(false, Message.NotError, new List<GroupDto>()
+                    return new Response<List<GroupDto>>(false, message.NotError, new List<GroupDto>()
                     {
                         new Group(0, 1, "Информатика", "dsqfew141"),
                         new Group(1, 3, "Базы данных", "gdwewegwd"),
@@ -219,15 +219,15 @@ public static class GroupService
                     });
                 } else
                 {
-                    return new Response<List<GroupDto>>(true, Message.IsNotStudent, null);
+                    return new Response<List<GroupDto>>(true, message.IsNotStudent, null);
                 }
             } else
             {
-                return new Response<List<GroupDto>>(true, Message.NotFoundUser, null);
+                return new Response<List<GroupDto>>(true, message.NotFoundUser, null);
             }
         } catch
         {
-            return new Response<List<GroupDto>>(true, Message.NotError, null);
+            return new Response<List<GroupDto>>(true, message.NotError, null);
         }
     }
 
@@ -245,7 +245,7 @@ public static class GroupService
         {
             if (groupExist)
             {
-                return new Response<List<UserDto>>(false, Message.NotError, new List<UserDto>()
+                return new Response<List<UserDto>>(false, message.NotError, new List<UserDto>()
                 {
                     new UserDto(0, "Артем", "Ельденев", "Тавросович", UserService.RolesDict[UserService.RolesEnum.Admin], true),
                     new UserDto(1, "Александр", "Крюков", "Федорович", UserService.RolesDict[UserService.RolesEnum.Teacher], true),
@@ -253,11 +253,11 @@ public static class GroupService
                 });
             } else
             {
-                return new Response<List<UserDto>>(true, Message.NotFoundGroup, null);
+                return new Response<List<UserDto>>(true, message.NotFoundGroup, null);
             }
         } catch
         {
-            return new Response<List<UserDto>>(true, Message.InternalServer, null);
+            return new Response<List<UserDto>>(true, message.InternalServer, null);
         }
     }
 
@@ -280,20 +280,20 @@ public static class GroupService
             {
                 if (codeWordRigth)
                 {
-                    return new Response<bool>(false, Message.NotError, true);
+                    return new Response<bool>(false, message.NotError, true);
                 } else
                 {
-                    return new Response<bool>(true, Message.IncorrectCodeWord, false);
+                    return new Response<bool>(true, message.IncorrectCodeWord, false);
                 }
             }
             else
             {
-                return new Response<bool>(true, Message.NotFoundGroup, false);
+                return new Response<bool>(true, message.NotFoundGroup, false);
             }
         }
         catch
         {
-            return new Response<bool>(true, Message.InternalServer, false);
+            return new Response<bool>(true, message.InternalServer, false);
         }
     }
-}
+}*/

@@ -78,7 +78,7 @@ public class Saving : MonoBehaviour
                 Debug.Log("Starting data reset...");
                 File.Delete(Application.persistentDataPath
                   + "/MySaveData.dat");                
-                Debug.Log("Data reset complete!");
+                Debug.Log("data reset complete!");
             }
             else
                 Debug.LogError("No save data to delete.");
