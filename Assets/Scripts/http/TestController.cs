@@ -21,7 +21,7 @@ public class TestController : MonoBehaviour
     public async void TestLogin()
     {
         string url = "https://educationalquest.herokuapp.com/api/users/login.php";
-        var response = await UserService.login("vav", "1233");
+        var response = await UserService.login("vav", "123");
 
         if (response.isError)
         {
@@ -107,11 +107,12 @@ public class TestController : MonoBehaviour
         // Устанавливаем заголовки
         httpClient.headers = new List<Header>()
         {
-            new Header() {name = "Authorization", value=$"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hbnktc2l0ZS5vcmciLCJhdWQiOiJodHRwOlwvXC9hbnktc2l0ZS5jb20iLCJleHAiOjE2NDg3NDE5MzIsImlhdCI6MTM1Njk5OTUyNCwibmJmIjoxMzU3MDAwMDAwLCJkYXRhIjp7ImlkIjozLCJmaXJzdE5hbWUiOiJBcnRlbSIsImxhc3ROYW1lIjoiXHUwNDE1XHUwNDNiXHUwNDRjXHUwNDM0XHUwNDM1XHUwNDNkXHUwNDM1XHUwNDMyMTIzMTIzIiwibG9naW4iOiJ2YXYiLCJyb2xlIjoiQURNSU4iLCJpc0FjdGl2YXRlZCI6dHJ1ZX19.8nb6wWdUDaA6nuyOqXNMUTHH4yYFEX_JeiYxyLhBjzM" }
+            new Header() {name = "Authorization", value=$"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hbnktc2l0ZS5vcmciLCJhdWQiOiJodHRwOlwvXC9hbnktc2l0ZS5jb20iLCJleHAiOjE2NDg3NjUwMTUsImlhdCI6MTM1Njk5OTUyNCwibmJmIjoxMzU3MDAwMDAwLCJkYXRhIjp7ImlkIjozLCJmaXJzdE5hbWUiOiJBcnRlbSIsImxhc3ROYW1lIjoiXHUwNDE1XHUwNDNiXHUwNDRjXHUwNDM0XHUwNDM1XHUwNDNkXHUwNDM1XHUwNDMyMTIzMTIzIiwibG9naW4iOiJ2YXYiLCJyb2xlIjoiQURNSU4iLCJpc0FjdGl2YXRlZCI6dHJ1ZX19.hbEB7qmC4X24fjo_jCTDCRjhyKEhwy-rHDOqiH-3r6Q" }
         };
 
-        var result = await httpClient.Get<List<UserDto>>(url);
-
-        Debug.Log($"{result.data[1].userId}");
+        var result = await httpClient.Get<User[]>(url);
+        var _ser = new JsonSerializationOption();
+        _ser.Serialize<Response<User[]>>(result);
+        Debug.Log($"{result.data[0].lastName}");
     }
 }
