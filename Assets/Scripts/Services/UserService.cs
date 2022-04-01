@@ -54,7 +54,7 @@ public static class UserService
     /// <param name="_password">Пароль</param>
     /// <returns>Возвращает ответ либо с null, либо с ошибкой</returns>
     public async static Task<Response<ResponseUserData>> registration(string _firstName, string _lastName,
-        RolesEnum _role, bool _isActivated, string _login, string _password, string middleName = "")
+        RolesEnum _role, bool _isActivated, string _login, string _password, string _middleName = "")
     {
         // Задаем URL
         string url = "https://educationalquest.herokuapp.com/api/users/registration.php";
@@ -65,7 +65,7 @@ public static class UserService
         {
             lastName = _lastName,
             firstName = _firstName,
-            middleName = "",
+            middleName = _middleName,
             role = RolesDict[_role],
             login = _login,
             password = _password
