@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class TestController : MonoBehaviour
 {
@@ -100,19 +96,15 @@ public class TestController : MonoBehaviour
     [ContextMenu("get all users")]
     public async void TestGetAllUsers()
     {
-        // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/users/get_all_users.php";
-        // Инициализируем соединение
-        var httpClient = new HttpClient(new JsonSerializationOption());
-        // Устанавливаем заголовки
-        httpClient.headers = new List<Header>()
-        {
-            new Header() {name = "Authorization", value=$"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hbnktc2l0ZS5vcmciLCJhdWQiOiJodHRwOlwvXC9hbnktc2l0ZS5jb20iLCJleHAiOjE2NDg3NjUwMTUsImlhdCI6MTM1Njk5OTUyNCwibmJmIjoxMzU3MDAwMDAwLCJkYXRhIjp7ImlkIjozLCJmaXJzdE5hbWUiOiJBcnRlbSIsImxhc3ROYW1lIjoiXHUwNDE1XHUwNDNiXHUwNDRjXHUwNDM0XHUwNDM1XHUwNDNkXHUwNDM1XHUwNDMyMTIzMTIzIiwibG9naW4iOiJ2YXYiLCJyb2xlIjoiQURNSU4iLCJpc0FjdGl2YXRlZCI6dHJ1ZX19.hbEB7qmC4X24fjo_jCTDCRjhyKEhwy-rHDOqiH-3r6Q" }
-        };
+        var response = await UserService.getAllUsers("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hbnktc2l0ZS5vcmciLCJhdWQiOiJodHRwOlwvXC9hbnktc2l0ZS5jb20iLCJleHAiOjE2NDg4NjIwNzgsImlhdCI6MTM1Njk5OTUyNCwibmJmIjoxMzU3MDAwMDAwLCJkYXRhIjp7ImlkIjozLCJmaXJzdE5hbWUiOiJBcnRlbSIsImxhc3ROYW1lIjoiXHUwNDE1XHUwNDNiXHUwNDRjXHUwNDM0XHUwNDM1XHUwNDNkXHUwNDM1XHUwNDMyMTIzMTIzIiwibG9naW4iOiJ2YXYiLCJyb2xlIjoiQURNSU4iLCJpc0FjdGl2YXRlZCI6dHJ1ZX19.43jR7ml_TGR4-K3-giIjQte43IgwVvUq5dM9XYFB-IA");
 
-        var result = await httpClient.Get<User[]>(url);
-        var _ser = new JsonSerializationOption();
-        _ser.Serialize<Response<User[]>>(result);
-        Debug.Log($"{result.data[0].lastName}");
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            Debug.Log(response.data[0].lastName);
+        }
     }
 }

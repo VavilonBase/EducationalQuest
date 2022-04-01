@@ -127,40 +127,27 @@ public async static Task<Response<ResponseUserData>> updateUser(string _firstNam
         return result;
     }
 
-    /* 
 
-      /// <summary>
-      /// Получение всех пользователей
-      /// </summary>
-      /// <returns>Возвращает ответ со списком пользователей, либо с ошибкой</returns>
-      public static Response<List<UserDto>> getAllUsers()
-      {
-          List<User> users = new List<User>()
-          {
-              new User(0, "Артем", "Ельденев", "Тавросович", RolesDict[RolesEnum.Admin], true, "admin", "admin"),
-              new User(1, "Александр", "Крюков", "Федорович", RolesDict[RolesEnum.Teacher], true, "teacher", "teacher"),
-              new User(3, "Светлана", "Борисова", "Вячеславовна", RolesDict[RolesEnum.Student], false, "student", "student"),
-          };
-          // Подключение к БД
-          try
-          {
-              //Получаем данные без логина и пароля
-              List<UserDto> usersDtos = new List<UserDto>();
 
-              foreach (var u in users)
-              {
-                  UserDto userDto = u;
-                  usersDtos.Add(userDto);
-              }
+    /// <summary>
+    /// Получение всех пользователей
+    /// </summary>
+    /// <returns>Возвращает ответ со списком пользователей, либо с ошибкой</returns>
+    public async static Task<Response<List<User>>> getAllUsers(string jwt)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/users/get_all_users.php";
+        // Инициализируем соединение
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}" }
+        };
 
-              return new Response<List<UserDto>>(false, message.NotError, usersDtos);
-
-          }
-          catch
-          {
-              return new Response<List<UserDto>>(true, message.InternalServer, null);
-          }
-      }*/
+        var result = await httpClient.Get<List<User>>(url);
+        return result;
+    }
 
     /// <summary>
     /// Получение одного пользователя по ID
