@@ -65,7 +65,7 @@ public static class UserService
         {
             lastName = _lastName,
             firstName = _firstName,
-            middleName = "Tavroso",
+            middleName = "",
             role = RolesDict[_role],
             login = _login,
             password = _password
