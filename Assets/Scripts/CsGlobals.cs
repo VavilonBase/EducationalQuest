@@ -7,6 +7,10 @@ using TMPro;
 [System.Serializable]
 public class PlayerInfo
 {
+    public User user;
+    public string jwt;
+
+
     // "инвентарь" - наличие или отсутствие у игрока ключа
     private bool activeKey = false;    
     public bool ActiveKey { get { return activeKey; } }
