@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Threading.Tasks;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class PlayerInfo
 {
-    public User user;
-    public string jwt;
-
+    public ResponseUserData responseUserData;
+    public bool isAuthorized = false;
 
     // "инвентарь" - наличие или отсутствие у игрока ключа
     private bool activeKey = false;    
@@ -77,8 +78,10 @@ public class PlayerInfo
 public class CsGlobals : MonoBehaviour
 {    
     public GameObject player; // игровой объект - игрок
-    public PlayerInfo playerInfo;    
-    
+    public PlayerInfo playerInfo;
+    public GameObject messageDurable; //постоянно висящая табличка (вверху)
+    public GameObject messageTemporary; //временно появляющаяся табличка (внизу)
+
     public TaskBoardInformation[] boardsInfo;
     public bool RELOAD = false;
     public byte RELOADcount = 0;
@@ -123,7 +126,7 @@ public class CsGlobals : MonoBehaviour
         textUI_pressF.SetActive(false);
     }
 
-    
+
 
     /* Доступ к переменным:
     CsGlobals gl;
@@ -134,10 +137,51 @@ public class CsGlobals : MonoBehaviour
     }
     */
 
-    void Awake()
+    public IEnumerator ChangeMessageTemporary(string newMessage, float time)
     {
-        // ------- возможность загрузки здесь
+        //показываем табличку с сообщением
+        messageTemporary.transform.Find("Text").GetComponent<Text>().text = newMessage;
+        messageTemporary.SetActive(true);
+
+        //ждём
+        yield return new WaitForSeconds(time);
+
+        //убираем табличку
+        messageTemporary.SetActive(false);
+    }
+
+    public void ChangeMessageDurable(bool active, string newMessage = null)
+    {
+        if (active)
+        {
+            messageDurable.transform.Find("Text").GetComponent<Text>().text = newMessage;
+            messageDurable.SetActive(true);
+        }
+        else messageDurable.SetActive(false);
+    }
+
+    async void Awake()
+    {
+        // ------- на случай, если всё сломалось, раскомментировать и запустить
+        //Saving.SaveSerial.DeleteAccountSettings();
+        
         playerInfo = new PlayerInfo(); //начальная инициализация игрока
+        Saving.AccountSettingsData accountData = Saving.SaveSerial.LoadAccountSettings();
+        if (accountData != null)
+        {
+            var response = await UserService.refresh(accountData.jwt);
+            if (!response.isError)
+            {                
+                Saving.SaveSerial.SaveAccountSettings(playerInfo.responseUserData = response.data);
+                playerInfo.isAuthorized = true;                
+            }               
+        }
+        else Debug.Log("Account data doesn't exist");
+
+        if (playerInfo.isAuthorized)
+            ChangeMessageDurable(true, "Добро пожаловать, " + playerInfo.responseUserData.user.firstName);
+        else
+            ChangeMessageDurable(true, "Добро пожаловать, гость");       
 
         boardsInfo = new TaskBoardInformation[3];
         
@@ -154,6 +198,7 @@ public class CsGlobals : MonoBehaviour
         //answ = new byte[10] { 1, 0, 0, 2, 1, 1, 0, 1, 2, 0 };
         //boardInfo1 = new TaskBoardInformation(0, "Mechanics", answ);
 
+        /*
         textUI_startMessage.SetActive(true);
         textUI_question.SetActive(false);
         textUI_endMessage.SetActive(false);
@@ -161,7 +206,8 @@ public class CsGlobals : MonoBehaviour
         textUI_lockedDoor.SetActive(false);
         key.transform.position = null_position;
         keyIcon.SetActive(false);
-        crownIcon.SetActive(false);        
+        crownIcon.SetActive(false);   
+        */
     }
 
     void Update()

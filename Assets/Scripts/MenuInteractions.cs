@@ -6,17 +6,52 @@ using UnityEngine.UI;
 
 public class MenuInteractions : MonoBehaviour
 {
-    public GameObject message;
+    public GameObject menuStart;
     public GameObject menuInput;
     public GameObject menuRegistration;
+    public GameObject menuChangePassword;
     public GameObject menuAdmin;
     public GameObject menuTeacher;
     public GameObject menuStudent;
 
     private CsGlobals gl;
 
-    public async void login()
+    void SelectWorkingMenu(string role)
+    {        
+        switch (role)
+        {
+            case "ADMIN":
+                menuAdmin.SetActive(true);
+                break;
+            case "TEACHER":
+                menuTeacher.SetActive(true);
+                break;
+            case "STUDENT":
+                menuStudent.SetActive(true);
+                break;
+        }
+        menuInput.SetActive(false);
+    }
+
+    public void StartSession()
     {
+        if (gl.playerInfo.isAuthorized) 
+            SelectWorkingMenu(gl.playerInfo.responseUserData.user.role);
+        else 
+            menuInput.SetActive(true);
+        menuStart.SetActive(false);            
+    }
+
+    public void LeaveSession()
+    {
+        gl.playerInfo.isAuthorized = false;
+        gl.playerInfo.responseUserData = new ResponseUserData();
+        Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);
+        gl.ChangeMessageDurable(false);
+    }
+
+    public async void login()
+    {       
         string log = menuInput.transform.Find("In_log").Find("Text").GetComponent<Text>().text;
         string pass = menuInput.transform.Find("In_pas").Find("Text").GetComponent<Text>().text;     
         
@@ -27,36 +62,24 @@ public class MenuInteractions : MonoBehaviour
             switch (response.message)
             {
                 case Message.IncorrectPassword:
-                    message.GetComponent<Text>().text = "Неправильный логин или пароль";
+                    StartCoroutine(gl.ChangeMessageTemporary("Неправильный логин или пароль", 5));                    
                     break;
                 case Message.UserNotExist:
-                    message.GetComponent<Text>().text = "Такого пользователя не существует";
+                    StartCoroutine(gl.ChangeMessageTemporary("Такого пользователя не существует", 5));                    
                     break;
                 default:
-                    message.GetComponent<Text>().text = "Что-то пошло не так, но вы держитесь";
+                    StartCoroutine(gl.ChangeMessageTemporary("Что-то пошло не так, но вы держитесь", 5));                    
                     break;
-            }
-            message.SetActive(true);
+            }            
         }
         else
         {
-            gl.playerInfo.user = response.data.user;
-            gl.playerInfo.jwt = response.data.jwt;
-            message.GetComponent<Text>().text = "Здравствуй, " + gl.playerInfo.user.firstName;
-            message.SetActive(true);
-            switch (gl.playerInfo.user.role)
-            {
-                case "ADMIN":
-                    menuAdmin.SetActive(true);
-                    break;
-                case "TEACHER":
-                    menuTeacher.SetActive(true);
-                    break;
-                case "STUDENT":
-                    menuStudent.SetActive(true);
-                    break;
-            }
-            menuInput.SetActive(false);               
+            gl.playerInfo.responseUserData = response.data;
+            Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);
+
+            gl.ChangeMessageDurable(true, "Здравствуй, " + gl.playerInfo.responseUserData.user.firstName);
+            gl.playerInfo.isAuthorized = true;
+            SelectWorkingMenu(gl.playerInfo.responseUserData.user.role);
         }
     }
 
@@ -92,31 +115,37 @@ public class MenuInteractions : MonoBehaviour
             switch (response.message)
             {
                 case Message.UserExist:
-                    message.GetComponent<Text>().text = "Пользователь уже существует";
+                    StartCoroutine(gl.ChangeMessageTemporary("Пользователь уже существует", 5));                    
                     break;
                 case Message.CanNotCreateUser:
-                    message.GetComponent<Text>().text = "Проверьте правильность заполнения полей";
+                    StartCoroutine(gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5));
                     break;
                 default:
-                    message.GetComponent<Text>().text = "Что-то пошло не так, но вы держитесь";
+                    StartCoroutine(gl.ChangeMessageTemporary("Что-то пошло не так, но вы держитесь", 5));                    
                     break;
-            }
-            message.SetActive(true);
+            }           
         }
         else
         {
-            message.GetComponent<Text>().text = "Регистрация прошла успешно";
-            message.SetActive(true);
+            StartCoroutine(gl.ChangeMessageTemporary("Регистрация прошла успешно", 5));                       
+            menuInput.transform.Find("In_log").GetComponent<InputField>().text = login;
+            menuInput.transform.Find("In_pas").GetComponent<InputField>().text = password;
             menuInput.SetActive(true);
-            menuInput.transform.Find("In_log").Find("Text").GetComponent<Text>().text = login;            
-            menuInput.transform.Find("In_pas").Find("Text").GetComponent<Text>().text = password;          
             menuRegistration.SetActive(false);
-        }
+        }        
+    }
 
-        menuInput.SetActive(true);
-        menuInput.transform.Find("In_log").GetComponent<InputField>().text = login;
-        menuInput.transform.Find("In_pas").GetComponent<InputField>().text = password;
-        menuRegistration.SetActive(false);
+    public async void ChangePassword()
+    {
+        string oldPassword = menuChangePassword.transform.Find("oldPassword").GetComponent<InputField>().text;
+        var response = await UserService.login(gl.playerInfo.responseUserData.user.login, oldPassword);
+        if (response.isError)
+            StartCoroutine(gl.ChangeMessageTemporary("Неверный пароль", 5));
+        else
+        {
+            //UserService.updateUser();
+            StartCoroutine(gl.ChangeMessageTemporary("Всё верно, но поживи пока со старым паролем :)", 5));
+        }
     }
 
     // Start is called before the first frame update

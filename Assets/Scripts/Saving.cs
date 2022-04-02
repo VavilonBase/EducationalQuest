@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 public class Saving : MonoBehaviour
 {
     [Serializable]
+    public class AccountSettingsData
+    {
+        public string jwt;
+    }
+
+    [Serializable]
     class SaveData
     {  
         //Test comment
@@ -27,6 +33,56 @@ public class Saving : MonoBehaviour
         public TaskBoardInformation[] BoardsInfo { get { return boardsInfo; } }
         float[] keyPosition;
         public float[] KeyPosition { get { return keyPosition; } }
+
+        public static void SaveAccountSettings(ResponseUserData rud)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Create(Application.persistentDataPath
+              + "/accountSettings.dat");
+            AccountSettingsData data = new AccountSettingsData();
+
+            data.jwt = rud.jwt;
+
+            bf.Serialize(file, data);
+            file.Close();
+            Debug.Log("Account settings saved!");
+        }
+
+        public static AccountSettingsData LoadAccountSettings()
+        {
+            if (File.Exists(Application.persistentDataPath
+              + "/accountSettings.dat"))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file =
+                  File.Open(Application.persistentDataPath
+                  + "/accountSettings.dat", FileMode.Open);
+                AccountSettingsData data = (AccountSettingsData)bf.Deserialize(file);
+                file.Close();                
+
+                Debug.Log("Account settings loaded!");
+                return data;
+            }
+            else
+            {
+                Debug.LogError("There is no save account settings data!");
+                return null;
+            }
+        }
+
+        public static void DeleteAccountSettings()
+        {
+            if (File.Exists(Application.persistentDataPath
+              + "/accountSettings.dat"))
+            {
+                Debug.Log("Starting data reset...");
+                File.Delete(Application.persistentDataPath
+                  + "/accountSettings.dat");
+                Debug.Log("data reset complete!");
+            }
+            else
+                Debug.LogError("No save data to delete.");
+        }
 
         public void SaveGame()
         {
