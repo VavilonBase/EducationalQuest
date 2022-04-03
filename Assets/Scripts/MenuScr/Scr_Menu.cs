@@ -13,12 +13,28 @@ public class Scr_Menu : MonoBehaviour
     public GameObject Menu_Admin;
     public GameObject About;
     public GameObject Opt;
-    public GameObject Change_pass_Student;
+    public GameObject Results_Teacher;
     public GameObject Join_Student;
     public GameObject Results_Student;
     public GameObject All_users_Admin;
-    public GameObject Results_Teachert;
-
+    public GameObject Group_list_Teacher;
+    public GameObject Create_tasr_Teacher;
+    public void Group_list_Teacher_in()
+    {
+        Group_list_Teacher.SetActive(true);
+    }
+    public void Group_list_Teacher_out()
+    {
+        Group_list_Teacher.SetActive(false);
+    }
+    public void Create_tasr_Teacher_in()
+    {
+        Create_tasr_Teacher.SetActive(true);
+    }
+    public void Create_tasr_Teacher_out()
+    {
+        Create_tasr_Teacher.SetActive(false);
+    }
     public void Menu_Srudent_in()
     {
         Menu_Srudent.SetActive(true);
@@ -52,13 +68,13 @@ public class Scr_Menu : MonoBehaviour
         Opt.SetActive(false);
     }
 
-    public void Change_pass_Student_in()
+    public void Results_Teacher_in()
     {
-        Change_pass_Student.SetActive(true);
+        Results_Teacher.SetActive(true);
     }
-    public void Change_pass_Student_out()
+    public void Results_Teacher_out()
     {
-        Change_pass_Student.SetActive(false);
+        Results_Teacher.SetActive(false);
     }
 
     public void Join_Student_in()
@@ -86,15 +102,6 @@ public class Scr_Menu : MonoBehaviour
     public void All_users_Admin_out()
     {
         All_users_Admin.SetActive(false);
-    }
-
-    public void Results_Teachert_in()
-    {
-        Results_Teachert.SetActive(true);
-    }
-    public void Results_Teachert_out()
-    {
-        Results_Teachert.SetActive(false);
     }
 
     public void Input_in()
