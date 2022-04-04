@@ -81,6 +81,7 @@ public class CsGlobals : MonoBehaviour
     public PlayerInfo playerInfo;
     public GameObject messageDurable; //постоянно висящая табличка (вверху)
     public GameObject messageTemporary; //временно появляющаяся табличка (внизу)
+    public GameObject menuStart;
 
     public TaskBoardInformation[] boardsInfo;
     public bool RELOAD = false;
@@ -176,12 +177,9 @@ public class CsGlobals : MonoBehaviour
                 playerInfo.isAuthorized = true;                
             }               
         }
-        else Debug.Log("Account data doesn't exist");
+        else Debug.Log("Account data doesn't exist");        
 
-        if (playerInfo.isAuthorized)
-            ChangeMessageDurable(true, "Добро пожаловать, " + playerInfo.responseUserData.user.firstName);
-        else
-            ChangeMessageDurable(true, "Добро пожаловать, гость");       
+        menuStart.SetActive(true); 
 
         boardsInfo = new TaskBoardInformation[3];
         

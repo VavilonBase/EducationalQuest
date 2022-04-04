@@ -529,6 +529,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
+  m_OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1922,7 +1925,7 @@ RectTransform:
   m_Children:
   - {fileID: 1324788341}
   m_Father: {fileID: 1835157467}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3810,6 +3813,7 @@ MonoBehaviour:
     cur_rank: 0
   messageDurable: {fileID: 985262070}
   messageTemporary: {fileID: 187743760}
+  menuStart: {fileID: 1835157466}
   boardsInfo: []
   RELOAD: 0
   RELOADcount: 0
@@ -4675,6 +4679,9 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_CharacterLimit: 0
   m_OnEndEdit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
   m_OnValueChanged:
@@ -7563,6 +7570,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
+  m_OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8192,7 +8202,7 @@ RectTransform:
   m_Children:
   - {fileID: 736287543}
   m_Father: {fileID: 1835157467}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10855,6 +10865,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
+  m_OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -11464,6 +11477,9 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_CharacterLimit: 0
   m_OnEndEdit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
   m_OnValueChanged:
@@ -14543,7 +14559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c596ee6fac017b4f8ac8abe96d39e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuStart: {fileID: 1835157466}
   menuInput: {fileID: 160003943}
   menuRegistration: {fileID: 724264590}
   menuChangePassword: {fileID: 1915138370}
@@ -15751,6 +15766,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
+  m_OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -16665,6 +16683,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
+  m_OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -16808,6 +16829,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
+  m_OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -16949,6 +16973,9 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_CharacterLimit: 0
   m_OnEndEdit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
   m_OnValueChanged:
@@ -17243,13 +17270,14 @@ GameObject:
   - component: {fileID: 1835157470}
   - component: {fileID: 1835157469}
   - component: {fileID: 1835157468}
+  - component: {fileID: 1835157471}
   m_Layer: 5
   m_Name: Menu_start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1835157467
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17264,9 +17292,9 @@ RectTransform:
   - {fileID: 1953565882}
   - {fileID: 938758064}
   - {fileID: 1399224762}
-  - {fileID: 1921437975}
   - {fileID: 193172763}
   - {fileID: 988094655}
+  - {fileID: 1921437975}
   m_Father: {fileID: 1194321346}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -17336,6 +17364,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1835157471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835157466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f599ae80332b60148908227fbc1d004c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1844000386
 GameObject:
   m_ObjectHideFlags: 0
@@ -17762,6 +17802,9 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
+  m_OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -17983,7 +18026,7 @@ GameObject:
   - component: {fileID: 1915138372}
   - component: {fileID: 1915138371}
   m_Layer: 5
-  m_Name: Change_pass_Student
+  m_Name: Change_pass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18252,7 +18295,7 @@ RectTransform:
   m_Children:
   - {fileID: 283334570}
   m_Father: {fileID: 1835157467}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -18759,6 +18802,9 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_CharacterLimit: 0
   m_OnEndEdit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
   m_OnValueChanged:

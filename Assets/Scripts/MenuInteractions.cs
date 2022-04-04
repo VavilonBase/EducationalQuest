@@ -5,8 +5,7 @@ using UnityEngine.UI;
 
 
 public class MenuInteractions : MonoBehaviour
-{
-    public GameObject menuStart;
+{   
     public GameObject menuInput;
     public GameObject menuRegistration;
     public GameObject menuChangePassword;
@@ -39,15 +38,15 @@ public class MenuInteractions : MonoBehaviour
             SelectWorkingMenu(gl.playerInfo.responseUserData.user.role);
         else 
             menuInput.SetActive(true);
-        menuStart.SetActive(false);            
+        gl.menuStart.SetActive(false);            
     }
 
     public void LeaveSession()
     {
         gl.playerInfo.isAuthorized = false;
         gl.playerInfo.responseUserData = new ResponseUserData();
-        Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);
-        gl.ChangeMessageDurable(false);
+        Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);        
+        gl.menuStart.SetActive(false); gl.menuStart.SetActive(true); //перезагрузка меню
     }
 
     public async void login()
@@ -138,13 +137,22 @@ public class MenuInteractions : MonoBehaviour
     public async void ChangePassword()
     {
         string oldPassword = menuChangePassword.transform.Find("oldPassword").GetComponent<InputField>().text;
-        var response = await UserService.login(gl.playerInfo.responseUserData.user.login, oldPassword);
+        string newPassword = menuChangePassword.transform.Find("newPassword").GetComponent<InputField>().text;
+        var response = await UserService.changePassword(oldPassword, newPassword, gl.playerInfo.responseUserData.jwt);
+
         if (response.isError)
-            StartCoroutine(gl.ChangeMessageTemporary("Неверный пароль", 5));
+            switch (response.message)
+            {
+                case Message.NotFountRequiredData:
+                    StartCoroutine(gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5));
+                    break;
+                case Message.PassowordNotEquals:
+                    StartCoroutine(gl.ChangeMessageTemporary("Неверный старый пароль", 5));
+                    break;
+            }            
         else
         {
-            //UserService.updateUser();
-            StartCoroutine(gl.ChangeMessageTemporary("Всё верно, но поживи пока со старым паролем :)", 5));
+            StartCoroutine(gl.ChangeMessageTemporary("Пароль успешно изменен", 5));
         }
     }
 
@@ -156,7 +164,7 @@ public class MenuInteractions : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {       
         
     }
 }
