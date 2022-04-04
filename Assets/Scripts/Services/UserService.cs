@@ -150,6 +150,59 @@ public async static Task<Response<ResponseUserData>> updateUser(string _firstNam
     }
 
     /// <summary>
+    /// Активация учителя
+    /// </summary>
+    /// <param name="teacherId">Идентификатор учителя</param>
+    /// <param name="jwt">Токен</param>
+    /// <returns>Возвращает учителя, если он был активирован, иначе ошибку</returns>
+    public async static Task<Response<ResponseUser>> activateTeacher(int teacherId, string jwt)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/users/activate_teacher.php?teacherId=" + teacherId.ToString();
+
+        // Инициализируем соединение
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}" }
+        };
+
+        var result = await httpClient.Get<ResponseUser>(url);
+        return result;
+    }
+
+    /// <summary>
+    /// Изменение пароля
+    /// </summary>
+    /// <param name="_lastPassword">Старый пароль</param>
+    /// <param name="_newPassword">Новый пароль</param>
+    /// <param name="jwt">Токен</param>
+    /// <returns>Возвращает пользователя, если пароль был изменен, иначе ошибку</returns>
+    public async static Task<Response<ResponseUser>> changePassword(string _lastPassword, string _newPassword, string jwt)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/users/change_password.php";
+
+        // Инициализируем соединение
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}" }
+        };
+
+        // Подготавливаем данные
+        RequestChangePasswordData requestChangePasswordData = new RequestChangePasswordData()
+        {
+            lastPassword = _lastPassword,
+            password = _newPassword
+        };
+        var result = await httpClient.Post<ResponseUser, RequestChangePasswordData>(requestChangePasswordData, url);
+        return result;
+    }
+
+    /// <summary>
     /// Получение одного пользователя по ID
     /// </summary>
     /// <param name="userId">Идентификатор пользователя</param>

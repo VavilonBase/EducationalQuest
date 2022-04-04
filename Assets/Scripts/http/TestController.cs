@@ -107,4 +107,34 @@ public class TestController : MonoBehaviour
             Debug.Log(response.data[0].lastName);
         }
     }
+
+    [ContextMenu("activate teacher")]
+    public async void TestActvateTeacher()
+    {
+        var response = await UserService.activateTeacher(38, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hbnktc2l0ZS5vcmciLCJhdWQiOiJodHRwOlwvXC9hbnktc2l0ZS5jb20iLCJleHAiOjE2NDkwODU0NDYsImlhdCI6MTM1Njk5OTUyNCwibmJmIjoxMzU3MDAwMDAwLCJkYXRhIjp7ImlkIjo2MSwiZmlyc3ROYW1lIjoiXHUwNDEwXHUwNDQwXHUwNDQyXHUwNDM1XHUwNDNjIiwibGFzdE5hbWUiOiJcdTA0MTVcdTA0M2JcdTA0NGNcdTA0MzRcdTA0MzVcdTA0M2RcdTA0MzVcdTA0MzIiLCJsb2dpbiI6InZhdiIsInJvbGUiOiJBRE1JTiIsImlzQWN0aXZhdGVkIjp0cnVlfX0.sPFQFO0svFpA0Ddet6AMBewOarRnqJHOH7vTVhG-Ya4");
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            Debug.Log(response.data.isActivated);
+            Debug.Log(response.data.lastName);
+        }
+    }
+
+    [ContextMenu("change password")]
+    public async void TestChangePassword()
+    {
+        var response = await UserService.changePassword("123", "1234", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hbnktc2l0ZS5vcmciLCJhdWQiOiJodHRwOlwvXC9hbnktc2l0ZS5jb20iLCJleHAiOjE2NDkwODU0NDYsImlhdCI6MTM1Njk5OTUyNCwibmJmIjoxMzU3MDAwMDAwLCJkYXRhIjp7ImlkIjo2MSwiZmlyc3ROYW1lIjoiXHUwNDEwXHUwNDQwXHUwNDQyXHUwNDM1XHUwNDNjIiwibGFzdE5hbWUiOiJcdTA0MTVcdTA0M2JcdTA0NGNcdTA0MzRcdTA0MzVcdTA0M2RcdTA0MzVcdTA0MzIiLCJsb2dpbiI6InZhdiIsInJvbGUiOiJBRE1JTiIsImlzQWN0aXZhdGVkIjp0cnVlfX0.sPFQFO0svFpA0Ddet6AMBewOarRnqJHOH7vTVhG-Ya4");
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            Debug.Log(response.data.isActivated);
+            Debug.Log(response.data.lastName);
+        }
+    }
 }
