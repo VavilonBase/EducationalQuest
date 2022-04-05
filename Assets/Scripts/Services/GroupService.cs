@@ -9,7 +9,13 @@ public static class GroupService
     /// </summary>
     /// <param name="title">Название группы</param>
     /// <param name="jwt">Токен</param>
-    /// <returns>Возвращает созданную группу</returns>
+    /// <returns>Возвращает созданную группу
+    /// Ошибки:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// CanNotCreateGroup
+    /// DBErrorExecute
+    /// </returns>
     public async static Task<Response<Group>> createGroup(string _title, string jwt)
     {
         // Задаем URL
@@ -32,7 +38,13 @@ public static class GroupService
     /// Возвращаем все группы учителя
     /// </summary>
     /// <param name="jwt">Токен</param>
-    /// <returns>Все группы учителя</returns>
+    /// <returns>Все группы учителя
+    /// Ошибки:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// TeacherHasNotGroups
+    /// DBErrorExecute
+    /// </returns>
     public async static Task<Response<List<Group>>> getAllTeacherGroups(string jwt)
     {
         // Задаем URL
@@ -54,7 +66,14 @@ public static class GroupService
     /// </summary>
     /// <param name="jwt">Токен</param>
     /// <param name="_codeWord">Кодовое слово</param>
-    /// <returns>Возвращаем true, если ученик вступил в группу, иначе возвращает ошибку</returns>
+    /// <returns>Возвращаем true, если ученик вступил в группу, иначе возвращает ошибку
+    /// Ошибки:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// CanNotJoinStudentInTheGroup
+    /// StudentIsInAGroup
+    /// DBErrorExecute
+    /// </returns>
     public async static Task<Response<object>> joinStudentToTheGroup(string jwt, string _codeWord)
     {
         // Задаем URL
@@ -77,7 +96,13 @@ public static class GroupService
     /// Получение всех групп студента
     /// </summary>
     /// <param name="jwt">Токен</param>
-    /// <returns>Возвращает все группы студента</returns>
+    /// <returns>Возвращает все группы студента
+    /// Ошибки:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// StudentHasNotGroups
+    /// DBErrorExecute
+    /// </returns>
     public async static Task<Response<List<ResponseStudentGroupData>>> getStudentGroups(string jwt)
     {
         // Задаем URL
@@ -95,11 +120,18 @@ public static class GroupService
     }
 
     /// <summary>
-    /// Получение всех групп студентов
+    /// Получение всех учеников группы
     /// </summary>
     /// <param name="jwt">Токен</param>
     /// <param name="_groupId">Идентификатор группы</param>
-    /// <returns></returns>
+    /// <returns>Возвращает список учеников группы
+    /// Ошибки:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// GroupHasNotStudents
+    /// GroupNotFound
+    /// DBErrorExecute
+    /// </returns>
     public async static Task<Response<List<ResponseUserGroupData>>> getGroupStudents(string jwt, int _groupId)
     {
         // Задаем URL
@@ -125,7 +157,15 @@ public static class GroupService
     /// <param name="jwt">Токен</param>
     /// <param name="_title">Название группы</param>
     /// <param name="_groupId">Идентификатор группы</param>
-    /// <returns>Возвращает обновленную группу</returns>
+    /// <returns>Возвращает обновленную группу
+    /// Ошибки:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// CanNotUpdateGroup
+    /// GroupNotFound
+    /// UserIsNotCreatorGroup
+    /// DBErrorExecute
+    /// </returns>
     public async static Task<Response<Group>> updateGroup(string jwt, string _title, int _groupId)
     {
         // Задаем URL
@@ -149,7 +189,15 @@ public static class GroupService
     /// </summary>
     /// <param name="jwt">Токен</param>
     /// <param name="_groupId">Идентификатор группы</param>
-    /// <returns>Возвращает true, если группа удалена или возвращает ошибки</returns>
+    /// <returns>Возвращает true, если группа удалена или возвращает ошибки
+    /// Ошибки:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// CanNotDeleteGroup
+    /// GroupNotFound
+    /// UserIsNotCreatorGroup
+    /// DBErrorExecute
+    /// </returns>
     public async static Task<Response<object>> deleteGroup(string jwt, int _groupId)
     {
         // Задаем URL
