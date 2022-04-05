@@ -1,299 +1,170 @@
-﻿/*using System.Collections.Generic;
-using System.IO;
+﻿
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public static class GroupService
 {
     /// <summary>
-    /// Получение всех групп
-    /// </summary>
-    /// <returns>Все группы</returns>
-    public static Response<List<GroupDto>> getAllGroups()
-    {
-        Group group1 = new Group(0, 1, "Информатика", "dsqfew141");
-        Group group2 = new Group(1, 3, "Базы данных", "gdwewegwd");
-        Group group3 = new Group(2, 1, "Unity", "fsdfewed");
-        List<Group> groups = new List<Group>()
-        {
-            new Group(0, 1, "Информатика", "dsqfew141"),
-            new Group(1, 3, "Базы данных", "gdwewegwd"),
-            new Group(2, 1, "Unity", "fsdfewed")
-        };
-        // Проверяем доступ
-        bool isAccess = true;
-        // Подключение к БД
-        try
-        {
-            if (isAccess)
-            {
-                List<GroupDto> groupsDto = new List<GroupDto>();
-                for (int i = 0; i < groups.Count; i++)
-                {
-                    groupsDto.Add(groups[i]);
-                }
-                return new Response<List<GroupDto>>(false, message.NotError, groupsDto);
-            } else
-            {
-                return new Response<List<GroupDto>>(true, message.AccessDenied, null);
-            }
-        }
-        catch
-        {
-            return new Response<List<GroupDto>>(true, message.InternalServer, null);
-        }
-    }
-    
-    /// <summary>
-    /// Получение группы по ID
-    /// </summary>
-    /// <param name="groupId">Идентификатор группы</param>
-    /// <returns>Ответ с группой или ошибкой</returns>
-    public static Response<GroupDto> getGroupByGroupId(int groupId)
-    {
-        // Существует ли группы
-        bool groupExist = true;
-        // Пробуем получить группу из базы данных
-        try
-        {
-            if (groupExist)
-            {
-                return new Response<GroupDto>(false, message.NotError, new Group(2, 1, "Unity", "fsdfewed"));
-            } else
-            {
-                return new Response<GroupDto>(true, message.InternalServer, null);
-            }
-        }
-        catch
-        {
-            return new Response<GroupDto>(true, message.CanNotGetGroup, null);
-        }
-    }
-
-    /// <summary>
-    /// Получение всех групп учителя по его ID
-    /// </summary>
-    /// <param name="userId">Идентификатор учителя</param>
-    /// <returns>Ответ с группами или с ошибкой</returns>
-    public static Response<List<GroupDto>> getGroupsByTeacherId(int userId)
-    {
-        // Существует ли пользователь
-        bool userExist = true;
-        // Является ли найденный пользователь учителем
-        bool isTeacher = true;
-        // Пробуем найти все группы учителя
-        try
-        {
-            if (userExist)
-            {
-                if (isTeacher)
-                {
-                    return new Response<List<GroupDto>>(false, message.NotError, new List<GroupDto>() {
-                        new Group(0, 1, "Информатика", "dsqfew141"),
-                        new Group(1, 3, "Базы данных", "gdwewegwd"),
-                        new Group(2, 1, "Unity", "fsdfewed")
-                });
-                } else
-                {
-                    return new Response<List<GroupDto>>(true, message.IsNotTeacher, null);
-                }
-            } else
-            {
-                return new Response<List<GroupDto>>(true, message.NotFoundUser, null);
-            }
-        }
-        catch
-        {
-            return new Response<List<GroupDto>>(true, message.CanNotGetGroups, null);
-        }
-    }
-
-    /// <summary>
-    /// Получение ключевого слова для группы
-    /// </summary>
-    /// <param name="groupId">Идентификатор группы</param>
-    /// <returns></returns>
-    public static Response<string> getGroupCodeWord(int groupId)
-    {
-        // Проверяем существует ли группы
-        bool groupExist = true;
-        // Проверяем является ли пользователь создателем группы
-        bool isCreator = true;
-        // Подключение к БД
-        try
-        {
-            if (groupExist)
-            {
-                if (isCreator)
-                {
-                    return new Response<string>(false, message.NotError, "dsqfew141");
-                } else
-                {
-                    return new Response<string>(true, message.IsNotCreator, null);
-                }
-            } else
-            {
-                return new Response<string>(true, message.NotFoundGroup, null);
-            }
-        }
-        catch
-        {
-            return new Response<string>(true, message.CanNotGetGroup, null);
-        }
-    }
-
-    /// <summary>
     /// Создание группы
     /// </summary>
-    /// <param name="_title">Название группы</param>
-    /// <returns></returns>
-    public static Response<Group> createGroup(string _title)
+    /// <param name="title">Название группы</param>
+    /// <param name="jwt">Токен</param>
+    /// <returns>Возвращает созданную группу</returns>
+    public async static Task<Response<Group>> createGroup(string _title, string jwt)
     {
-        // Проверяем на доступность
-        bool isAccess = true;
-        // Подключаемся к БД
-        try
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/groups/create_group.php";
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
         {
-            // Генерируем кодовое слово
-            string _codeWord = Path.GetRandomFileName();
-            return new Response<Group>(false, message.NotError, new Group(0, 1, _title, _codeWord));
-        } catch
-        {
-            return new Response<Group>(true, message.InternalServer, null);
-        }
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Создаем данные
+        RequestCreateGroupData requestCreateGroupData = new RequestCreateGroupData() { title = _title };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Post<Group, RequestCreateGroupData>(requestCreateGroupData, url);
+        return result;
     }
+
+    /// <summary>
+    /// Возвращаем все группы учителя
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <returns>Все группы учителя</returns>
+    public async static Task<Response<List<Group>>> getAllTeacherGroups(string jwt)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/groups/get_all_groups_teacher.php";
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Get<List<Group>>(url);
+        return result;
+    }
+
+    /// <summary>
+    /// Вступление ученика в группу
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <param name="_codeWord">Кодовое слово</param>
+    /// <returns>Возвращаем true, если ученик вступил в группу, иначе возвращает ошибку</returns>
+    public async static Task<Response<object>> joinStudentToTheGroup(string jwt, string _codeWord)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/groups/student_join_to_the_group.php";
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Создаем данные
+        var requestJoinStudentToTheGroupData = new RequestJoinStudentToTheGroupData() { codeWord = _codeWord };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Post<object, RequestJoinStudentToTheGroupData>(requestJoinStudentToTheGroupData, url);
+        return result;
+    }
+
+    /// <summary>
+    /// Получение всех групп студента
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <returns>Возвращает все группы студента</returns>
+    public async static Task<Response<List<ResponseStudentGroupData>>> getStudentGroups(string jwt)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/groups/get_student_groups.php";
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Get<List<ResponseStudentGroupData>>(url);
+        return result;
+    }
+
+    /// <summary>
+    /// Получение всех групп студентов
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <param name="_groupId">Идентификатор группы</param>
+    /// <returns></returns>
+    public async static Task<Response<List<ResponseUserGroupData>>> getGroupStudents(string jwt, int _groupId)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/groups/get_group_students.php";
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Создаем данные
+        var requestGetGroupStudentsData = new RequestWithGroupIdData() { groupId = _groupId };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Post<List<ResponseUserGroupData>, RequestWithGroupIdData>(requestGetGroupStudentsData, url);
+        return result;
+    }
+
 
     /// <summary>
     /// Обновление группы
     /// </summary>
-    /// <param name="_groupId">Идентификатор группы</param>
+    /// <param name="jwt">Токен</param>
     /// <param name="_title">Название группы</param>
-    /// <returns></returns>
-    public static Response<Group> updateGroup(int _groupId, string _title)
-    {
-        //Проверяем доступность
-        bool isAccess = true;
-        // Проверяем существует ли группы
-        bool groupExist = true;
-        try
-        {
-            if (isAccess)
-            {
-                if (groupExist)
-                {
-                    return new Response<Group>(false, message.NotError, new Group(0, 1, _title, "dsfsdfs"));
-                } else
-                {
-                    return new Response<Group>(true, message.NotFoundGroup, null);
-                }
-            } else
-            {
-                return new Response<Group>(true, message.AccessDenied, null);
-            }
-        } catch
-        {
-            return new Response<Group>(true, message.InternalServer, null);
-        }
-    }
-
-    /// <summary>
-    /// Получение все групп ученика по его ID
-    /// </summary>
-    /// <param name="_userId">Идентификатор ученика</param>
-    /// <returns>Возвращает группы </returns>
-    public static Response<List<GroupDto>> getGroupsStudentsByStudentId(int _userId)
-    {
-        // Проверяем существует ли пользователь
-        bool userExist = true;
-        // Проверка явялется ли пользователь учеников
-        bool isStudent = true;
-        try
-        {
-            if (userExist)
-            {
-                if (isStudent)
-                {
-                    return new Response<List<GroupDto>>(false, message.NotError, new List<GroupDto>()
-                    {
-                        new Group(0, 1, "Информатика", "dsqfew141"),
-                        new Group(1, 3, "Базы данных", "gdwewegwd"),
-                        new Group(2, 1, "Unity", "fsdfewed")
-                    });
-                } else
-                {
-                    return new Response<List<GroupDto>>(true, message.IsNotStudent, null);
-                }
-            } else
-            {
-                return new Response<List<GroupDto>>(true, message.NotFoundUser, null);
-            }
-        } catch
-        {
-            return new Response<List<GroupDto>>(true, message.NotError, null);
-        }
-    }
-
-    /// <summary>
-    /// Получение всех учеников группы по ее ID
-    /// </summary>
     /// <param name="_groupId">Идентификатор группы</param>
-    /// <returns>Список учеников группы</returns>
-    public static Response<List<UserDto>> getStudentsFromGroupByGroupId(int _groupId)
+    /// <returns>Возвращает обновленную группу</returns>
+    public async static Task<Response<Group>> updateGroup(string jwt, string _title, int _groupId)
     {
-        // Проверяем существует ли группы
-        bool groupExist = true;
-        // Поиск группы
-        try
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/groups/update_group.php";
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
         {
-            if (groupExist)
-            {
-                return new Response<List<UserDto>>(false, message.NotError, new List<UserDto>()
-                {
-                    new UserDto(0, "Артем", "Ельденев", "Тавросович", UserService.RolesDict[UserService.RolesEnum.Admin], true),
-                    new UserDto(1, "Александр", "Крюков", "Федорович", UserService.RolesDict[UserService.RolesEnum.Teacher], true),
-                    new UserDto(3, "Светлана", "Борисова", "Вячеславовна", UserService.RolesDict[UserService.RolesEnum.Student], true),
-                });
-            } else
-            {
-                return new Response<List<UserDto>>(true, message.NotFoundGroup, null);
-            }
-        } catch
-        {
-            return new Response<List<UserDto>>(true, message.InternalServer, null);
-        }
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Создаем данные
+        var requestUpdateGroupData = new RequestUpdateGroupData() { groupId = _groupId, title = _title };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Post<Group, RequestUpdateGroupData>(requestUpdateGroupData, url);
+        return result;
     }
 
     /// <summary>
-    /// Вступление текущего пользователя в группу
+    /// Удаление группы
     /// </summary>
+    /// <param name="jwt">Токен</param>
     /// <param name="_groupId">Идентификатор группы</param>
-    /// <param name="_codeWord">Кодовое слово группы</param>
-    /// <returns>Ответ, с true - если удалось добавить ученика, иначе - false</returns>
-    public static Response<bool> joinStudentToGroupByGroupId(int _groupId, string _codeWord)
+    /// <returns>Возвращает true, если группа удалена или возвращает ошибки</returns>
+    public async static Task<Response<object>> deleteGroup(string jwt, int _groupId)
     {
-        // Проверяем существует ли группы
-        bool groupExist = true;
-        // Проверяем правильность кодового слова
-        bool codeWordRigth = true;
-        // Поиск группы
-        try
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/api/groups/delete_group.php";
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
         {
-            if (groupExist)
-            {
-                if (codeWordRigth)
-                {
-                    return new Response<bool>(false, message.NotError, true);
-                } else
-                {
-                    return new Response<bool>(true, message.IncorrectCodeWord, false);
-                }
-            }
-            else
-            {
-                return new Response<bool>(true, message.NotFoundGroup, false);
-            }
-        }
-        catch
-        {
-            return new Response<bool>(true, message.InternalServer, false);
-        }
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Создаем данные
+        var requestWithGroupIdData = new RequestWithGroupIdData() { groupId = _groupId };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Post<object, RequestWithGroupIdData>(requestWithGroupIdData, url);
+        return result;
     }
-}*/
+}
