@@ -16992,9 +16992,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 675402149}
   playerInfo:
+    isAuthorized: 0
     roomsOpen: 010000
     points: 0
     cur_rank: 0
+  messageDurable: {fileID: 0}
+  messageTemporary: {fileID: 0}
+  menuStart: {fileID: 0}
   boardsInfo: []
   RELOAD: 0
   RELOADcount: 0
