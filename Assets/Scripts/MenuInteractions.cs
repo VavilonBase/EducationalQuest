@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.UIElements;
 
 public class MenuInteractions : MonoBehaviour
 {   
@@ -12,6 +13,8 @@ public class MenuInteractions : MonoBehaviour
     public GameObject menuAdmin;
     public GameObject menuTeacher;
     public GameObject menuStudent;
+    public GameObject menuTeacherGroupsList;
+    public GameObject menuJoinStudent;
 
     private CsGlobals gl;
 
@@ -20,7 +23,8 @@ public class MenuInteractions : MonoBehaviour
         switch (role)
         {
             case "ADMIN":
-                menuAdmin.SetActive(true);
+                menuAdmin.SetActive(true);                
+                //UserService.activateTeacher(65, gl.playerInfo.responseUserData.jwt); -- у этого учителя явно связи, в обход всех протоколов активировался
                 break;
             case "TEACHER":
                 menuTeacher.SetActive(true);
@@ -153,6 +157,81 @@ public class MenuInteractions : MonoBehaviour
         else
         {
             StartCoroutine(gl.ChangeMessageTemporary("Пароль успешно изменен", 5));
+        }
+    }
+
+    public async static Task<List<Group>> ShowAllGroupsList(string jwt)
+    {
+        var response = await GroupService.getAllTeacherGroups(jwt);
+        if (response.isError)
+        {
+            Debug.Log("Ошибка при получении списка групп");
+            return null;
+        }
+        else
+        {
+            Debug.Log("Список групп получен");
+            return response.data;
+        }
+    }
+
+    public async void CreateGroup()
+    {  
+        string groupName = menuTeacherGroupsList.transform.Find("Name_group").Find("Text").GetComponent<Text>().text;
+        var response = await GroupService.createGroup(groupName, gl.playerInfo.responseUserData.jwt);
+        if (response.isError)
+        {
+            //Выводить предупреждение, если учитель не активирован
+            Debug.Log("Ошибка при создании группы");
+        }
+        else
+        {
+            Debug.Log("Группа успешно создана");
+            menuTeacherGroupsList.SetActive(false);
+            menuTeacherGroupsList.SetActive(true);
+        }
+    }
+
+    public async void ShowGroupContent()
+    {
+        MenuTeacherGroupsListInteractions menu = menuTeacherGroupsList.GetComponent<MenuTeacherGroupsListInteractions>();
+        var list = menu.listGroups;     
+        Text text = menuTeacherGroupsList.transform.Find("Panel").GetComponent<Text>();
+
+        Dropdown dd = menuTeacherGroupsList.transform.Find("Dropdown").GetComponent<Dropdown>();
+        int groupId = list[dd.value].groupId;
+
+        //string sRole = dd.options[dd.value].text;
+
+        string t = "Кодовое слово = " + list[dd.value].codeWord + "\n";
+
+        var response = await GroupService.getGroupStudents(gl.playerInfo.responseUserData.jwt, groupId);
+        if (response.isError)
+        {
+            Debug.Log("Ошибка при получении списка группы");
+        }
+        else
+        {
+            var listStudents = response.data;            
+            foreach (ResponseUserGroupData student in listStudents)
+            {
+                t += student.lastName + " " + student.firstName + " (" + student.userId + ")\n";
+            }
+        }
+        text.text = t;
+    }
+
+    public async void JoinGroup()
+    {
+        string codeWord = menuJoinStudent.transform.Find("InputField").GetComponent<InputField>().text;
+        var response = await GroupService.joinStudentToTheGroup(gl.playerInfo.responseUserData.jwt, codeWord);
+        if (response.isError)
+        {
+            Debug.Log("Ошибка при вступлении в группу " + codeWord);
+        }
+        else
+        {
+            Debug.Log("Успешное вступление в группу");
         }
     }
 
