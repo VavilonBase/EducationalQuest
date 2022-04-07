@@ -65,13 +65,13 @@ public class MenuInteractions : MonoBehaviour
             switch (response.message)
             {
                 case Message.IncorrectPassword:
-                    StartCoroutine(gl.ChangeMessageTemporary("Неправильный логин или пароль", 5));                    
+                    gl.ChangeMessageTemporary("Неправильный логин или пароль", 5);                    
                     break;
                 case Message.UserNotExist:
-                    StartCoroutine(gl.ChangeMessageTemporary("Такого пользователя не существует", 5));                    
+                    gl.ChangeMessageTemporary("Такого пользователя не существует", 5);                    
                     break;
                 default:
-                    StartCoroutine(gl.ChangeMessageTemporary("Что-то пошло не так, но вы держитесь", 5));                    
+                    gl.ChangeMessageTemporary("Что-то пошло не так, но вы держитесь", 5);                    
                     break;
             }            
         }
@@ -118,19 +118,19 @@ public class MenuInteractions : MonoBehaviour
             switch (response.message)
             {
                 case Message.UserExist:
-                    StartCoroutine(gl.ChangeMessageTemporary("Пользователь уже существует", 5));                    
+                    gl.ChangeMessageTemporary("Пользователь уже существует", 5);                    
                     break;
                 case Message.CanNotCreateUser:
-                    StartCoroutine(gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5));
+                    gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
                     break;
                 default:
-                    StartCoroutine(gl.ChangeMessageTemporary("Что-то пошло не так, но вы держитесь", 5));                    
+                    gl.ChangeMessageTemporary("Что-то пошло не так, но вы держитесь", 5);                    
                     break;
             }           
         }
         else
         {
-            StartCoroutine(gl.ChangeMessageTemporary("Регистрация прошла успешно", 5));                       
+            gl.ChangeMessageTemporary("Регистрация прошла успешно", 5);                       
             menuInput.transform.Find("In_log").GetComponent<InputField>().text = login;
             menuInput.transform.Find("In_pas").GetComponent<InputField>().text = password;
             menuInput.SetActive(true);
@@ -148,47 +148,15 @@ public class MenuInteractions : MonoBehaviour
             switch (response.message)
             {
                 case Message.NotFountRequiredData:
-                    StartCoroutine(gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5));
+                    gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
                     break;
                 case Message.PassowordNotEquals:
-                    StartCoroutine(gl.ChangeMessageTemporary("Неверный старый пароль", 5));
+                    gl.ChangeMessageTemporary("Неверный старый пароль", 5);
                     break;
             }            
         else
         {
-            StartCoroutine(gl.ChangeMessageTemporary("Пароль успешно изменен", 5));
-        }
-    }
-
-    public async static Task<List<Group>> ShowAllGroupsList(string jwt)
-    {
-        var response = await GroupService.getAllTeacherGroups(jwt);
-        if (response.isError)
-        {
-            Debug.Log("Ошибка при получении списка групп");
-            return null;
-        }
-        else
-        {
-            Debug.Log("Список групп получен");
-            return response.data;
-        }
-    }
-
-    public async void CreateGroup()
-    {  
-        string groupName = menuTeacherGroupsList.transform.Find("Name_group").Find("Text").GetComponent<Text>().text;
-        var response = await GroupService.createGroup(groupName, gl.playerInfo.responseUserData.jwt);
-        if (response.isError)
-        {
-            //Выводить предупреждение, если учитель не активирован
-            Debug.Log("Ошибка при создании группы");
-        }
-        else
-        {
-            Debug.Log("Группа успешно создана");
-            menuTeacherGroupsList.SetActive(false);
-            menuTeacherGroupsList.SetActive(true);
+            gl.ChangeMessageTemporary("Пароль успешно изменен", 5);
         }
     }
 
@@ -226,15 +194,24 @@ public class MenuInteractions : MonoBehaviour
         string codeWord = menuJoinStudent.transform.Find("InputField").GetComponent<InputField>().text;
         var response = await GroupService.joinStudentToTheGroup(gl.playerInfo.responseUserData.jwt, codeWord);
         if (response.isError)
-        {
-            Debug.Log("Ошибка при вступлении в группу " + codeWord);
-        }
+            switch (response.message)
+            {
+                case Message.StudentIsInAGroup:
+                    gl.ChangeMessageTemporary("Ты уже числишься в этой группе", 5);
+                    break;
+                case Message.CanNotJoinStudentInTheGroup:
+                    gl.ChangeMessageTemporary("Не удалось вступить в группу", 5);
+                    break;
+                default:
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
+                    break;
+            }
         else
         {
-            Debug.Log("Успешное вступление в группу");
+            gl.ChangeMessageTemporary("Успешное вступление в группу", 5);
         }
     }
-
+    
     // Start is called before the first frame update
     void Start()
     {

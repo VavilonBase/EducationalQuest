@@ -138,7 +138,7 @@ public class CsGlobals : MonoBehaviour
     }
     */
 
-    public IEnumerator ChangeMessageTemporary(string newMessage, float time)
+    private IEnumerator ChangeMessageTemporaryIE(string newMessage, float time)
     {
         //показываем табличку с сообщением
         messageTemporary.transform.Find("Text").GetComponent<Text>().text = newMessage;
@@ -149,6 +149,11 @@ public class CsGlobals : MonoBehaviour
 
         //убираем табличку
         messageTemporary.SetActive(false);
+    }
+
+    public void ChangeMessageTemporary(string newMessage, float time)
+    {
+        StartCoroutine(ChangeMessageTemporaryIE(newMessage, time));
     }
 
     public void ChangeMessageDurable(bool active, string newMessage = null)

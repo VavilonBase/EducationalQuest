@@ -19,6 +19,34 @@ public class Scr_Menu : MonoBehaviour
     public GameObject All_users_Admin;
     public GameObject Group_list_Teacher;
     public GameObject Create_tasr_Teacher;
+    public GameObject Group_Teacher;
+    public GameObject Delete_Group_Teacher;
+    public AudioMixer audioMixer;
+    public void SetVolume(float volume)
+    {
+        audioMixer.SetFloat("volume", Mathf.Log10(volume) * 20);
+    }
+    public void Sound()
+    {
+        AudioListener.pause = !AudioListener.pause;
+    }
+
+    public void Delete_Group_Teacher_in()
+    {
+        Delete_Group_Teacher.SetActive(true);
+    }
+    public void Delete_Group_Teacher_out()
+    {
+        Delete_Group_Teacher.SetActive(false);
+    }
+    public void Group_Teacher_in()
+    {
+        Group_Teacher.SetActive(true);
+    }
+    public void Grou_Teacher_out()
+    {
+        Group_Teacher.SetActive(false);
+    }
     public void Group_list_Teacher_in()
     {
         Group_list_Teacher.SetActive(true);
@@ -143,23 +171,5 @@ public class Scr_Menu : MonoBehaviour
     public void About_out()
     {
         About.SetActive(false);
-    }
-
-
-
-
-
-
-
-   
-
-    public AudioMixer audioMixer;
-    public void SetVolume(float volume)
-    {
-        audioMixer.SetFloat("volume", Mathf.Log10(volume) * 20);
-    }
-    public void Sound ()
-    {
-        AudioListener.pause = !AudioListener.pause;
     }
 }
