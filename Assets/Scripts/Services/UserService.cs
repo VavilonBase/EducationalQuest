@@ -10,7 +10,8 @@ public static class UserService
     {
         Admin = 0,
         Teacher = 1,
-        Student = 2
+        Student = 2,
+        ALL = 3
     }
 
     //Словарь для перевода из перечисления в строку
@@ -18,7 +19,8 @@ public static class UserService
     {
         {RolesEnum.Admin, "ADMIN"},
         {RolesEnum.Teacher, "TEACHER"},
-        {RolesEnum.Student, "STUDENT"}
+        {RolesEnum.Student, "STUDENT"},
+        {RolesEnum.ALL, "ALL"}
 
     };
 
@@ -32,7 +34,7 @@ public static class UserService
     public async static Task<Response<ResponseUserData>> login(string _login, string _password)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/users/login.php";
+        string url = "https://educationalquest.herokuapp.com/user/login";
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Создаем данные
@@ -57,7 +59,7 @@ public static class UserService
         RolesEnum _role, bool _isActivated, string _login, string _password, string _middleName = "")
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/users/registration.php";
+        string url = "https://educationalquest.herokuapp.com/user/registration";
         // Инициализируем соединение
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Подготавливаем данные
@@ -82,7 +84,7 @@ public static class UserService
     public async static Task<Response<ResponseUserData>> refresh(string jwt)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/users/refresh_token.php";
+        string url = "https://educationalquest.herokuapp.com/user/refreshToken";
         // Инициализируем соединение
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Подготавливаем данные (устанавливаем заголовки)
@@ -106,7 +108,7 @@ public async static Task<Response<ResponseUserData>> updateUser(string _firstNam
     string _middleName, RolesEnum _role, string jwt)
 {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/users/update_user.php";
+        string url = "https://educationalquest.herokuapp.com/user/update";
         // Инициализируем соединение
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -133,10 +135,10 @@ public async static Task<Response<ResponseUserData>> updateUser(string _firstNam
     /// Получение всех пользователей
     /// </summary>
     /// <returns>Возвращает ответ со списком пользователей, либо с ошибкой</returns>
-    public async static Task<Response<List<User>>> getAllUsers(string jwt)
+    public async static Task<Response<List<User>>> getAllUsers(string jwt, RolesEnum role = RolesEnum.ALL)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/users/get_all_users.php";
+        string url = "https://educationalquest.herokuapp.com/user/getAllUsers?role=" + RolesDict[role];
         // Инициализируем соединение
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -158,7 +160,7 @@ public async static Task<Response<ResponseUserData>> updateUser(string _firstNam
     public async static Task<Response<ResponseUser>> activateTeacher(int teacherId, string jwt)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/users/activate_teacher.php?teacherId=" + teacherId.ToString();
+        string url = "https://educationalquest.herokuapp.com/user/activateTeacher?teacherId=" + teacherId.ToString();
 
         // Инициализируем соединение
         var httpClient = new HttpClient(new JsonSerializationOption());
@@ -182,7 +184,7 @@ public async static Task<Response<ResponseUserData>> updateUser(string _firstNam
     public async static Task<Response<ResponseUser>> changePassword(string _lastPassword, string _newPassword, string jwt)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/users/change_password.php";
+        string url = "https://educationalquest.herokuapp.com/user/changePassword";
 
         // Инициализируем соединение
         var httpClient = new HttpClient(new JsonSerializationOption());
