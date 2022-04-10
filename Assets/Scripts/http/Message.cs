@@ -35,4 +35,14 @@
     UserIsNotCreatorGroup = 407, // Пользователь не является создателем группы
     CanNotUpdateGroup = 408, // Не удалось обновить группы
     CanNotDeleteGroup = 409, // Не удалось удалить группу
+
+    // Тесты
+    CanNotCreateTest = 500, // Не удалось создать тест
+    GroupHasNotTests = 501, // В группе нет тестов
+    TestNotExist = 502, // Такого теста не существует
+    CanNotUpdateTest = 503, // Не удалось обновить тест
+    TestCanNotOpenedAndClosedTogether = 504, // Тесте не может быть одновременно открыт и закрыт
+    UserIsNotCreatorTest = 504, // Пользователь не является создателем теста
+    TestIsClosed = 505, // Тест закрыт
+    TestIsNotOpened = 506, // Тест не открыт
 }

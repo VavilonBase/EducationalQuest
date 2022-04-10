@@ -19,7 +19,7 @@ public static class GroupService
     public async static Task<Response<Group>> createGroup(string _title, string jwt)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/groups/create_group.php";
+        string url = "https://educationalquest.herokuapp.com/group/create";
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -48,7 +48,7 @@ public static class GroupService
     public async static Task<Response<List<Group>>> getAllTeacherGroups(string jwt)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/groups/get_all_groups_teacher.php";
+        string url = "https://educationalquest.herokuapp.com/group/getAllTeacherGroups";
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -77,7 +77,7 @@ public static class GroupService
     public async static Task<Response<object>> joinStudentToTheGroup(string jwt, string _codeWord)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/groups/student_join_to_the_group.php";
+        string url = "https://educationalquest.herokuapp.com/group/join";
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -106,7 +106,7 @@ public static class GroupService
     public async static Task<Response<List<ResponseStudentGroupData>>> getStudentGroups(string jwt)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/groups/get_student_groups.php";
+        string url = "https://educationalquest.herokuapp.com/group/getAllStudentGroups";
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -135,7 +135,7 @@ public static class GroupService
     public async static Task<Response<List<ResponseUserGroupData>>> getGroupStudents(string jwt, int _groupId)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/groups/get_group_students.php";
+        string url = "https://educationalquest.herokuapp.com/group/getAllGroupStudents?groupId=" + _groupId;
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -143,10 +143,8 @@ public static class GroupService
         {
             new Header() {name = "Authorization", value=$"Bearer {jwt}"}
         };
-        // Создаем данные
-        var requestGetGroupStudentsData = new RequestWithGroupIdData() { groupId = _groupId };
         // Отправляем запрос и ждем ответа
-        var result = await httpClient.Post<List<ResponseUserGroupData>, RequestWithGroupIdData>(requestGetGroupStudentsData, url);
+        var result = await httpClient.Get<List<ResponseUserGroupData>>(url);
         return result;
     }
 
@@ -169,7 +167,7 @@ public static class GroupService
     public async static Task<Response<Group>> updateGroup(string jwt, string _title, int _groupId)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/groups/update_group.php";
+        string url = "https://educationalquest.herokuapp.com/group/update";
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -201,7 +199,7 @@ public static class GroupService
     public async static Task<Response<object>> deleteGroup(string jwt, int _groupId)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/api/groups/delete_group.php";
+        string url = "https://educationalquest.herokuapp.com/group/delete?groupId=" + _groupId;
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -209,10 +207,8 @@ public static class GroupService
         {
             new Header() {name = "Authorization", value=$"Bearer {jwt}"}
         };
-        // Создаем данные
-        var requestWithGroupIdData = new RequestWithGroupIdData() { groupId = _groupId };
         // Отправляем запрос и ждем ответа
-        var result = await httpClient.Post<object, RequestWithGroupIdData>(requestWithGroupIdData, url);
+        var result = await httpClient.Get<object>(url);
         return result;
     }
 }

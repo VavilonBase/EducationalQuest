@@ -233,4 +233,109 @@ public class TestController : MonoBehaviour
                 Debug.Log("Группа удалена");
         }
     }
+
+    [ContextMenu("Create Test")]
+    public async void TestCreateTest()
+    {
+        var response = await TestService.create("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY0OTYzMTI1MSwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjQ1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0M2JcdTA0MzVcdTA0M2FcdTA0NDFcdTA0MzVcdTA0MzkiLCJsYXN0TmFtZSI6Ilx1MDQxY1x1MDQzMFx1MDQ0MFx1MDQzYVx1MDQzOFx1MDQzZCIsImxvZ2luIjoiYWxleDEyMyIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.TcGP50p_m_OAmZxizl26RJy7fdMgxP2mdJMRE_C4ZkY",
+            7, "Тест на создание группы", true);
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            Debug.Log($"Для группы с ID {response.data.groupId}\n" +
+                $"был создан тест с ID {response.data.testId}\n" +
+                $"и названием {response.data.title}");
+        }
+    }
+
+    [ContextMenu("Update Test")]
+    public async void TestUpdateTest()
+    {
+        var response = await TestService.update("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY0OTYzMTI1MSwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjQ1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0M2JcdTA0MzVcdTA0M2FcdTA0NDFcdTA0MzVcdTA0MzkiLCJsYXN0TmFtZSI6Ilx1MDQxY1x1MDQzMFx1MDQ0MFx1MDQzYVx1MDQzOFx1MDQzZCIsImxvZ2luIjoiYWxleDEyMyIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.TcGP50p_m_OAmZxizl26RJy7fdMgxP2mdJMRE_C4ZkY",
+            6, "Тест на создание группы измененный", false);
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            Debug.Log($"Для группы с ID {response.data.groupId}\n" +
+                $"был обновлен тест с ID {response.data.testId}\n" +
+                $"с названием {response.data.title}");
+        }
+    }
+
+    [ContextMenu("Delete Test")]
+    public async void TestDeleteTest()
+    {
+        var response = await TestService.delete("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY0OTYzMTI1MSwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjQ1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0M2JcdTA0MzVcdTA0M2FcdTA0NDFcdTA0MzVcdTA0MzkiLCJsYXN0TmFtZSI6Ilx1MDQxY1x1MDQzMFx1MDQ0MFx1MDQzYVx1MDQzOFx1MDQzZCIsImxvZ2luIjoiYWxleDEyMyIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.TcGP50p_m_OAmZxizl26RJy7fdMgxP2mdJMRE_C4ZkY",
+            6);
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            Debug.Log("Тест удален");
+        }
+    }
+
+    [ContextMenu("Get All Group Tests")]
+    public async void TestGetAllGroupTest()
+    {
+        var response = await TestService.getAllGroupTest("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY0OTYzMTI1MSwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjQ1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0M2JcdTA0MzVcdTA0M2FcdTA0NDFcdTA0MzVcdTA0MzkiLCJsYXN0TmFtZSI6Ilx1MDQxY1x1MDQzMFx1MDQ0MFx1MDQzYVx1MDQzOFx1MDQzZCIsImxvZ2luIjoiYWxleDEyMyIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.TcGP50p_m_OAmZxizl26RJy7fdMgxP2mdJMRE_C4ZkY",
+            7);
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            foreach(var test in response.data)
+            {
+                Debug.Log($"Для группы с ID {test.groupId}\n" +
+                $"был получен тест с ID {test.testId}\n" +
+                $"с названием {test.title}");
+            }
+        }
+    }
+
+    [ContextMenu("Open Test")]
+    public async void TestOpenTest()
+    {
+        var response = await TestService.openTest("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY0OTYzMTI1MSwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjQ1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0M2JcdTA0MzVcdTA0M2FcdTA0NDFcdTA0MzVcdTA0MzkiLCJsYXN0TmFtZSI6Ilx1MDQxY1x1MDQzMFx1MDQ0MFx1MDQzYVx1MDQzOFx1MDQzZCIsImxvZ2luIjoiYWxleDEyMyIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.TcGP50p_m_OAmZxizl26RJy7fdMgxP2mdJMRE_C4ZkY",
+            3);
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+
+            Debug.Log($"Для группы с ID {response.data.groupId}\n" +
+            $"был открыт тест с ID {response.data.testId}\n" +
+            $"с названием {response.data.title}");
+
+        }
+    }
+
+    [ContextMenu("Close Test")]
+    public async void TestCloseTest()
+    {
+        var response = await TestService.closeTest("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY0OTYzMTI1MSwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjQ1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0M2JcdTA0MzVcdTA0M2FcdTA0NDFcdTA0MzVcdTA0MzkiLCJsYXN0TmFtZSI6Ilx1MDQxY1x1MDQzMFx1MDQ0MFx1MDQzYVx1MDQzOFx1MDQzZCIsImxvZ2luIjoiYWxleDEyMyIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.TcGP50p_m_OAmZxizl26RJy7fdMgxP2mdJMRE_C4ZkY",
+            3);
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            Debug.Log($"Для группы с ID {response.data.groupId}\n" +
+                $"был закрыт тест с ID {response.data.testId}\n" +
+                $"с названием {response.data.title}");
+        }
+    }
 }
