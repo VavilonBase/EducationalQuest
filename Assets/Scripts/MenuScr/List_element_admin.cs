@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,4 +22,17 @@ public class List_element_admin : MonoBehaviour
     public float Height() => m_transform.rect.height;
     public Button GetActionButton() => this.m_ActionButton;
 
+    public async void ActivateTeacher()
+    {
+        CsGlobals gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
+        int id = Convert.ToInt32(m_SomeId);      
+        var response = await UserService.activateTeacher(id, gl.playerInfo.responseUserData.jwt);
+        if (response.isError)
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        else
+        {
+            gl.ChangeMessageTemporary("Учитель успешно активирован", 5);
+            this.m_ActionButton.gameObject.SetActive(false);
+        }
+    }
 }

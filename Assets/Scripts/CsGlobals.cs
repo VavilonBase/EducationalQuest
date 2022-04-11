@@ -170,7 +170,7 @@ public class CsGlobals : MonoBehaviour
     {
         // ------- на случай, если всё сломалось, раскомментировать и запустить
         //Saving.SaveSerial.DeleteAccountSettings();
-        
+
         playerInfo = new PlayerInfo(); //начальная инициализация игрока
         Saving.AccountSettingsData accountData = Saving.SaveSerial.LoadAccountSettings();
         if (accountData != null)
@@ -182,7 +182,7 @@ public class CsGlobals : MonoBehaviour
                 playerInfo.isAuthorized = true;                
             }               
         }
-        else Debug.Log("Account data doesn't exist");        
+        else Debug.Log("Account data doesn't exist");     
 
         menuStart.SetActive(true); 
 
@@ -215,6 +215,7 @@ public class CsGlobals : MonoBehaviour
 
     void Update()
     {
+        /*
         if (startMessageIsShowing && Input.GetKeyDown(KeyCode.F))
         {
             startMessageIsShowing = false;
@@ -224,13 +225,13 @@ public class CsGlobals : MonoBehaviour
         
         if (playerInfo.ActiveKey && playerInfo.KeysCount == 3)
         {
-            /*
+            
             if (playerInfo.points >= rooms*70)
             {
                 crownIcon.transform.localPosition = new Vector3(0, 245, 0);
                 crownIcon.SetActive(true);
             }
-            */
+            
             
             textUI_question.SetActive(false);
             endMessageIsShowing = true;
@@ -250,6 +251,6 @@ public class CsGlobals : MonoBehaviour
             endMessageIsShowing = false;
             textUI_endMessage.SetActive(false);
             textUI_question.SetActive(true);            
-        }       
+        } */       
     }
 }
