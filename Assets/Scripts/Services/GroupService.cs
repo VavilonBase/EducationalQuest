@@ -19,9 +19,7 @@ public static class GroupService
     public async static Task<Response<Group>> createGroup(string _title, string jwt)
     {
         // Задаем URL
-
         string url = "https://educationalquest.herokuapp.com/group/create";
-
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -51,7 +49,6 @@ public static class GroupService
     {
         // Задаем URL
         string url = "https://educationalquest.herokuapp.com/group/getAllTeacherGroups";
-
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
@@ -146,7 +143,6 @@ public static class GroupService
         {
             new Header() {name = "Authorization", value=$"Bearer {jwt}"}
         };
-
         // Отправляем запрос и ждем ответа
         var result = await httpClient.Get<List<ResponseUserGroupData>>(url);
         return result;
@@ -203,7 +199,6 @@ public static class GroupService
     public async static Task<Response<object>> deleteGroup(string jwt, int _groupId)
     {
         // Задаем URL
-
         string url = "https://educationalquest.herokuapp.com/group/delete?groupId=" + _groupId;
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
@@ -212,7 +207,6 @@ public static class GroupService
         {
             new Header() {name = "Authorization", value=$"Bearer {jwt}"}
         };
-
         // Отправляем запрос и ждем ответа
         var result = await httpClient.Get<object>(url);
         return result;
