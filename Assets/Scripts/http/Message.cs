@@ -23,4 +23,26 @@
     CanNotGetUsers = 305, // Ошибка при получении пользователей
     IsNotTeacher = 306, // Пользователь не является учителем
     PassowordNotEquals = 307, // При смене пароля, пароли не совпали
+
+    // Группы
+    CanNotCreateGroup = 400, // Не удалось создать группу
+    TeacherHasNotGroups = 401, // У учителя нет групп
+    GroupNotFound = 402, // Группа не найдена
+    StudentIsInAGroup = 403, // Ученик уже находится в группе
+    CanNotJoinStudentInTheGroup = 404, // Не удалось добавить ученика в группу
+    StudentHasNotGroups = 405, // У ученика нет групп
+    GroupHasNotStudents = 406, // У группы нет учеников
+    UserIsNotCreatorGroup = 407, // Пользователь не является создателем группы
+    CanNotUpdateGroup = 408, // Не удалось обновить группы
+    CanNotDeleteGroup = 409, // Не удалось удалить группу
+
+    // Тесты
+    CanNotCreateTest = 500, // Не удалось создать тест
+    GroupHasNotTests = 501, // В группе нет тестов
+    TestNotExist = 502, // Такого теста не существует
+    CanNotUpdateTest = 503, // Не удалось обновить тест
+    TestCanNotOpenedAndClosedTogether = 504, // Тесте не может быть одновременно открыт и закрыт
+    UserIsNotCreatorTest = 504, // Пользователь не является создателем теста
+    TestIsClosed = 505, // Тест закрыт
+    TestIsNotOpened = 506, // Тест не открыт
 }
