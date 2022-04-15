@@ -67,12 +67,12 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 31898104b81321a4ab30de388fe27c27, type: 3}
-    m_FontSize: 40
+    m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 3
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -396,3 +396,4 @@ MonoBehaviour:
   m_transform: {fileID: 2889085565071475408}
   m_title: {fileID: 8214100549526634248}
   m_ActionButton: {fileID: 5739681491393835520}
+  m_SomeId: 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Components_admin : MonoBehaviour
+public class Components_student_admin : MonoBehaviour
 {
     private CsGlobals gl;
     private List<User> listTeachers;
@@ -28,30 +28,20 @@ public class Components_admin : MonoBehaviour
             GameObject element = this.m_ListView.Add(this.m_Prefab);
 
             List_element_admin elementMeta = element.GetComponent<List_element_admin>();
-            elementMeta.SetTitle(i + 1 + ". (" + listTeachers[i].login + ") " + listTeachers[i].lastName + " " + listTeachers[i].firstName + " " + listTeachers[i].middleName); // вместо this.m_Tittle надо выводить ФИО учителя
-
-            Button actionButton = elementMeta.GetActionButton();
-            if (!listTeachers[i].isActivated)
-            {
-                actionButton.onClick.AddListener(elementMeta.ActivateTeacher);
-
-                string id_button = listTeachers[i].userId.ToString(); // надо придать значение такое же как и у id учителя, чтобы по нажатию активировался нужный учитель                
-                elementMeta.SetSomeId(id_button);
-            }
-            else
-                actionButton.gameObject.SetActive(false);
+            elementMeta.SetTitle(i + 1 + ". (" + listTeachers[i].login + ") " + listTeachers[i].lastName + " " + listTeachers[i].firstName + " " + listTeachers[i].middleName); 
         }
     }
 
     async Task<List<User>> GetTeachersList()
-    {        
+    {
         var response = await UserService.getAllUsers(gl.playerInfo.responseUserData.jwt, UserService.RolesEnum.Teacher);
         if (response.isError)
         {
             Debug.LogError(response.message.ToString());
             return null;
-        }            
+        }
         else
             return response.data;
     }
 }
+
