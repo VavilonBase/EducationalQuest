@@ -9,6 +9,7 @@ public class MenuStartInteractions : MonoBehaviour
     private GameObject buttonLeaveSession;
     void OnEnable()
     {
+        Debug.Log("Start Menu");
         if (gl.playerInfo.isAuthorized)
         {
             gl.ChangeMessageDurable(true, "Добро пожаловать, " + gl.playerInfo.responseUserData.user.firstName);

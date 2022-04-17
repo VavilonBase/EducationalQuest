@@ -22,7 +22,7 @@ public class MenuTeacherGroupInteractions : MonoBehaviour
         inputNewTitle = this.transform.Find("InputField").GetComponent<InputField>();
     }
 
-    async void OnEnable()
+    void OnEnable()
     {
         titleGroup.text = menuData.listGroups[menuData.selectedGroup].title;
     }
@@ -36,21 +36,26 @@ public class MenuTeacherGroupInteractions : MonoBehaviour
     public async void ChangeGroupTitle()
     {
         string newGroupTitle = inputNewTitle.text;
-        var response = await GroupService.updateGroup(gl.playerInfo.responseUserData.jwt, newGroupTitle, menuData.listGroups[menuData.selectedGroup].groupId);
-        if (response.isError)
-            switch (response.message)
-            {
-                case Message.CanNotUpdateGroup:
-                    gl.ChangeMessageTemporary("Не удалось обновить название. Проверьте правильность заполнения полей", 5);
-                    break;
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }
+        if (menuData.CheckIfTitleExists(newGroupTitle))
+            gl.ChangeMessageTemporary("Группа с таким названием уже существует", 5);
         else
         {
-            gl.ChangeMessageTemporary("Название группы успешно обновлено", 5);
-            titleGroup.text = response.data.title;
+            var response = await GroupService.updateGroup(gl.playerInfo.responseUserData.jwt, newGroupTitle, menuData.listGroups[menuData.selectedGroup].groupId);
+            if (response.isError)
+                switch (response.message)
+                {
+                    case Message.CanNotUpdateGroup:
+                        gl.ChangeMessageTemporary("Не удалось обновить название. Проверьте правильность заполнения полей", 5);
+                        break;
+                    default:
+                        gl.ChangeMessageTemporary(response.message.ToString(), 5);
+                        break;
+                }
+            else
+            {
+                gl.ChangeMessageTemporary("Название группы успешно обновлено", 5);
+                titleGroup.text = response.data.title;
+            }
         }
     }
 

@@ -12,6 +12,8 @@ public class List_view_admin : MonoBehaviour
     [SerializeField] private List<GameObject> m_elements;
     [SerializeField] private float m_offset;
 
+    public List<GameObject> Elements { get { return m_elements; } set { m_elements = value; } }
+
     public GameObject Add(GameObject element)
     {
         GameObject createdElement = Instantiate(element, this.m_ContentTransform);

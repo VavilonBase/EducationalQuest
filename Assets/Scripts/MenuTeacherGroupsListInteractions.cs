@@ -33,6 +33,7 @@ public class MenuTeacherGroupsListInteractions : MonoBehaviour
         dd.ClearOptions();
         buttonShowGroup.SetActive(false);
         buttonCopyCodeWord.SetActive(false);
+        codeWord.text = null;
 
         listGroups = await ShowAllGroupsList();
         if (listGroups != null)  
@@ -79,40 +80,6 @@ public class MenuTeacherGroupsListInteractions : MonoBehaviour
         }
     }
 
-    public async void CreateGroup()
-    {
-        string groupName = this.transform.Find("Name_group").GetComponent<InputField>().text;
-        var response = await GroupService.createGroup(groupName, gl.playerInfo.responseUserData.jwt);
-        if (response.isError)
-            switch (response.message)
-            {
-                case Message.CanNotCreateGroup:
-                    gl.ChangeMessageTemporary("Не удалось создать группу. Проверьте правильность заполнения полей", 5);
-                    break;
-                case Message.AccessDenied:
-                    gl.ChangeMessageTemporary("Доступ ограничен. Дождитесь подтверждения регистрации", 5);
-                    break;
-                case Message.IncorrectTokenFormat:
-                    Debug.LogError("Incorrect token format");
-                    gl.ChangeMessageTemporary("Ошибка подключения. Попробуйте перезайти в аккаунт", 5);
-                    break;
-                case Message.DBErrorExecute:
-                    gl.ChangeMessageTemporary("Ошибка при выполнении запроса в базе данных", 5);
-                    break;
-                default:
-                    gl.ChangeMessageTemporary("Default Error", 5);
-                    break;
-            }
-        else
-        {
-            gl.ChangeMessageTemporary("Группа успешна создана, проверьте список", 5);
-            codeWord.text = response.data.codeWord;
-            //перезагрузка меню
-            this.gameObject.SetActive(false);
-            this.gameObject.SetActive(true);
-        }
-    }
-
     void DropdownValueChanged()
     {
         selectedGroup = dd.value - 1;
@@ -134,5 +101,17 @@ public class MenuTeacherGroupsListInteractions : MonoBehaviour
     {
         GUIUtility.systemCopyBuffer = codeWord.text;
         gl.ChangeMessageTemporary("Код приглашения скопирован в буфер обмена", 5);
+    }
+
+    public bool CheckIfTitleExists(string groupTitle)
+    {
+        bool compare = false;
+        int i = 0;
+        while (!compare && i < listGroups.Count)
+        {
+            if (groupTitle == listGroups[i].title) compare = true;
+            else i++;
+        }
+        return compare;
     }
 }
