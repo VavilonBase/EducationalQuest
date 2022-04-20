@@ -1,15 +1,8 @@
-﻿class Question
+﻿public class Question
 {
-    int questionId; //Идентификатор вопроса
-    int testId; // Идентификатор теста
-    string question; // Сам вопрос, либо ссылка на него в виде фотографии
-    bool isText; // Вопрос является текстом
-
-    public Question(int _questionId, int _testId, string _question, bool _isText)
-    {
-        questionId = _questionId;
-        testId = _testId;
-        question = _question;
-        isText = _isText;
-    }
+    public int questionId { get; set; } //Идентификатор вопроса
+    public int testId { get; set; } // Идентификатор теста
+    public string question { get; set; } // Сам вопрос, либо ссылка на него в виде фотографии
+    public bool isText { get; set; } // Вопрос является текстом
+    public int scores { get; set; } // Очки за вопрос
 }
