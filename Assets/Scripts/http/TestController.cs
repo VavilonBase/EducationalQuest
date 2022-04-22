@@ -227,7 +227,7 @@ public class TestController : MonoBehaviour
     [ContextMenu("Delete group")]
     public async void TestDeleteGroup()
     {
-        var response = await GroupService.deleteGroup("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hbnktc2l0ZS5vcmciLCJhdWQiOiJodHRwOlwvXC9hbnktc2l0ZS5jb20iLCJleHAiOjE2NDkxOTk4MTAsImlhdCI6MTM1Njk5OTUyNCwibmJmIjoxMzU3MDAwMDAwLCJkYXRhIjp7ImlkIjo0NSwiZmlyc3ROYW1lIjoiXHUwNDEwXHUwNDNiXHUwNDM1XHUwNDNhXHUwNDQxXHUwNDM1XHUwNDM5IiwibGFzdE5hbWUiOiJcdTA0MWNcdTA0MzBcdTA0NDBcdTA0M2FcdTA0MzhcdTA0M2QiLCJsb2dpbiI6ImFsZXgxMjMiLCJyb2xlIjoiVEVBQ0hFUiIsImlzQWN0aXZhdGVkIjp0cnVlfX0._VCID1vHRWL2JlzOz1s_ZALBvndzAXzWg0Bm2LcnSTI",
+        var response = await GroupService.deleteGroup("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY1MDYzODIxOCwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjg1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0NDBcdTA0NDJcdTA0MzVcdTA0M2MiLCJsYXN0TmFtZSI6Ilx1MDQxNVx1MDQzYlx1MDQ0Y1x1MDQzNFx1MDQzNVx1MDQzZFx1MDQzNVx1MDQzMiIsImxvZ2luIjoic2RzZCIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.mTpkXSZppki0A_0GjvTOffS7qRT1EC7bx-MU_mLXwk8",
             1);
         if (response.isError)
         {
@@ -235,7 +235,7 @@ public class TestController : MonoBehaviour
         }
         else
         {
-                Debug.Log("Группа удалена");
+            Debug.Log("Группа удалена");
         }
     }
 

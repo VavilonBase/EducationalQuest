@@ -147,7 +147,7 @@ public class MenuInteractions : MonoBehaviour
         if (response.isError)
             switch (response.message)
             {
-                case Message.NotFountRequiredData:
+                case Message.NotFoundRequiredData:
                     gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
                     break;
                 case Message.PassowordNotEquals:

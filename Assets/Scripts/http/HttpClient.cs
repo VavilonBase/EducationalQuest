@@ -31,11 +31,13 @@ public class HttpClient
             // Ждем, когда запрос выполнится
             while (!operation.isDone)
                 await Task.Yield();
-            // Получаем текст ответа
-            var jsonResponse = www.downloadHandler.text;
+
             // Если возникла ошибка, выведем ее
             if (www.result != UnityWebRequest.Result.Success)
                 Debug.Log($"Failed: {www.error}");
+
+            // Получаем текст ответа
+            var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
             return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
@@ -75,11 +77,13 @@ public class HttpClient
             // Ждем, когда запрос выполнится
             while (!operation.isDone)
                 await Task.Yield();
-            // Получаем текст ответа
-            var jsonResponse = www.downloadHandler.text;
+
             // Если возникла ошибка, выведем ее
             if (www.result != UnityWebRequest.Result.Success)
                 Debug.Log($"Failed: {www.error}");
+
+            // Получаем текст ответа
+            var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
             return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
@@ -101,6 +105,8 @@ public class HttpClient
         {
             // Инициализируем соединение
             using var www = UnityWebRequest.Delete(url);
+            // Прикрепляем downloadHandler
+            www.downloadHandler = new DownloadHandlerBuffer();
             // Устанавливаем заголовки
             www.SetRequestHeader("Content-Type", _serializationOption.ContentType + "; charset=UTF8");
             SetHeaders(www);
@@ -109,18 +115,20 @@ public class HttpClient
             // Ждем, когда запрос выполнится
             while (!operation.isDone)
                 await Task.Yield();
-            // Получаем текст ответа
-            var jsonResponse = www.downloadHandler.text;
+
             // Если возникла ошибка, выведем ее
             if (www.result != UnityWebRequest.Result.Success)
                 Debug.Log($"Failed: {www.error}");
+
+            // Получаем текст ответа
+            var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
             return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
         }
         catch (Exception ex)
         {
-            Debug.LogError($"[{nameof(Get)}].{ex.Message}");
+            Debug.LogError($"[{nameof(Delete)}].{ex.Message}");
             return default;
         }
         finally
