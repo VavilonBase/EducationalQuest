@@ -10,7 +10,7 @@ public class HttpClient
     private readonly ISerializationOption _serializationOption;
     public List<Header> headers { get; set; }
 
-    // Конструктор
+    // Конструктор с сериализацией
     public HttpClient(ISerializationOption serializationOption)
     {
         this._serializationOption = serializationOption;
@@ -31,11 +31,13 @@ public class HttpClient
             // Ждем, когда запрос выполнится
             while (!operation.isDone)
                 await Task.Yield();
-            // Получаем текст ответа
-            var jsonResponse = www.downloadHandler.text;
+
             // Если возникла ошибка, выведем ее
             if (www.result != UnityWebRequest.Result.Success)
                 Debug.Log($"Failed: {www.error}");
+
+            // Получаем текст ответа
+            var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
             return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
@@ -75,11 +77,13 @@ public class HttpClient
             // Ждем, когда запрос выполнится
             while (!operation.isDone)
                 await Task.Yield();
-            // Получаем текст ответа
-            var jsonResponse = www.downloadHandler.text;
+
             // Если возникла ошибка, выведем ее
             if (www.result != UnityWebRequest.Result.Success)
                 Debug.Log($"Failed: {www.error}");
+
+            // Получаем текст ответа
+            var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
             return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
@@ -93,7 +97,79 @@ public class HttpClient
             ClearHeaders();
         }
     }
-    
+
+    // DELETE запрос
+    public async Task<Response<TResultType>> Delete<TResultType>(string url)
+    {
+        try
+        {
+            // Инициализируем соединение
+            using var www = UnityWebRequest.Delete(url);
+            // Прикрепляем downloadHandler
+            www.downloadHandler = new DownloadHandlerBuffer();
+            // Устанавливаем заголовки
+            www.SetRequestHeader("Content-Type", _serializationOption.ContentType + "; charset=UTF8");
+            SetHeaders(www);
+            // Отправляем запрос
+            var operation = www.SendWebRequest();
+            // Ждем, когда запрос выполнится
+            while (!operation.isDone)
+                await Task.Yield();
+
+            // Если возникла ошибка, выведем ее
+            if (www.result != UnityWebRequest.Result.Success)
+                Debug.Log($"Failed: {www.error}");
+
+            // Получаем текст ответа
+            var jsonResponse = www.downloadHandler.text;
+
+            // Переводим текст в объект
+            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[{nameof(Delete)}].{ex.Message}");
+            return default;
+        }
+        finally
+        {
+            ClearHeaders();
+        }
+    }
+
+    // POST запрос
+    public async Task<Response<TResultType>> PostMultipart<TResultType>(List<IMultipartFormSection> data, string url)
+    {
+        try
+        {
+            // Инициализируем соединение
+            using var www = UnityWebRequest.Post(url, data);
+            SetHeaders(www);
+            // Отправляем запрос
+            var operation = www.SendWebRequest();
+            // Ждем, когда запрос выполнится
+            while (!operation.isDone)
+                await Task.Yield();
+            // Получаем текст ответа
+            var jsonResponse = www.downloadHandler.text;
+            // Если возникла ошибка, выведем ее
+            if (www.result != UnityWebRequest.Result.Success)
+                Debug.Log($"Failed: {www.error}");
+
+            // Переводим текст в объект
+            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[{nameof(Post)}].{ex.Message}");
+            return default;
+        }
+        finally
+        {
+            ClearHeaders();
+        }
+    }
+
     // Установка заголовков в запрос
     private void SetHeaders(UnityWebRequest www)
     {

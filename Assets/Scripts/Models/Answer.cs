@@ -1,17 +1,8 @@
-﻿class Answer
+﻿public class Answer
 {
-    int answerId; // Идентификатор ответа
-    int questionId; // Идентификатор вопроса
-    string answer; // Сам ответ, либо ссылка на него в виде фотографии
-    bool isText; // Ответ является текстом, или фотографией
-    bool isRightAnswer; // Ответ является правильным
-
-    public Answer(int _answerId, int _questionId, string _answer, bool _isText, bool _isRightAnswer)
-    {
-        answerId = _answerId;
-        questionId = _questionId;
-        answer = _answer;
-        isText = _isText;
-        isRightAnswer = _isRightAnswer;
-    }
+    public int answerId { get; set; } // Идентификатор ответа
+    public int questionId { get; set; } // Идентификатор вопроса
+    public string answer { get; set; } // Сам ответ, либо ссылка на него в виде фотографии
+    public bool isText { get; set; } // Ответ является текстом, или фотографией
+    public bool isRightAnswer { get; set; } // Ответ является правильным
 }

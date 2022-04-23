@@ -28,7 +28,7 @@ public class MenuTeacherCreateGroupInteractions : MonoBehaviour
                     case Message.CanNotCreateGroup:
                         gl.ChangeMessageTemporary("Не удалось создать группу. Проверьте правильность заполнения полей", 5);
                         break;
-                    case Message.NotFountRequiredData:
+                    case Message.NotFoundRequiredData:
                         gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
                         break;
                     case Message.AccessDenied:

@@ -42307,6 +42307,8 @@ GameObject:
   - component: {fileID: 1663986478}
   - component: {fileID: 1663986477}
   - component: {fileID: 1663986479}
+  - component: {fileID: 1663986480}
+  - component: {fileID: 1663986481}
   m_Layer: 0
   m_Name: TextureGenerator
   m_TagString: Untagged
@@ -42356,6 +42358,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d8f5e45a37df084884aae2dba5ada55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  texture: {fileID: 0}
+--- !u!114 &1663986480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1663986476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 727bedcb718100340970f4ad57e14f83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quesitonId: 87
+  testId: 29
+  question: https://yadi.sk/d/CGSxaQjdZzMmEw
+  isText: 0
+  scores: 5
+  path: "E:\\7 \u0441\u0435\u043C\u0435\u0441\u0442\u0440(4 \u043A\u0443\u0440\u0441)\\\u041C\u041F\u0421\\\u041B\u0435\u043A\u0446\u0438\u044F
+    1\\1.png"
+  jwt: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY1MDY2NzM3OCwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjg1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0NDBcdTA0NDJcdTA0MzVcdTA0M2MiLCJsYXN0TmFtZSI6Ilx1MDQxNVx1MDQzYlx1MDQ0Y1x1MDQzNFx1MDQzNVx1MDQzZFx1MDQzNVx1MDQzMiIsImxvZ2luIjoic2RzZCIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.hw-MXhaHDNBxlYCA8tUzCBThXRlNFzsJeEAMx5whhhg
+--- !u!114 &1663986481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1663986476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aab7869c43c3a164f81d8ff379d0f04e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  answerId: 49
+  quesitonId: 87
+  answer: https://yadi.sk/d/oMupPCXSrlMHqA
+  isText: 0
+  isRightAnswer: 1
+  path: "E:\\7 \u0441\u0435\u043C\u0435\u0441\u0442\u0440(4 \u043A\u0443\u0440\u0441)\\\u041C\u041F\u0421\\\u041B\u0435\u043A\u0446\u0438\u044F
+    1\\1.png"
+  jwt: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY1MDY2NzM3OCwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjg1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0NDBcdTA0NDJcdTA0MzVcdTA0M2MiLCJsYXN0TmFtZSI6Ilx1MDQxNVx1MDQzYlx1MDQ0Y1x1MDQzNFx1MDQzNVx1MDQzZFx1MDQzNVx1MDQzMiIsImxvZ2luIjoic2RzZCIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.hw-MXhaHDNBxlYCA8tUzCBThXRlNFzsJeEAMx5whhhg
 --- !u!1 &1669294927
 GameObject:
   m_ObjectHideFlags: 0

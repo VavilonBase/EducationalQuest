@@ -95,7 +95,7 @@ public static class TestService
             new Header() {name = "Authorization", value=$"Bearer {jwt}"}
         };
         // Отправляем запрос и ждем ответа
-        var result = await httpClient.Get<object>(url);
+        var result = await httpClient.Delete<object>(url);
         return result;
     }
 
@@ -111,7 +111,7 @@ public static class TestService
     /// NotFoundRequiredData
     /// GroupHasNotTests
     /// </returns>
-    public async static Task<Response<List<Test>>> getAllGroupTest(string jwt, int _groupId)
+    public async static Task<Response<List<Test>>> getAllGroupTests(string jwt, int _groupId)
     {
         // Задаем URL
         string url = "https://educationalquest.herokuapp.com/test/getAllGroupTests?groupId=" + _groupId;
@@ -128,7 +128,7 @@ public static class TestService
     }
 
     /// <summary>
-    /// Открывает тест
+    /// Открытие теста
     /// </summary>
     /// <param name="jwt">Токен</param>
     /// <param name="_testId">ID теста</param>
@@ -158,7 +158,7 @@ public static class TestService
     }
 
     /// <summary>
-    /// Закрывает тест
+    /// Закрытие теста
     /// </summary>
     /// <param name="jwt">Токен</param>
     /// <param name="_testId">ID теста</param>
@@ -183,6 +183,128 @@ public static class TestService
         };
         // Отправляем запрос и ждем ответа
         var result = await httpClient.Get<Test>(url);
+        return result;
+    }
+
+    /// <summary>
+    /// Получение теста с вопросами
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <param name="_testId">ID теста</param>
+    /// <returns>Возвращает тест с вопросами, либо ошибку
+    /// При вызове этого метода учеников, isRightAnswer = false всегда
+    /// Ошибка:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// NotFoundRequiredData
+    /// TestNotExist
+    /// UserIsNotCreatorTest
+    /// TestHasNotQuestions
+    /// </returns>
+    public async static Task<Response<ResponseTestWithQuestion>> getTestWithQuestion(string jwt, int _testId)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/test/getTestWithQuestion?testId=" + _testId;
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Get<ResponseTestWithQuestion>(url);
+        return result;
+    }
+
+    /// <summary>
+    /// Получение результата ученика за тест без правильных ответов, только результат
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <param name="_testId">ID теста</param>
+    /// <returns>Массив (так как ученик мог написать тест больше 1 раза) результатов ученика за тест
+    /// Ошибка:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// NotFoundRequiredData
+    /// NotFoundResult
+    /// </returns>
+    public async static Task<Response<List<ResponseTestWithQuestion>>> getStudentTestResult(string jwt, int _studentId, int _testId)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/test/getStudentTestResult?studentId=" + _studentId + "&testId=" + _testId;
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Get<List<ResponseTestWithQuestion>>(url);
+        return result;
+    }
+
+    /// <summary>
+    /// Получение результата ученика за тест с правильными ответами
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <param name="_testId">ID теста</param>
+    /// <param name="_studentId">ID ученика</param>
+    /// <returns>Массив (так как ученик мог написать тест больше 1 раза) результатов ученика за тест с ответами
+    /// Ошибка:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// TestNotExist
+    /// NotFoundRequiredData
+    /// UserIsNotCreatorTest
+    /// NotFoundResult
+    /// NotFoundQuestion
+    /// </returns>
+    public async static Task<Response<ResponseStudentResultWithRightAnswer>> getStudentTestResultWithRightAnswer(string jwt, int _studentId, int _testId)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/test/getStudentTestResultWithRightAnswer?studentId=" + _studentId + "&testId=" + _testId;
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Get<ResponseStudentResultWithRightAnswer>(url);
+        return result;
+    }
+
+    /// <summary>
+    /// Получение результатов всех студентов (обучающихся) за тест
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <param name="_testId">ID теста</param>
+    /// <returns>Массив (так как ученик мог написать тест больше 1 раза) результатов ученика за тест с ответами
+    /// Ошибка:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// TestNotExist
+    /// NotFoundRequiredData
+    /// UserIsNotCreatorTest
+    /// NotFoundResult
+    /// NotFoundQuestion
+    /// </returns>
+    public async static Task<Response<List<ResponseStudentTestResult>>> getAllResultsTestsForStudents(string jwt, int _testId)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/test/getAllResultsTestForStudent?testId=" + _testId;
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Get<List<ResponseStudentTestResult>>(url);
         return result;
     }
 }

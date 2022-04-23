@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class TestController : MonoBehaviour
 {
+    [SerializeField] private Image texture;
     [ContextMenu("Test Get")]
     public async void TestGet()
     {
@@ -222,7 +227,7 @@ public class TestController : MonoBehaviour
     [ContextMenu("Delete group")]
     public async void TestDeleteGroup()
     {
-        var response = await GroupService.deleteGroup("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hbnktc2l0ZS5vcmciLCJhdWQiOiJodHRwOlwvXC9hbnktc2l0ZS5jb20iLCJleHAiOjE2NDkxOTk4MTAsImlhdCI6MTM1Njk5OTUyNCwibmJmIjoxMzU3MDAwMDAwLCJkYXRhIjp7ImlkIjo0NSwiZmlyc3ROYW1lIjoiXHUwNDEwXHUwNDNiXHUwNDM1XHUwNDNhXHUwNDQxXHUwNDM1XHUwNDM5IiwibGFzdE5hbWUiOiJcdTA0MWNcdTA0MzBcdTA0NDBcdTA0M2FcdTA0MzhcdTA0M2QiLCJsb2dpbiI6ImFsZXgxMjMiLCJyb2xlIjoiVEVBQ0hFUiIsImlzQWN0aXZhdGVkIjp0cnVlfX0._VCID1vHRWL2JlzOz1s_ZALBvndzAXzWg0Bm2LcnSTI",
+        var response = await GroupService.deleteGroup("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY1MDYzODIxOCwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjg1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0NDBcdTA0NDJcdTA0MzVcdTA0M2MiLCJsYXN0TmFtZSI6Ilx1MDQxNVx1MDQzYlx1MDQ0Y1x1MDQzNFx1MDQzNVx1MDQzZFx1MDQzNVx1MDQzMiIsImxvZ2luIjoic2RzZCIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.mTpkXSZppki0A_0GjvTOffS7qRT1EC7bx-MU_mLXwk8",
             1);
         if (response.isError)
         {
@@ -230,7 +235,7 @@ public class TestController : MonoBehaviour
         }
         else
         {
-                Debug.Log("Группа удалена");
+            Debug.Log("Группа удалена");
         }
     }
 
@@ -286,7 +291,7 @@ public class TestController : MonoBehaviour
     [ContextMenu("Get All Group Tests")]
     public async void TestGetAllGroupTest()
     {
-        var response = await TestService.getAllGroupTest("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY0OTYzMTI1MSwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjQ1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0M2JcdTA0MzVcdTA0M2FcdTA0NDFcdTA0MzVcdTA0MzkiLCJsYXN0TmFtZSI6Ilx1MDQxY1x1MDQzMFx1MDQ0MFx1MDQzYVx1MDQzOFx1MDQzZCIsImxvZ2luIjoiYWxleDEyMyIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.TcGP50p_m_OAmZxizl26RJy7fdMgxP2mdJMRE_C4ZkY",
+        var response = await TestService.getAllGroupTests("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY0OTYzMTI1MSwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjQ1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0M2JcdTA0MzVcdTA0M2FcdTA0NDFcdTA0MzVcdTA0MzkiLCJsYXN0TmFtZSI6Ilx1MDQxY1x1MDQzMFx1MDQ0MFx1MDQzYVx1MDQzOFx1MDQzZCIsImxvZ2luIjoiYWxleDEyMyIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.TcGP50p_m_OAmZxizl26RJy7fdMgxP2mdJMRE_C4ZkY",
             7);
         if (response.isError)
         {
@@ -336,6 +341,41 @@ public class TestController : MonoBehaviour
             Debug.Log($"Для группы с ID {response.data.groupId}\n" +
                 $"был закрыт тест с ID {response.data.testId}\n" +
                 $"с названием {response.data.title}");
+        }
+    }
+
+    [ContextMenu("Add quesiton")]
+    public async void TestAddQuestion()
+    {
+        OpenFileName openFileName = new OpenFileName();
+        string path = "";
+        if (LocalDialog.GetOpenFileName(openFileName))
+        {
+            path = openFileName.file;
+        };
+        WWW www1 = new WWW("file://" + path);
+        Texture2D texture = www1.texture;
+        byte[] bytes = texture.EncodeToPNG();
+        List<IMultipartFormSection> formData = new List<IMultipartFormSection>
+        {
+            new MultipartFormDataSection("testId", "29"),
+            new MultipartFormDataSection("isText", "0"),
+            new MultipartFormDataSection("scores", "5"),
+            new MultipartFormFileSection("question", bytes, "Question.jpg", "image/jpg")
+        };
+        // Инициализируем соединение
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        httpClient.headers = new List<Header>()
+        {
+            new Header(){name = "Authorization", value="Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY1MDUwMDkyMiwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjg1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0NDBcdTA0NDJcdTA0MzVcdTA0M2MiLCJsYXN0TmFtZSI6Ilx1MDQxNVx1MDQzYlx1MDQ0Y1x1MDQzNFx1MDQzNVx1MDQzZFx1MDQzNVx1MDQzMiIsImxvZ2luIjoic2RzZCIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.es0uv_xe396yc5aywqhARg8L8gYCpV0nhytbBlnJJTQ" }
+        };
+        var response = await httpClient.PostMultipart<Question>(formData, "http://localhost/educationalquest/question/create");
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        } else
+        {
+            Debug.Log(response.data.question);
         }
     }
 }
