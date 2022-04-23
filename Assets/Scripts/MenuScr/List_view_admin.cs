@@ -49,5 +49,11 @@ public class List_view_admin : MonoBehaviour
         return (createdElement);
     }
 
-
+    public void CleanList()
+    {
+        var elements = m_elements;
+        foreach (GameObject element in elements)
+            DestroyImmediate(element);
+        m_elements = new List<GameObject>();
+    }
 }
