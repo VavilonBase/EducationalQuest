@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuStudentGroupsInteractions : MonoBehaviour
-{
+{    
     private CsGlobals gl;
     private List<ResponseStudentGroupData> listGroups;
     private List<Test> listTests;
@@ -17,7 +17,9 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
     private GameObject buttonShowResults;
     private GameObject buttonExitGroup;
     private GameObject buttonUpdate;    
-    private GameObject buttonYesExitGroup;    
+    private GameObject buttonYesExitGroup;
+
+    private Text groupTitle;
 
     private int selectedGroup;
     public int SelectedGroup { get { return selectedGroup; } }
@@ -40,6 +42,8 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
         buttonExitGroup = menuTests.transform.Find("But_quit").gameObject;
         buttonUpdate = menuResults.transform.Find("Update").gameObject;        
         buttonYesExitGroup = menuExitGroup.transform.Find("Button_Yes").gameObject;
+
+        groupTitle = menuTests.transform.Find("GroupTitle").GetComponent<Text>();
 
         dd.onValueChanged.AddListener(delegate {
             DropdownValueChanged();
@@ -112,21 +116,24 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
         if (dd.value > 0)
         {            
             buttonShowResults.SetActive(true);
-            buttonExitGroup.SetActive(true);
+            buttonExitGroup.SetActive(true);                        
             ShowGroupTests();
+            groupTitle.text = listGroups[selectedGroup].title;
         }
         else
-        {
+        {            
             buttonShowResults.SetActive(false);
             buttonExitGroup.SetActive(false);
-        }
+            m_ListViewGroupContent.CleanList();
+            groupTitle.text = "Выбери группу...";
+        }        
     }
 
     async void ShowGroupTests()
     {
         m_ListViewGroupContent.CleanList();
 
-        var response = await TestService.getAllGroupTest(gl.playerInfo.responseUserData.jwt, listGroups[selectedGroup].groupId);
+        var response = await TestService.getAllGroupTests(gl.playerInfo.responseUserData.jwt, listGroups[selectedGroup].groupId);
 
         if (response.isError)
         {
@@ -142,7 +149,8 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
         }
         else
         {
-            listTests = response.data;
+            listTests = response.data;           
+            
             int count = 0;
 
             for (int i = 0; i < listTests.Count; i++)
@@ -151,15 +159,21 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
                 List_element_admin elementMeta = element.GetComponent<List_element_admin>();
 
                 string status;
-                if (listTests[i].isClosed)
-                    status = " | статус: закрыт";
-                else
-                {
-                    status = " | статус: активен (!)";
+                if (listTests[i].isOpened)
+                {                   
+                    status = "Активен";
                     count++;
-                }                   
+                }                    
+                else
+                    status = "Закрыт";
 
-                elementMeta.SetTitle(i + 1 + ". " + listTests[i].title + status);
+                if (listTests[i].canViewResult)
+                    status += ", результаты доступны";
+                else
+                    status += ", результаты недоступны";
+
+                elementMeta.SetTitle(i + 1 + ". " + listTests[i].title);
+                elementMeta.SetDescription(status);
             }
 
             if (count > 0)
@@ -179,9 +193,15 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
 
     async void ExitGroup()
     {
-        gl.ChangeMessageTemporary("Допустим, вышли из группы", 5);
-        menuExitGroup.SetActive(false);
-        menuResults.SetActive(false);
-        menuTests.SetActive(true);
+        var response = await GroupService.leavingStudentFromGroup(gl.playerInfo.responseUserData.jwt, listGroups[selectedGroup].groupId);
+        if (response.isError)
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        else
+        {
+            gl.ChangeMessageTemporary("Успешный выход из группы", 5);
+            menuExitGroup.SetActive(false);
+            menuResults.SetActive(false);
+            menuTests.SetActive(true);
+        }            
     }
 }

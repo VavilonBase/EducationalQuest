@@ -23,8 +23,7 @@ public class MenuInteractions : MonoBehaviour
         switch (role)
         {
             case "ADMIN":
-                menuAdmin.SetActive(true);                
-                //UserService.activateTeacher(65, gl.playerInfo.responseUserData.jwt); -- у этого учителя явно связи, в обход всех протоколов активировался
+                menuAdmin.SetActive(true);             
                 break;
             case "TEACHER":
                 menuTeacher.SetActive(true);
@@ -56,9 +55,8 @@ public class MenuInteractions : MonoBehaviour
     public async void login()
     {       
         string log = menuInput.transform.Find("In_log").Find("Text").GetComponent<Text>().text;
-        string pass = menuInput.transform.Find("In_pas").Find("Text").GetComponent<Text>().text;     
+        string pass = menuInput.transform.Find("In_pas").Find("Text").GetComponent<Text>().text;    
         
-        //var response = await UserService.login("vav", "1233");
         var response = await UserService.login(log, pass);
         if (response.isError)
         {
@@ -71,7 +69,7 @@ public class MenuInteractions : MonoBehaviour
                     gl.ChangeMessageTemporary("Такого пользователя не существует", 5);                    
                     break;
                 default:
-                    gl.ChangeMessageTemporary("Что-то пошло не так, но вы держитесь", 5);                    
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
                     break;
             }            
         }
@@ -124,7 +122,7 @@ public class MenuInteractions : MonoBehaviour
                     gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
                     break;
                 default:
-                    gl.ChangeMessageTemporary("Что-то пошло не так, но вы держитесь", 5);                    
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
                     break;
             }           
         }
@@ -158,35 +156,6 @@ public class MenuInteractions : MonoBehaviour
         {
             gl.ChangeMessageTemporary("Пароль успешно изменен", 5);
         }
-    }
-
-    public async void ShowGroupContent()
-    {
-        MenuTeacherGroupsListInteractions menu = menuTeacherGroupsList.GetComponent<MenuTeacherGroupsListInteractions>();
-        var list = menu.listGroups;     
-        Text text = menuTeacherGroupsList.transform.Find("Panel").GetComponent<Text>();
-
-        Dropdown dd = menuTeacherGroupsList.transform.Find("Dropdown").GetComponent<Dropdown>();
-        int groupId = list[dd.value].groupId;
-
-        //string sRole = dd.options[dd.value].text;
-
-        string t = "Кодовое слово = " + list[dd.value].codeWord + "\n";
-
-        var response = await GroupService.getGroupStudents(gl.playerInfo.responseUserData.jwt, groupId);
-        if (response.isError)
-        {
-            Debug.Log("Ошибка при получении списка группы");
-        }
-        else
-        {
-            var listStudents = response.data;            
-            foreach (ResponseUserGroupData student in listStudents)
-            {
-                t += student.lastName + " " + student.firstName + " (" + student.userId + ")\n";
-            }
-        }
-        text.text = t;
     }
 
     public async void JoinGroup()
