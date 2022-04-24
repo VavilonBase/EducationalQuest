@@ -10,6 +10,12 @@ public class HttpClient
     private readonly ISerializationOption _serializationOption;
     public List<Header> headers { get; set; }
 
+    // Конструктор
+    public HttpClient()
+    {
+
+    }
+
     // Конструктор с сериализацией
     public HttpClient(ISerializationOption serializationOption)
     {
@@ -80,7 +86,7 @@ public class HttpClient
 
             // Если возникла ошибка, выведем ее
             if (www.result != UnityWebRequest.Result.Success)
-                Debug.Log($"Failed: {www.error}");
+                Debug.Log($"Failed: {www.error}. Result: {www.result}");
 
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
@@ -158,6 +164,39 @@ public class HttpClient
 
             // Переводим текст в объект
             return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[{nameof(Post)}].{ex.Message}");
+            return default;
+        }
+        finally
+        {
+            ClearHeaders();
+        }
+    }
+
+    // Получение изображения
+    public async Task<Texture2D> GetTexture(string url)
+    {
+        try
+        {
+            // Инициализируем соединение
+            using var www = UnityWebRequestTexture.GetTexture(url);
+
+            // Отправляем запрос
+            var operation = www.SendWebRequest();
+
+            // Ждем, когда запрос выполнится
+            while (!operation.isDone)
+                await Task.Yield();
+
+            // Если возникла ошибка, выведем ее
+            if (www.result != UnityWebRequest.Result.Success)
+                Debug.Log($"Failed: {www.error}");
+
+            Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            return texture;
         }
         catch (Exception ex)
         {

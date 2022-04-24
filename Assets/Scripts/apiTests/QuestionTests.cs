@@ -12,6 +12,7 @@ class QuestionTests : MonoBehaviour
     [SerializeField] private string path;
     [SerializeField] private string jwt;
     [SerializeField] public List<ResponseAnswerWithQuestion> answers;
+    [SerializeField] Texture2D texture;
 
     [ContextMenu("Create Question")]
     [System.Obsolete]
@@ -30,6 +31,8 @@ class QuestionTests : MonoBehaviour
             testId = data.testId;
             isText = data.isText;
             scores = data.scores;
+
+            texture = await data.GetTexture();
         }
     }
 
