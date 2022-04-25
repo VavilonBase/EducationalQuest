@@ -13,7 +13,6 @@ public static class GroupService
     /// Ошибки:
     /// IncorrectTokenFormat
     /// AccessDenied
-    /// CanNotCreateGroup
     /// DBErrorExecute
     /// </returns>
     public async static Task<Response<Group>> createGroup(string _title, string jwt)
@@ -44,7 +43,6 @@ public static class GroupService
     /// Ошибки:
     /// IncorrectTokenFormat
     /// AccessDenied
-    /// CanNotUpdateGroup
     /// GroupNotFound
     /// UserIsNotCreatorGroup
     /// DBErrorExecute
@@ -76,7 +74,6 @@ public static class GroupService
     /// Ошибки:
     /// IncorrectTokenFormat
     /// AccessDenied
-    /// CanNotDeleteGroup
     /// GroupNotFound
     /// UserIsNotCreatorGroup
     /// DBErrorExecute
@@ -197,7 +194,6 @@ public static class GroupService
     /// Ошибки:
     /// IncorrectTokenFormat
     /// AccessDenied
-    /// CanNotJoinStudentInTheGroup
     /// StudentIsInAGroup
     /// DBErrorExecute
     /// </returns>
@@ -262,17 +258,8 @@ public static class GroupService
     /// </returns>
     public async static Task<Response<List<ResponseUserGroupData>>> getGroupStudents(string jwt, int _groupId, bool _isStudy = true)
     {
-        string url = "";
-
-        // Задаем URL
-        if (_isStudy)
-        {
-            url = "https://educationalquest.herokuapp.com/group/getAllGroupStudyingStudents?groupId=" + _groupId;
-        }
-        else
-        {
-            url = "https://educationalquest.herokuapp.com/group/getAllGroupStudents?groupId=" + _groupId;
-        }
+        string url = "https://educationalquest.herokuapp.com/group/getAllGroupStudents?groupId=" + _groupId
+            + "&isStudy=" + (_isStudy ? "1" : "0");
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки

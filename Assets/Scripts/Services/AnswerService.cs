@@ -22,7 +22,6 @@ class AnswerService
     /// NotFoundRequiredData
     /// TestNotExist
     /// UserIsNotCreatorTest
-    /// CanNotCreateAnswer
     /// CanNotLoadFile
     /// CanNotPublishFile
     /// </returns>
@@ -88,7 +87,6 @@ class AnswerService
     /// NotFoundRequiredData
     /// TestNotExist
     /// UserIsNotCreatorTest
-    /// CanNotCreateAnswer
     /// CanNotLoadFile
     /// CanNotPublishFile
     /// </returns>

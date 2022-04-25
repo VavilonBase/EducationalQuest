@@ -19,7 +19,6 @@ public static class QuestionService
     /// NotFoundRequiredData
     /// TestNotExist
     /// UserIsNotCreatorTest
-    /// CanNotCreateQuestion
     /// CanNotLoadFile
     /// CanNotPublishFile
     /// CanNotCreateFolder
@@ -84,7 +83,6 @@ public static class QuestionService
     /// NotFoundRequiredData
     /// TestNotExist
     /// UserIsNotCreatorTest
-    /// CanNotUpdateQuestion
     /// CanNotLoadFile
     /// CanNotPublishFile
     /// CanNotCreateFolder

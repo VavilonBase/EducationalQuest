@@ -3,6 +3,20 @@ using System.Threading.Tasks;
 
 public static class ResultService
 {
+    /// <summary>
+    /// Создание результата
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <param name="_testId">Идентификатор теста</param>
+    /// <param name="_answers">Ответы на вопросы</param>
+    /// <returns>Возвращает созданный результат или ошибку:
+    /// IncorrectTokenFormat
+    /// AccessDenied
+    /// NotFoundRequiredData
+    /// StudentIsNotInAGroup
+    /// TestHasNotQuestions
+    /// DBErrorExecute
+    /// </returns>
     public async static Task<Response<Result>> createResult(string jwt, int _testId, List<AnswerResultQuestionDto> _answers)
     {
         // Задаем URL

@@ -16,7 +16,6 @@ public static class TestService
     /// AccessDenied
     /// NotFoundRequiredData
     /// UserIsNotCreatorGroup
-    /// CanNotCreateTest
     /// </returns>
     public async static Task<Response<Test>> create(string jwt, int _groupId, string _title, bool _canViewResults)
     {
@@ -50,7 +49,6 @@ public static class TestService
     /// NotFoundRequiredData
     /// TestNotExist
     /// UserIsNotCreatorGroup
-    /// CanNotUpdateTest 
     /// </returns>
     public async static Task<Response<Test>> update(string jwt, int _testId, string _title, bool _canViewResults)
     {
