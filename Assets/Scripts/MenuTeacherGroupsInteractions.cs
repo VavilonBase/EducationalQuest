@@ -182,15 +182,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
             {
                 var response = await GroupService.updateGroup(jwt, newGroupTitle, listGroups[selectedGroup].groupId);
                 if (response.isError)
-                    switch (response.message)
-                    {
-                        case Message.CanNotUpdateGroup:
-                            gl.ChangeMessageTemporary("Не удалось обновить название. Проверьте правильность заполнения полей", 5);
-                            break;
-                        default:
-                            gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                            break;
-                    }
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);                
                 else
                 {
                     ShowGroupsList();                    
@@ -218,15 +210,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
     {        
         var response = await GroupService.deleteGroup(jwt, listGroups[selectedGroup].groupId);
         if (response.isError)
-            switch (response.message)
-            {
-                case Message.CanNotDeleteGroup:
-                    gl.ChangeMessageTemporary("Не удалось удалить группу", 5);
-                    break;
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);        
         else
         {
             ShowGroupsList();
@@ -253,10 +237,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
                 var response = await GroupService.createGroup(groupTitle, jwt);
                 if (response.isError)
                     switch (response.message)
-                    {
-                        case Message.CanNotCreateGroup:
-                            gl.ChangeMessageTemporary("Не удалось создать группу", 5);
-                            break;
+                    {                       
                         case Message.NotFoundRequiredData:
                             gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
                             break;
