@@ -117,10 +117,7 @@ public class MenuInteractions : MonoBehaviour
             {
                 case Message.UserExist:
                     gl.ChangeMessageTemporary("Пользователь уже существует", 5);                    
-                    break;
-                case Message.CanNotCreateUser:
-                    gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
-                    break;
+                    break;                
                 default:
                     gl.ChangeMessageTemporary(response.message.ToString(), 5);
                     break;
@@ -167,10 +164,7 @@ public class MenuInteractions : MonoBehaviour
             {
                 case Message.StudentIsInAGroup:
                     gl.ChangeMessageTemporary("Ты уже числишься в этой группе", 5);
-                    break;
-                case Message.CanNotJoinStudentInTheGroup:
-                    gl.ChangeMessageTemporary("Не удалось вступить в группу", 5);
-                    break;
+                    break;                
                 default:
                     gl.ChangeMessageTemporary(response.message.ToString(), 5);
                     break;

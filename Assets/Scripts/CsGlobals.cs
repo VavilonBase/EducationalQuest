@@ -175,12 +175,19 @@ public class CsGlobals : MonoBehaviour
         Saving.AccountSettingsData accountData = Saving.SaveSerial.LoadAccountSettings();
         if (accountData != null)
         {
-            var response = await UserService.refresh(accountData.jwt);
-            if (!response.isError)
-            {                
-                Saving.SaveSerial.SaveAccountSettings(playerInfo.responseUserData = response.data);
-                playerInfo.isAuthorized = true;                
-            }               
+            try
+            {
+                var response = await UserService.refresh(accountData.jwt);
+                if (!response.isError)
+                {
+                    Saving.SaveSerial.SaveAccountSettings(playerInfo.responseUserData = response.data);
+                    playerInfo.isAuthorized = true;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
         else Debug.Log("Account data doesn't exist");     
 
