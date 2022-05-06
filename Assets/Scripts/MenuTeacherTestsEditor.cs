@@ -27,8 +27,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
     private GameObject buttonDeleteTest;
     private GameObject buttonYesDeleteTest;
 
-    private GameObject textStatus;
-
+    private InputField textStatus;
     private InputField inputCreateTestTitle;
 
     private int selectedGroup;
@@ -49,7 +48,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
 
         ddGroups = menuTestsEditor.transform.Find("DropdownGroups").GetComponent<Dropdown>();
         ddTests = menuTestsEditor.transform.Find("DropdownTests").GetComponent<Dropdown>();
-        
+
         buttonChangeStatus = menuTestsEditor.transform.Find("ButtonChangeStatus").gameObject;
         buttonEditTest = menuTestsEditor.transform.Find("ButtonEditTest").gameObject;
         buttonCreateTest = menuTestsEditor.transform.Find("ButtonCreateTest").gameObject;
@@ -60,14 +59,16 @@ public class MenuTeacherTestsEditor : MonoBehaviour
 
         inputCreateTestTitle = menuCreateTest.transform.Find("TestName").GetComponent<InputField>();
 
-        textStatus = menuTestsEditor.transform.Find("TextStatus").gameObject;
+        textStatus = menuTestsEditor.transform.Find("TextStatus").GetComponent<InputField>();
 
         ddGroups.onValueChanged.AddListener(delegate {
             DropdownGroupsValueChanged();
+            ChangeTextStatus();
         });        
 
         ddTests.onValueChanged.AddListener(delegate {
             DropdownTestsValueChanged();
+            ChangeTextStatus();
         });        
 
         buttonYesCreateTest.GetComponent<Button>().onClick.AddListener(delegate
@@ -80,14 +81,25 @@ public class MenuTeacherTestsEditor : MonoBehaviour
             DeleteTest();
         });
 
+        buttonChangeStatus.GetComponent<Button>().onClick.AddListener(delegate
+        {
+            ChangeStatus();
+        });
     }
 
     void OnEnable()
     {
         selectedGroup = -1;
         selectedTest = -1;
+        ChangeTextStatus();
         UpdateGroupsList();
         UpdateTestsList();
+    }
+
+    void OnDisable()
+    {
+        listGroups = null;
+        listTests = null;
     }
 
     async Task<List<Group>> GetGroupsList()
@@ -158,7 +170,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         buttonChangeStatus.SetActive(false);
         if (selectedGroup >= 0)
         {
-            listTests = await GetTestsList(selectedGroup);
+            listTests = await GetTestsList(listGroups[selectedGroup].groupId);
             if (listTests != null)
             {
                 //Вывод названий групп в Dropdown. Это визуализация, в дальнейшем выбранный тест определяется по индексу в списке - 1.
@@ -166,10 +178,10 @@ public class MenuTeacherTestsEditor : MonoBehaviour
                 m_DropOptions.Add("Выберите тест...");
                 foreach (Test t in listTests)
                     m_DropOptions.Add(t.title);
-                ddGroups.AddOptions(m_DropOptions);
+                ddTests.AddOptions(m_DropOptions);
             }
         }
-        selectedTest = -1;
+        selectedTest = -1;        
     }
 
     async void CreateTest()
@@ -180,7 +192,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
             gl.ChangeMessageTemporary("Введите название теста", 5);
         else
         {
-            var response = await TestService.create(jwt, selectedGroup, title, true);
+            var response = await TestService.create(jwt, listGroups[selectedGroup].groupId, title, true);
 
             if (response.isError)
                 gl.ChangeMessageTemporary(response.message.ToString(), 5);
@@ -196,12 +208,37 @@ public class MenuTeacherTestsEditor : MonoBehaviour
 
     async void ChangeStatus()
     {
+        Response<Test> response;
+        if (listTests[selectedTest].isOpened)
+            response = await TestService.closeTest(jwt, listTests[selectedTest].testId);
+        else
+            response = await TestService.openTest(jwt, listTests[selectedTest].testId);
 
+        if (response.isError)
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        else
+        {
+            listTests[selectedTest] = response.data;
+            ChangeTextStatus();
+        }
+    }
+
+    void ChangeTextStatus()
+    {
+        if (selectedTest >= 0)
+        {
+            if (listTests[selectedTest].isOpened)
+                textStatus.text = "Открыт";
+            else
+                textStatus.text = "Закрыт";
+        }
+        else
+            textStatus.text = "Статус";
     }
 
     async void DeleteTest()
     {
-        var response = await TestService.delete(jwt, selectedTest);
+        var response = await TestService.delete(jwt, listTests[selectedTest].testId);
 
         if (response.isError)
             gl.ChangeMessageTemporary(response.message.ToString(), 5);
@@ -209,6 +246,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         {
             menuDeleteTest.SetActive(false);
             UpdateTestsList();
+            ChangeTextStatus();
             gl.ChangeMessageTemporary("Тест успешно удалён", 5);
         }
     }
@@ -230,7 +268,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         {
             buttonEditTest.SetActive(true);
             buttonDeleteTest.SetActive(true);
-            buttonChangeStatus.SetActive(true);
+            buttonChangeStatus.SetActive(true);            
         }
         else
         {
