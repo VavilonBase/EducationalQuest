@@ -277,4 +277,14 @@ public class MenuTeacherTestsEditor : MonoBehaviour
             buttonChangeStatus.SetActive(false);
         }
     }
+
+    public Group GetSelectedGroup()
+    {
+        return listGroups[selectedGroup];
+    }
+
+    public Test GetSelectedTest()
+    {
+        return listTests[selectedTest];
+    }
 }

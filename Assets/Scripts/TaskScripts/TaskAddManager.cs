@@ -34,7 +34,7 @@ public class TaskAddManager : MonoBehaviour
 
         //Начальная инициализация
         //Получаем объекты поля Направление
-        GetObjectsFromDirectionField();
+        //GetObjectsFromDirectionField();
         //Выключаем переключатели выбора правильного ответа
         OffAnswerTrueToggles();
         //Поиск глобального объекта
@@ -45,10 +45,10 @@ public class TaskAddManager : MonoBehaviour
         SetListenerAnswerTrueToggles();
 
         //Скрываем все поля
-        _directionField.SetActive(false);
+        //_directionField.SetActive(false);
         _addQuestionWindow.SetInactive();
         HideAnswersField();
-        _errorText.gameObject.SetActive(false);
+        //_errorText.gameObject.SetActive(false);
 
         //Скрываем кнопку Добавить и показываем кнопки Далее и Назад
         _addBtn.gameObject.SetActive(false);

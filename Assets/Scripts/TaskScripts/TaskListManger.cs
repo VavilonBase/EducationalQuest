@@ -72,6 +72,7 @@ public class TaskListManger : MonoBehaviour
         }
     }
 
+    /*
     void CreateElements(string direction)
     {
         for (int i = 0; i < _textures.Count; i++)
@@ -88,6 +89,7 @@ public class TaskListManger : MonoBehaviour
             elementMeta.SetTaskManagerSript(this.gameObject.GetComponent<TaskListManger>());
         }
     }
+    */
 
     /// <summary>
     /// Заполняет поля при изменении вопроса
@@ -157,7 +159,7 @@ public class TaskListManger : MonoBehaviour
 
         }
 
-        this.CreateElements(direction);
+        //this.CreateElements(direction);
     }
     
     string[] SortFiles(string[] files)

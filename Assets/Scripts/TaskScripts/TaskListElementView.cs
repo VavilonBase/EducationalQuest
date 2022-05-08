@@ -17,8 +17,8 @@ namespace Assets.Scripts.TaskScripts
         [Space]
         [SerializeField] private Button _deleteBtn;
         [Space]
-        [SerializeField] private TaskListManger _taskListManager;
-        private string _direction;
+        [SerializeField] private MenuTeacherTasksEditor _parentManager;
+        //private string _direction;
         private int _numberQuestion;
         private void Awake()
         {
@@ -39,12 +39,12 @@ namespace Assets.Scripts.TaskScripts
         //------------------------СОБЫТИЯ-------------------------
         void ClickEditBtn()
         {
-            _taskListManager.EditTask(_direction, _numberQuestion);
+            _parentManager.EditTask(_numberQuestion);
         }
 
         void ClickDeleteBtn()
         {
-            Debug.Log(_title.text);
+            _parentManager.DeleteTask(_numberQuestion);
         }
         /// <summary>
         /// Возвращает ширину элемета
@@ -70,12 +70,6 @@ namespace Assets.Scripts.TaskScripts
         public void SetImage(Texture2D texture) => _image.texture = texture;
 
         /// <summary>
-        /// Установка направления
-        /// </summary>
-        /// <param name="direction"></param>
-        public void SetDirection(string direction) => _direction = direction;
-
-        /// <summary>
         /// Установка номера вопроса
         /// </summary>
         /// <param name="numberQestion"></param>
@@ -84,7 +78,7 @@ namespace Assets.Scripts.TaskScripts
         /// <summary>
         /// Получает главный скрипт родителя
         /// </summary>
-        /// <param name="taskListManger"></param>
-        public void SetTaskManagerSript(TaskListManger taskListManger) => _taskListManager = taskListManger;
+        /// <param name="parentManager"></param>
+        public void SetTaskManagerSript(MenuTeacherTasksEditor parentManager) => _parentManager = parentManager;
     }
 }
