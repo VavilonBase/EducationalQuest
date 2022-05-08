@@ -29,7 +29,7 @@ public static class TestService
             new Header() {name = "Authorization", value=$"Bearer {jwt}"}
         };
         // Создаем данные
-        var requestCreateTestData = new RequestCreateTestData() { groupId = _groupId, title = _title, canViewResult = _canViewResults };
+        var requestCreateTestData = new RequestCreateTestData() { groupId = _groupId, title = _title, canViewResults = _canViewResults };
         // Отправляем запрос и ждем ответа
         var result = await httpClient.Post<Test, RequestCreateTestData>(requestCreateTestData, url);
         return result;
@@ -62,7 +62,7 @@ public static class TestService
             new Header() {name = "Authorization", value=$"Bearer {jwt}"}
         };
         // Создаем данные
-        var requestUpdateTestData = new RequestUpdateTestData() { testId = _testId, title = _title, canViewResult = _canViewResults };
+        var requestUpdateTestData = new RequestUpdateTestData() { testId = _testId, title = _title, canViewResults = _canViewResults };
         // Отправляем запрос и ждем ответа
         var result = await httpClient.Post<Test, RequestUpdateTestData>(requestUpdateTestData, url);
         return result;

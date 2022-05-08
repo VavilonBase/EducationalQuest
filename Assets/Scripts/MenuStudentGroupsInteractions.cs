@@ -167,7 +167,7 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
                 else
                     status = "Закрыт";
 
-                if (listTests[i].canViewResult)
+                if (listTests[i].canViewResults)
                     status += ", результаты доступны";
                 else
                     status += ", результаты недоступны";
