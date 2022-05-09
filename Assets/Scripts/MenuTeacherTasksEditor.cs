@@ -88,6 +88,7 @@ public class MenuTeacherTasksEditor : MonoBehaviour
         questions = await GetQuestionsList();
         if (questions != null)
         {
+            Debug.Log("Количество вопросов: " + questions.Count);
             for (int i = 0; i < questions.Count; i++)
                 CreateElement(questions[i], i);
         }
@@ -95,19 +96,20 @@ public class MenuTeacherTasksEditor : MonoBehaviour
 
     void CreateElement(ResponseQuestionForTest question, int num)
     {
+        Debug.Log(question.questionId + " / " + question.question + " / " + num);
         //Создаем новый элемент в списке по prefab
         GameObject element = m_ListViewTasksList.Add(m_PrefabTasksList);
         //Получаем из него объект TaskListElementView
         TaskListElementView elementMeta = element.GetComponent<TaskListElementView>();
-        //Заполняем содержимое элемента
-        elementMeta.SetTitle("Вопрос "+ num+1 + ":");
+        //Заполняем содержимое элемента        
         if (question.isText)
         {
-            elementMeta.SetTitle("Вопрос " + num + 1 + ":" + question.question);
+            Debug.Log(question.question);
+            elementMeta.SetTitle("Вопрос " + (num+1) + ":" + question.question);
         }
         else
         {
-            elementMeta.SetTitle("Вопрос " + num + 1 + ":");
+            elementMeta.SetTitle("Вопрос " + (num+1) + ":");
             //elementMeta.SetImage(question.);
         }                
         elementMeta.SetNumberQuestion(num);
