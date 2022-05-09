@@ -13,6 +13,7 @@ public class MenuTeacherTasksEditor : MonoBehaviour
     private MenuTeacherTestsEditor parentInfo;
     private Group group;
     private Test test;
+    public int GetTestId() { return test.testId; }
     private List<ResponseQuestionForTest> questions;
 
     private GameObject menuTasksList;
@@ -40,7 +41,7 @@ public class MenuTeacherTasksEditor : MonoBehaviour
         buttonCreateTask.GetComponent<Button>().onClick.AddListener(delegate
         {
             AddTask();
-        });
+        });    
     }
 
     private void OnEnable()
@@ -48,18 +49,7 @@ public class MenuTeacherTasksEditor : MonoBehaviour
         group = parentInfo.GetSelectedGroup();
         test = parentInfo.GetSelectedTest();
 
-        UpdateQuestionList();
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        UpdateQuestionsList();
     }
 
     async Task<List<ResponseQuestionForTest>> GetQuestionsList()
@@ -82,7 +72,7 @@ public class MenuTeacherTasksEditor : MonoBehaviour
             return response.data.questions;
     }
 
-    async void UpdateQuestionList()
+    async public void UpdateQuestionsList()
     {
         m_ListViewTasksList.ClearList();
         questions = await GetQuestionsList();
@@ -112,12 +102,18 @@ public class MenuTeacherTasksEditor : MonoBehaviour
             elementMeta.SetTitle("Вопрос " + (num+1) + ":");
             //elementMeta.SetImage(question.);
         }                
-        elementMeta.SetNumberQuestion(num);
+        elementMeta.SetNumberQuestion(question.questionId);
         elementMeta.SetTaskManagerSript(this);
     }
 
     private async void AddTask()
     {
+        menuTasksList.SetActive(false);
+        var component = menuAddTask.GetComponent<MenuTeacherTaskChange>();
+        component.questionWithAnswersInfo = new MenuTeacherTaskChange.QuestionWithAnswersInfo();
+        menuAddTask.SetActive(true);
+
+        /*
         //Загрушка
         var responseQuestion = await QuestionService.createQuestion(jwt, test.testId, true, "Тестовый вопрос", 10);
         if (responseQuestion.isError)
@@ -129,16 +125,25 @@ public class MenuTeacherTasksEditor : MonoBehaviour
             await AnswerService.createAnswer(jwt, responseQuestion.data.questionId, "Тестовый ответ 3", true, false);
             gl.ChangeMessageTemporary("Наверное, все в порядке", 5);
             UpdateQuestionList();
+        */
+    }
+
+    public void EditTask(int id)
+    {
+
+    }
+
+    public async void DeleteTask(int id)
+    {
+        Debug.Log("id удаляемого вопроса: " + id);
+
+        var response = await QuestionService.delete(jwt, id);
+        if (response.isError)
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        else
+        {
+            UpdateQuestionsList();
+            gl.ChangeMessageTemporary("Вопрос успешно удален", 5);
         }
-    }
-
-    public void EditTask(int num)
-    {
-
-    }
-
-    public void DeleteTask(int num)
-    {
-
     }
 }

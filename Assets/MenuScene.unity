@@ -30200,7 +30200,6 @@ GameObject:
   - component: {fileID: 1343152508}
   - component: {fileID: 1343152512}
   - component: {fileID: 1343152511}
-  - component: {fileID: 1343152510}
   - component: {fileID: 1343152509}
   m_Layer: 5
   m_Name: Edit Btn
@@ -30273,18 +30272,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1343152510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1343152507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4896bcd629d9f044a2d982be46e1b65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1343152511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38973,72 +38960,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1690226627}
   m_CullTransparentMesh: 1
---- !u!1 &1690975976
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1690975977}
-  - component: {fileID: 1690975979}
-  - component: {fileID: 1690975978}
-  m_Layer: 5
-  m_Name: EventSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1690975977
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1690975976}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1922687174}
-  m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1690975978
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1690975976}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
---- !u!114 &1690975979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1690975976}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
 --- !u!1 &1698983772
 GameObject:
   m_ObjectHideFlags: 0
@@ -39842,7 +39763,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1715735719
 RectTransform:
   m_ObjectHideFlags: 0
@@ -42828,7 +42749,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1826128657
 RectTransform:
   m_ObjectHideFlags: 0
@@ -46106,7 +46027,6 @@ GameObject:
   - component: {fileID: 1922687173}
   - component: {fileID: 1922687172}
   - component: {fileID: 1922687171}
-  - component: {fileID: 1922687170}
   - component: {fileID: 1922687175}
   m_Layer: 5
   m_Name: UI Task Add
@@ -46114,35 +46034,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1922687170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1922687169}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ee47d1c32929604f9263d50e1ad74d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _directionField: {fileID: 0}
-  _addQuestionWindow: {fileID: 0}
-  _addAnswersWindows:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _nextBtn: {fileID: 1341094537}
-  _backBtn: {fileID: 1545813832}
-  _addBtn: {fileID: 0}
-  _taskListBtn: {fileID: 1577633448}
-  _errorText: {fileID: 0}
-  _answerTrueToggles:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _taskManager: {fileID: 0}
+  m_IsActive: 0
 --- !u!114 &1922687171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46225,7 +46117,6 @@ RectTransform:
   - {fileID: 1341094534}
   - {fileID: 1545813829}
   - {fileID: 1577633451}
-  - {fileID: 1690975977}
   m_Father: {fileID: 1826128657}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -46367,7 +46258,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1929226900
 MonoBehaviour:
   m_ObjectHideFlags: 0
