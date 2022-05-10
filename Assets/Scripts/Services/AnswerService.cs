@@ -113,13 +113,13 @@ class AnswerService
         else
         {
             // Если ответ ввиде файла
-            // Получаем ответ ввиде картинки
-            WWW www = new WWW(_answerOrFilePath);
-            if (!string.IsNullOrEmpty(www.error))
+            // Получаем ответ в виде картинки
+            var httpClientGetTexture = new HttpClient();
+            UnityEngine.Texture2D texture = await httpClientGetTexture.GetTexture(_answerOrFilePath);
+            if (texture == null)
             {
                 return new Response<Answer>() { data = null, isError = true, message = Message.CanNotLoadFile };
             }
-            Texture2D texture = www.texture;
             // Кодируем его в байты
             byte[] answerBytes = texture.EncodeToPNG();
             // Добавляем в форму картинку

@@ -108,13 +108,13 @@ public static class QuestionService
         else
         {
             // Если вопрос ввиде файла
-            // Получаем вопрос ввиде картинки
-            WWW www = new WWW(_questionOrFilePath);
-            if (!string.IsNullOrEmpty(www.error))
+            // Получаем вопрос в виде картинки
+            var httpClientGetTexture = new HttpClient();
+            UnityEngine.Texture2D texture = await httpClientGetTexture.GetTexture(_questionOrFilePath);
+            if (texture == null)
             {
                 return new Response<Question>() { data = null, isError = true, message = Message.CanNotLoadFile };
             }
-            Texture2D texture = www.texture;
             // Кодируем его в байты
             byte[] questionBytes = texture.EncodeToPNG();
             // Добавляем в форму картинку
