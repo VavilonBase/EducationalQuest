@@ -60,8 +60,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
             isNew = false;
 
             WWW www;            
-            int count = 0;
-            string path;
+            int count = 0;            
 
             isQuestionText = question.isText;
             if (isQuestionText)
@@ -218,7 +217,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
 
     static public Texture LoadTexture(string path)
     {
-        WWW www = new WWW("file://" + path);
+        WWW www = new WWW(path);
         return www.texture;
     }
 
@@ -296,6 +295,9 @@ public class MenuTeacherTaskChange : MonoBehaviour
                 case Message.CanNotPublishFile:
                     gl.ChangeMessageTemporary("Не удалось сделать файл вопроса публичным", 5);
                     break;
+                case Message.NotFoundRequiredData:
+                    gl.ChangeMessageTemporary("Не удалось загрузить файл вопроса. Попробуйте уменьшить размер файла", 10);
+                    break;
                 default:
                     gl.ChangeMessageTemporary(responseQuestion.message.ToString(), 5);
                     break;
@@ -318,6 +320,9 @@ public class MenuTeacherTaskChange : MonoBehaviour
                             break;
                         case Message.CanNotPublishFile:
                             gl.ChangeMessageTemporary("Не удалось сделать файл публичным (ответ " + (i + 1) + ")", 5);
+                            break;
+                        case Message.NotFoundRequiredData:
+                            gl.ChangeMessageTemporary("Не удалось загрузить файл (ответ " + (i + 1) + "). Попробуйте уменьшить размер файла", 10);
                             break;
                         default:
                             gl.ChangeMessageTemporary(responseAnswer.message.ToString(), 5);
@@ -347,6 +352,9 @@ public class MenuTeacherTaskChange : MonoBehaviour
                 case Message.CanNotPublishFile:
                     gl.ChangeMessageTemporary("Не удалось сделать файл вопроса публичным", 5);
                     break;
+                case Message.NotFoundRequiredData:
+                    gl.ChangeMessageTemporary("Не удалось загрузить файл вопроса. Попробуйте уменьшить размер файла", 10);
+                    break;
                 default:
                     gl.ChangeMessageTemporary(responseQuestion.message.ToString(), 5);
                     break;
@@ -371,6 +379,9 @@ public class MenuTeacherTaskChange : MonoBehaviour
                         case Message.CanNotPublishFile:
                             gl.ChangeMessageTemporary("Не удалось сделать файл публичным (ответ " + (i + 1) + ")", 5);
                             break;
+                        case Message.NotFoundRequiredData:
+                            gl.ChangeMessageTemporary("Не удалось загрузить файл (ответ " + (i + 1) + "). Попробуйте уменьшить размер файла", 10);
+                            break;
                         default:
                             gl.ChangeMessageTemporary(responseAnswer.message.ToString(), 5);
                             break;
@@ -384,7 +395,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
 
     private async Task<bool> SaveToServer()
     {
-        gl.ChangeMessageTemporary("Ждите...", 3);
+        gl.ChangeMessageTemporary("Ждите...", 30);
         if (questionWithAnswersInfo.isNew)
             return await NewQuestion();
         else

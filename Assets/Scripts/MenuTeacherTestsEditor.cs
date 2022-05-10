@@ -62,11 +62,10 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         textStatus = menuTestsEditor.transform.Find("TextStatus").GetComponent<InputField>();
 
         ddGroups.onValueChanged.AddListener(delegate {
-            DropdownGroupsValueChanged();
-            ChangeTextStatus();
+            DropdownGroupsValueChanged();            
         });        
 
-        ddTests.onValueChanged.AddListener(delegate {
+        ddTests.onValueChanged.AddListener(delegate {            
             DropdownTestsValueChanged();
             ChangeTextStatus();
         });        
@@ -84,8 +83,8 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         buttonChangeStatus.GetComponent<Button>().onClick.AddListener(delegate
         {
             ChangeStatus();
-        });
-    }
+        });     
+    }    
 
     void OnEnable()
     {
@@ -181,7 +180,8 @@ public class MenuTeacherTestsEditor : MonoBehaviour
                 ddTests.AddOptions(m_DropOptions);
             }
         }
-        selectedTest = -1;        
+        selectedTest = -1;
+        ChangeTextStatus();
     }
 
     async void CreateTest()
@@ -199,32 +199,52 @@ public class MenuTeacherTestsEditor : MonoBehaviour
             else
             {
                 menuCreateTest.SetActive(false);
-                UpdateTestsList();
+                UpdateTestsList();                
                 gl.ChangeMessageTemporary("Тест успешно создан, проверьте список", 5);
             }
-
         }                   
     }
 
     async void ChangeStatus()
     {
-        Response<Test> response;
-        if (listTests[selectedTest].isOpened)
-            response = await TestService.closeTest(jwt, listTests[selectedTest].testId);
-        else
-            response = await TestService.openTest(jwt, listTests[selectedTest].testId);
-
-        if (response.isError)
-            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        var check = await TestService.getTestWithQuestion(jwt, listTests[selectedTest].testId);
+        if (check.isError)
+        {
+            switch (check.message)
+            {
+                case Message.TestHasNotQuestions:
+                    gl.ChangeMessageTemporary("В тесте нет вопросов. Создайте вопросы, прежде чем открывать тест", 5);
+                    break;
+                default:
+                    gl.ChangeMessageTemporary(check.message.ToString(), 5);
+                    break;
+            }
+        }            
         else
         {
-            listTests[selectedTest] = response.data;
-            ChangeTextStatus();
-        }
+            if (check.data.questions != null)
+            {
+                Response<Test> response;
+                if (listTests[selectedTest].isOpened)
+                    response = await TestService.closeTest(jwt, listTests[selectedTest].testId);
+                else
+                    response = await TestService.openTest(jwt, listTests[selectedTest].testId);
+
+                if (response.isError)
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
+                else
+                {
+                    listTests[selectedTest] = response.data;
+                    ChangeTextStatus();
+                    DropdownTestsValueChanged();
+                }
+            }
+        }        
     }
 
     void ChangeTextStatus()
     {
+        Debug.Log("SelectedTest"+selectedTest);
         if (selectedTest >= 0)
         {
             if (listTests[selectedTest].isOpened)
@@ -245,8 +265,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         else
         {
             menuDeleteTest.SetActive(false);
-            UpdateTestsList();
-            ChangeTextStatus();
+            UpdateTestsList();            
             gl.ChangeMessageTemporary("Тест успешно удалён", 5);
         }
     }
@@ -254,20 +273,31 @@ public class MenuTeacherTestsEditor : MonoBehaviour
     private void DropdownGroupsValueChanged()
     {
         selectedGroup = ddGroups.value - 1;
+        buttonCreateTest.SetActive(true);
         if (ddGroups.value > 0)
-            buttonCreateTest.SetActive(true);
+            buttonCreateTest.GetComponent<Button>().interactable = true;
         else
-            buttonCreateTest.SetActive(false);
+            buttonCreateTest.GetComponent<Button>().interactable = false;
         UpdateTestsList();
     }
 
     private void DropdownTestsValueChanged()
-    {
+    {       
         selectedTest = ddTests.value - 1;
         if (ddTests.value > 0)
         {
             buttonEditTest.SetActive(true);
             buttonDeleteTest.SetActive(true);
+            if (listTests[selectedTest].isOpened)
+            {
+                buttonEditTest.GetComponent<Button>().interactable = false;
+                buttonDeleteTest.GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                buttonEditTest.GetComponent<Button>().interactable = true;
+                buttonDeleteTest.GetComponent<Button>().interactable = true;
+            }              
             buttonChangeStatus.SetActive(true);            
         }
         else
