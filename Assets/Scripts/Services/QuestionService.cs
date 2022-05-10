@@ -88,7 +88,7 @@ public static class QuestionService
     /// CanNotCreateFolder
     /// </returns>
     [System.Obsolete]
-    public async static Task<Response<Question>> updateQuestion(string jwt, int _questionId, bool _isText, string _question, int _scores)
+    public async static Task<Response<Question>> updateQuestion(string jwt, int _questionId, bool _isText, string _questionOrFilePath, int _scores)
     {
         // URL
         string url = "https://educationalquest.herokuapp.com/question/update";
@@ -103,13 +103,13 @@ public static class QuestionService
         if (_isText)
         {
             // Добавляем в форму текстовый вопрос
-            formData.Add(new MultipartFormDataSection("question", _question));
+            formData.Add(new MultipartFormDataSection("question", _questionOrFilePath));
         }
         else
         {
             // Если вопрос ввиде файла
             // Получаем вопрос ввиде картинки
-            WWW www = new WWW("file://" + _question);
+            WWW www = new WWW(_questionOrFilePath);
             if (!string.IsNullOrEmpty(www.error))
             {
                 return new Response<Question>() { data = null, isError = true, message = Message.CanNotLoadFile };
