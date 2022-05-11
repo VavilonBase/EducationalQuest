@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,6 +15,11 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
     private GameObject menuRenameGroup;
     private GameObject menuDeleteGroup;
     private GameObject menuGroup;
+    private GameObject menuExcludeStudentYesNo;
+
+    [Header("Components")]
+    [SerializeField] private List_view_admin m_ListViewGroupContent;
+    [SerializeField] private GameObject m_PrefabGroupContent;
 
     private Dropdown dd;
     private InputField codeWord;
@@ -22,13 +28,16 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
 
     private Button buttonCreateGroup;
     private Button buttonRenameGroup;
-    private Button buttonDeleteGroup;
-    private Button buttonCreateTest;
+    private Button buttonDeleteGroup;    
 
+    private Button buttonUpdateGroupContent;
+    private Button buttonExcludeStudent;
 
     private List<Group> listGroups;
     private int selectedGroup;
+    private int bufStudentIdToExclude;
 
+    private List<ResponseUserGroupData> listStudentsInGroup;
 
     private Text titleGroup;
     private InputField inputNewTitle;
@@ -44,6 +53,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
         menuRenameGroup = this.transform.Find("menuRenameGroup").gameObject;
         menuDeleteGroup = this.transform.Find("Delete_group_Teacher").gameObject;
         menuGroup = this.transform.Find("Group_Teacher").gameObject;
+        menuExcludeStudentYesNo = this.transform.Find("ExcludeStudentYesNo").gameObject;
 
         dd = menuGroupsList.transform.Find("Dropdown").GetComponent<Dropdown>();
         codeWord = menuGroupsList.transform.Find("CodeWord").GetComponent<InputField>();
@@ -53,6 +63,9 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
         buttonCreateGroup = menuCreateGroup.transform.Find("Create").GetComponent<Button>();        
         buttonDeleteGroup = menuDeleteGroup.transform.Find("Button_Yes").GetComponent<Button>();
         buttonRenameGroup = menuRenameGroup.transform.Find("Rename").GetComponent<Button>();
+
+        buttonUpdateGroupContent = menuGroup.transform.Find("But_up").GetComponent<Button>();
+        buttonExcludeStudent = menuExcludeStudentYesNo.transform.Find("Button_Yes").GetComponent<Button>();
 
         titleGroup = menuGroup.transform.Find("Text").GetComponent<Text>();
         inputNewTitle = menuRenameGroup.transform.Find("InputField").GetComponent<InputField>();
@@ -66,35 +79,13 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
         buttonCreateGroup.onClick.AddListener(delegate { CreateGroup(); });
         buttonDeleteGroup.onClick.AddListener(delegate { DeleteGroup(); });
         buttonRenameGroup.onClick.AddListener(delegate { RenameGroup(); });
-
-        buttonCreateTest = menuGroup.transform.Find("CreateTest").GetComponent<Button>();
-        buttonCreateTest.onClick.AddListener(delegate { CreateTest(); });
+        buttonUpdateGroupContent.onClick.AddListener(delegate { ShowSelectedGroupInfo(); });
+        buttonExcludeStudent.onClick.AddListener(delegate { ExcludeStudent(); });
     }
 
     void OnEnable()
     {
         ShowGroupsList();        
-    }
-
-    async void CreateTest()
-    {
-        //очень тестовое создание теста
-        var test = await TestService.create(jwt, listGroups[selectedGroup].groupId, "Тестовый тест", true);
-        if (test.isError)
-            gl.ChangeMessageTemporary(test.message.ToString(), 5);
-        else
-        {
-            var question = await QuestionService.createQuestion(jwt, test.data.testId, true, "2x2=?", 10);
-            if (question.isError)
-                gl.ChangeMessageTemporary(question.message.ToString(), 5);
-            else
-            {
-                await AnswerService.createAnswer(jwt, question.data.questionId, "3", true, false);
-                await AnswerService.createAnswer(jwt, question.data.questionId, "4", true, true);
-                await AnswerService.createAnswer(jwt, question.data.questionId, "8", true, false);
-                gl.ChangeMessageTemporary("Наверное, всё в порядке", 5);
-            }
-        }
     }
 
     async Task<List<Group>> GetGroupsList()
@@ -106,6 +97,29 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
             {
                 case Message.TeacherHasNotGroups:
                     gl.ChangeMessageTemporary("Создайте группу для начала работы", 5);
+                    break;
+                case Message.AccessDenied:
+                    gl.ChangeMessageTemporary("Доступ ограничен. Дождитесь подтверждения регистрации", 5);
+                    break;
+                default:
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
+                    break;
+            }
+            return null;
+        }
+        else
+            return response.data;
+    }
+
+    async Task<List<ResponseUserGroupData>> GetGroupStudentsList()
+    {
+        var response = await GroupService.getGroupStudents(jwt, listGroups[selectedGroup].groupId);
+        if (response.isError)
+        {
+            switch (response.message)
+            {
+                case Message.GroupHasNotStudents:
+                    gl.ChangeMessageTemporary("В группе нет учеников. Скопируйте и отправьте пригласительный код с главной страницы", 5);
                     break;
                 case Message.AccessDenied:
                     gl.ChangeMessageTemporary("Доступ ограничен. Дождитесь подтверждения регистрации", 5);
@@ -162,10 +176,48 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
         gl.ChangeMessageTemporary("Код приглашения скопирован в буфер обмена", 5);
     }
 
-    private void ShowSelectedGroupInfo()
-    {
+    private async void ShowSelectedGroupInfo()
+    {        
         titleGroup.text = "Группа " + listGroups[selectedGroup].title;
-        //список учеников и редактирование тестов
+        //список учеников и возможность исключения
+        m_ListViewGroupContent.CleanList();
+        listStudentsInGroup = await GetGroupStudentsList();
+        if (listStudentsInGroup != null)
+        {
+            for (int i=0; i < listStudentsInGroup.Count; i++)
+            {
+                GameObject element = m_ListViewGroupContent.Add(m_PrefabGroupContent);
+
+                List_element_admin elementMeta = element.GetComponent<List_element_admin>();
+                elementMeta.SetTitle(i + 1 + ". " + listStudentsInGroup[i].lastName + " " + listStudentsInGroup[i].firstName + " " + listStudentsInGroup[i].middleName);
+                
+                //string id_button = listStudentsInGroup[i].userId.ToString();              
+                //elementMeta.SetSomeId(id_button);
+
+                Button actionButton = elementMeta.GetActionButton();
+                actionButton.onClick.AddListener( delegate { ExcludeStudentYesNo(listStudentsInGroup[i].userId); } );
+                actionButton.gameObject.SetActive(true);                    
+            }
+        }
+    }
+
+    private void ExcludeStudentYesNo(int studentId)
+    {
+        bufStudentIdToExclude = studentId;
+        menuExcludeStudentYesNo.SetActive(true);
+    }
+
+    private async void ExcludeStudent()
+    {
+        var response = await GroupService.removeStudentFromGroup(jwt, bufStudentIdToExclude, listGroups[selectedGroup].groupId);
+        if (response.isError)
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        else
+        {
+            menuExcludeStudentYesNo.SetActive(false);
+            ShowSelectedGroupInfo();
+            gl.ChangeMessageTemporary("Ученик исключен из группы", 5);
+        }
     }
 
     async void RenameGroup()
@@ -205,7 +257,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
         }
         return compare;
     }
-      
+
     public async void DeleteGroup()
     {        
         var response = await GroupService.deleteGroup(jwt, listGroups[selectedGroup].groupId);
