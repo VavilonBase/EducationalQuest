@@ -88,7 +88,7 @@ public static class QuestionService
     /// CanNotCreateFolder
     /// </returns>
     [System.Obsolete]
-    public async static Task<Response<Question>> updateQuestion(string jwt, int _questionId, bool _isText, string _question, int _scores)
+    public async static Task<Response<Question>> updateQuestion(string jwt, int _questionId, bool _isText, string _questionOrFilePath, int _scores)
     {
         // URL
         string url = "https://educationalquest.herokuapp.com/question/update";
@@ -103,18 +103,18 @@ public static class QuestionService
         if (_isText)
         {
             // Добавляем в форму текстовый вопрос
-            formData.Add(new MultipartFormDataSection("question", _question));
+            formData.Add(new MultipartFormDataSection("question", _questionOrFilePath));
         }
         else
         {
             // Если вопрос ввиде файла
-            // Получаем вопрос ввиде картинки
-            WWW www = new WWW("file://" + _question);
-            if (!string.IsNullOrEmpty(www.error))
+            // Получаем вопрос в виде картинки
+            var httpClientGetTexture = new HttpClient();
+            UnityEngine.Texture2D texture = await httpClientGetTexture.GetTexture(_questionOrFilePath);
+            if (texture == null)
             {
                 return new Response<Question>() { data = null, isError = true, message = Message.CanNotLoadFile };
             }
-            Texture2D texture = www.texture;
             // Кодируем его в байты
             byte[] questionBytes = texture.EncodeToPNG();
             // Добавляем в форму картинку

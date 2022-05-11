@@ -78,7 +78,7 @@ class AnswerService
     /// <param name="jwt">Токен</param>
     /// <param name="answerId">ID ответа</param>
     /// <param name="_questionId">ID вопроса</param>
-    /// <param name="_answer">Ответ</param>
+    /// <param name="_answerOrFilePath">Ответ</param>
     /// <param name="_isText">Ответ текстовый?</param>
     /// <param name="_isRightAnswer">Ответ правильный?</param>
     /// <returns>
@@ -91,7 +91,7 @@ class AnswerService
     /// CanNotPublishFile
     /// </returns>
     [System.Obsolete]
-    public async static Task<Response<Answer>> updateAnswer(string jwt, int _answerId, int _questionId, string _answer, bool _isText, bool _isRightAnswer)
+    public async static Task<Response<Answer>> updateAnswer(string jwt, int _answerId, int _questionId, string _answerOrFilePath, bool _isText, bool _isRightAnswer)
     {
         // URL
         string url = "https://educationalquest.herokuapp.com/answer/update";
@@ -100,7 +100,7 @@ class AnswerService
         {
             new MultipartFormDataSection("answerId", _answerId.ToString()),
             new MultipartFormDataSection("questionId", _questionId.ToString()),
-            new MultipartFormDataSection("answer", _answer),
+            new MultipartFormDataSection("answer", _answerOrFilePath),
             new MultipartFormDataSection("isText", _isText ? "1" : "0"),
             new MultipartFormDataSection("isRightAnswer", _isRightAnswer ? "1" : "0")
         };
@@ -108,18 +108,18 @@ class AnswerService
         if (_isText)
         {
             // Добавляем в форму текстовый вопрос
-            formData.Add(new MultipartFormDataSection("answer", _answer));
+            formData.Add(new MultipartFormDataSection("answer", _answerOrFilePath));
         }
         else
         {
             // Если ответ ввиде файла
-            // Получаем ответ ввиде картинки
-            WWW www = new WWW("file://" + _answer);
-            if (!string.IsNullOrEmpty(www.error))
+            // Получаем ответ в виде картинки
+            var httpClientGetTexture = new HttpClient();
+            UnityEngine.Texture2D texture = await httpClientGetTexture.GetTexture(_answerOrFilePath);
+            if (texture == null)
             {
                 return new Response<Answer>() { data = null, isError = true, message = Message.CanNotLoadFile };
             }
-            Texture2D texture = www.texture;
             // Кодируем его в байты
             byte[] answerBytes = texture.EncodeToPNG();
             // Добавляем в форму картинку

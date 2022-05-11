@@ -86,7 +86,7 @@ public class MenuTeacherTasksEditor : MonoBehaviour
 
     void CreateElement(ResponseQuestionForTest question, int num)
     {
-        Debug.Log(question.questionId + " / " + question.question + " / " + num);
+        //Debug.Log(question.questionId + " / " + question.question + " / " + num);
         //Создаем новый элемент в списке по prefab
         GameObject element = m_ListViewTasksList.Add(m_PrefabTasksList);
         //Получаем из него объект TaskListElementView
@@ -94,43 +94,42 @@ public class MenuTeacherTasksEditor : MonoBehaviour
         //Заполняем содержимое элемента        
         if (question.isText)
         {
-            Debug.Log(question.question);
-            elementMeta.SetTitle("Вопрос " + (num+1) + ":" + question.question);
+            elementMeta.SetTitle("Вопрос " + (num + 1) + ":" + question.question);
         }
         else
         {
-            elementMeta.SetTitle("Вопрос " + (num+1) + ":");
-            //elementMeta.SetImage(question.);
+            elementMeta.SetTitle("Вопрос " + (num + 1) + ":");
+            Debug.Log(question.question);
+            WWW www = new WWW(question.question);
+            int count = 0;
+            while (!www.isDone) count++;
+            elementMeta.SetImage(www.texture);
         }                
         elementMeta.SetNumberQuestion(question.questionId);
         elementMeta.SetTaskManagerSript(this);
+        
     }
 
-    private async void AddTask()
+    private void AddTask()
     {
         menuTasksList.SetActive(false);
         var component = menuAddTask.GetComponent<MenuTeacherTaskChange>();
         component.questionWithAnswersInfo = new MenuTeacherTaskChange.QuestionWithAnswersInfo();
         menuAddTask.SetActive(true);
-
-        /*
-        //Загрушка
-        var responseQuestion = await QuestionService.createQuestion(jwt, test.testId, true, "Тестовый вопрос", 10);
-        if (responseQuestion.isError)
-            gl.ChangeMessageTemporary(responseQuestion.message.ToString(), 5);
-        else
-        {
-            await AnswerService.createAnswer(jwt, responseQuestion.data.questionId, "Тестовый ответ 1", true, false);
-            await AnswerService.createAnswer(jwt, responseQuestion.data.questionId, "Тестовый ответ 2(right)", true, true);
-            await AnswerService.createAnswer(jwt, responseQuestion.data.questionId, "Тестовый ответ 3", true, false);
-            gl.ChangeMessageTemporary("Наверное, все в порядке", 5);
-            UpdateQuestionList();
-        */
     }
 
-    public void EditTask(int id)
+    public async void EditTask(int id)
     {
-
+        var response = await QuestionService.getQuestionWithAnswers(jwt, id);
+        if (response.isError)
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        else
+        {
+            menuTasksList.SetActive(false);
+            var component = menuAddTask.GetComponent<MenuTeacherTaskChange>();
+            component.questionWithAnswersInfo = new MenuTeacherTaskChange.QuestionWithAnswersInfo(response.data);
+            menuAddTask.SetActive(true);
+        }        
     }
 
     public async void DeleteTask(int id)

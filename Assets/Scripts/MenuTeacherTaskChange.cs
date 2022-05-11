@@ -31,22 +31,79 @@ public class MenuTeacherTaskChange : MonoBehaviour
     public class QuestionWithAnswersInfo
     {
         public string questionText;
-        public string questionImage;
+        public string questionImagePath;
         public bool isQuestionText;
+        public Texture questionTexture;
 
         public string[] answersTexts;
-        public string[] answersImages;
+        public string[] answersImagePath;
         public bool[] isAnswersTexts;
         public bool[] isAnswersRight;
+        public Texture[] answersTexture;
 
+        public bool isNew; //флаг, является ли вопрос новым или происходит редактирование
         bool[] isFieldSet;
+
+        public int questionId;
+        public int[] answersId;
 
         public QuestionWithAnswersInfo()
         {
+            AllocateMemory();
+            isNew = true;
+        }
+
+        public QuestionWithAnswersInfo(ResponseQuestionWithAnswers question)
+        {
+            AllocateMemory();
+            answersId = new int[3];
+            isNew = false;
+
+            WWW www;            
+            int count = 0;            
+
+            isQuestionText = question.isText;
+            if (isQuestionText)
+                questionText = question.question;
+            else
+            {
+                questionText = "Вопрос в виде картинки";                
+                questionImagePath = question.question;
+
+                www = new WWW(questionImagePath);
+                while (!www.isDone) count++;             
+                questionTexture = www.texture; 
+            }
+            questionId = question.questionId;
+            isFieldSet[0] = true;
+
+            for (int i=0; i<3; i++)
+            {
+                isAnswersRight[i] = question.answers[i].isRightAnswer;
+                isAnswersTexts[i] = question.answers[i].isText;
+                if (isAnswersTexts[i])
+                    answersTexts[i] = question.answers[i].answer;
+                else
+                {
+                    answersTexts[i] = "Ответ в виде картинки";                    
+                    answersImagePath[i] = question.answers[i].answer;
+
+                    www = new WWW(answersImagePath[i]);
+                    while (!www.isDone) count++;
+                    answersTexture[i] = www.texture;
+                }
+                answersId[i] = question.answers[i].answerId;
+                isFieldSet[i+1] = true;
+            }         
+        }       
+
+        void AllocateMemory()
+        {
             answersTexts = new string[3];
-            answersImages = new string[3];
+            answersImagePath = new string[3];
             isAnswersTexts = new bool[3];
             isAnswersRight = new bool[3];
+            answersTexture = new Texture[3];
             isFieldSet = new bool[4];
         }
 
@@ -100,6 +157,22 @@ public class MenuTeacherTaskChange : MonoBehaviour
                 if (isAnswersRight[i]) return true;
             return false;
         }
+
+        public string GetQuestionString()
+        {
+            if (isQuestionText)
+                return questionText;
+            else
+                return questionImagePath;
+        }
+
+        public string GetAnswerString(byte num)
+        {
+            if (isAnswersTexts[num])
+                return answersTexts[num];
+            else
+                return answersImagePath[num];
+        }
     }
 
     private void Awake()
@@ -135,11 +208,42 @@ public class MenuTeacherTaskChange : MonoBehaviour
         {
             ButtonBack();
         });
+
+        buttonChoosePicture.GetComponent<Button>().onClick.AddListener(delegate
+        {
+            OpenExplorer();
+        });
+    }
+
+    static public Texture LoadTexture(string path)
+    {
+        WWW www = new WWW(path);
+        return www.texture;
+    }
+
+    private void OpenExplorer()
+    {        
+        OpenFileName openFileName = new OpenFileName();        
+        if (LocalDialog.GetOpenFileName(openFileName))
+        {
+            Texture t = LoadTexture(openFileName.file);
+            if (step == 0)
+            {
+                questionWithAnswersInfo.questionImagePath = openFileName.file;
+                questionWithAnswersInfo.questionTexture = t;
+            }
+            else
+            {
+                questionWithAnswersInfo.answersImagePath[step-1] = openFileName.file;
+                questionWithAnswersInfo.answersTexture[step-1] = t;
+            }
+            image.GetComponent<RawImage>().texture = t;
+        }        
     }
 
     private void ButtonBack()
     {
-        if (SaveFields())
+        if (SaveFields(false))
         {
             step--;
             RefreshFields();
@@ -149,7 +253,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
 
     private async void ButtonNext()
     {
-        if (SaveFields())
+        if (SaveFields(true))
         {
             if (step < 3)
             {
@@ -176,12 +280,11 @@ public class MenuTeacherTaskChange : MonoBehaviour
         }
     }
 
-    private async Task<bool> SaveToServer()
+    async Task<bool> NewQuestion()
     {
         int testId = this.gameObject.GetComponentInParent<MenuTeacherTasksEditor>().GetTestId();
-        //пока сохранение только текстовых
-        var responseQuestion = await QuestionService.createQuestion(jwt, testId, 
-            questionWithAnswersInfo.isQuestionText, questionWithAnswersInfo.questionText, 10);
+        var responseQuestion = await QuestionService.createQuestion(jwt, testId,
+            questionWithAnswersInfo.isQuestionText, questionWithAnswersInfo.GetQuestionString(), 10);
         if (responseQuestion.isError)
         {
             switch (responseQuestion.message)
@@ -192,19 +295,22 @@ public class MenuTeacherTaskChange : MonoBehaviour
                 case Message.CanNotPublishFile:
                     gl.ChangeMessageTemporary("Не удалось сделать файл вопроса публичным", 5);
                     break;
+                case Message.NotFoundRequiredData:
+                    gl.ChangeMessageTemporary("Не удалось загрузить файл вопроса. Попробуйте уменьшить размер файла", 10);
+                    break;
                 default:
                     gl.ChangeMessageTemporary(responseQuestion.message.ToString(), 5);
                     break;
-            }            
+            }
             return false;
         }
         else
         {
             Response<Answer> responseAnswer;
-            for (int i = 0; i < 3; i++)
-            {
+            for (byte i = 0; i < 3; i++)
+            {                
                 responseAnswer = await AnswerService.createAnswer(jwt, responseQuestion.data.questionId,
-                    questionWithAnswersInfo.answersTexts[i], questionWithAnswersInfo.isAnswersTexts[i], questionWithAnswersInfo.isAnswersRight[i]);
+                    questionWithAnswersInfo.GetAnswerString(i), questionWithAnswersInfo.isAnswersTexts[i], questionWithAnswersInfo.isAnswersRight[i]);
                 if (responseAnswer.isError)
                 {
                     switch (responseAnswer.message)
@@ -215,6 +321,9 @@ public class MenuTeacherTaskChange : MonoBehaviour
                         case Message.CanNotPublishFile:
                             gl.ChangeMessageTemporary("Не удалось сделать файл публичным (ответ " + (i + 1) + ")", 5);
                             break;
+                        case Message.NotFoundRequiredData:
+                            gl.ChangeMessageTemporary("Не удалось загрузить файл (ответ " + (i + 1) + "). Попробуйте уменьшить размер файла", 10);
+                            break;
                         default:
                             gl.ChangeMessageTemporary(responseAnswer.message.ToString(), 5);
                             break;
@@ -222,10 +331,75 @@ public class MenuTeacherTaskChange : MonoBehaviour
                     //если что-то пошло не так хотя бы с одним из ответов, удаляем тест
                     await QuestionService.delete(jwt, responseQuestion.data.questionId);
                     return false;
-                }                               
-            }
-            return true;
+                }
+            }            
         }
+        return true;
+    }
+
+    async Task<bool> EditQuestion()
+    {        
+        //пока сохранение только текстовых
+        var responseQuestion = await QuestionService.updateQuestion(jwt, questionWithAnswersInfo.questionId,
+                    questionWithAnswersInfo.isQuestionText, questionWithAnswersInfo.GetQuestionString(), 10);
+        if (responseQuestion.isError)
+        {
+            switch (responseQuestion.message)
+            {
+                case Message.CanNotLoadFile:
+                    gl.ChangeMessageTemporary("Не удалось загрузить файл вопроса", 5);
+                    break;
+                case Message.CanNotPublishFile:
+                    gl.ChangeMessageTemporary("Не удалось сделать файл вопроса публичным", 5);
+                    break;
+                case Message.NotFoundRequiredData:
+                    gl.ChangeMessageTemporary("Не удалось загрузить файл вопроса. Попробуйте уменьшить размер файла", 10);
+                    break;
+                default:
+                    gl.ChangeMessageTemporary(responseQuestion.message.ToString(), 5);
+                    break;
+            }
+            return false;
+        }
+        else
+        {
+            Response<Answer> responseAnswer;
+            for (byte i = 0; i < 3; i++)
+            {
+                Debug.Log("answer id: " + questionWithAnswersInfo.answersId[i]);
+                responseAnswer = await AnswerService.updateAnswer(jwt, questionWithAnswersInfo.answersId[i], questionWithAnswersInfo.questionId,
+                    questionWithAnswersInfo.GetAnswerString(i), questionWithAnswersInfo.isAnswersTexts[i], questionWithAnswersInfo.isAnswersRight[i]);                    
+                if (responseAnswer.isError)
+                {
+                    switch (responseAnswer.message)
+                    {
+                        case Message.CanNotLoadFile:
+                            gl.ChangeMessageTemporary("Не удалось загрузить файл (ответ " + (i + 1) + ")", 5);
+                            break;
+                        case Message.CanNotPublishFile:
+                            gl.ChangeMessageTemporary("Не удалось сделать файл публичным (ответ " + (i + 1) + ")", 5);
+                            break;
+                        case Message.NotFoundRequiredData:
+                            gl.ChangeMessageTemporary("Не удалось загрузить файл (ответ " + (i + 1) + "). Попробуйте уменьшить размер файла", 10);
+                            break;
+                        default:
+                            gl.ChangeMessageTemporary(responseAnswer.message.ToString(), 5);
+                            break;
+                    }                    
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private async Task<bool> SaveToServer()
+    {
+        gl.ChangeMessageTemporary("Ждите...", 30);
+        if (questionWithAnswersInfo.isNew)
+            return await NewQuestion();
+        else
+            return await EditQuestion();
     }
 
     private void ToggleTextOrPictureChanged()
@@ -243,13 +417,13 @@ public class MenuTeacherTaskChange : MonoBehaviour
         SetFieldsContent();
     }
 
-    private bool SaveFields()
+    private bool SaveFields(bool mandatoryInput)
     {
         if (toggleTextOrPicture.isOn)
         {
             //текстовый ввод
             string input = inputText.transform.GetComponent<InputField>().text;
-            if (input == "")
+            if (mandatoryInput && input == "")
             {
                 gl.ChangeMessageTemporary("Введите текст, чтобы продолжить", 5);
                 return false;
@@ -264,9 +438,8 @@ public class MenuTeacherTaskChange : MonoBehaviour
         }
         else
         {
-            //ввод в формате картинки
-            string input = inputText.transform.GetComponent<InputField>().text;
-            if (false)
+            //ввод в формате картинки            
+            if (mandatoryInput && image.GetComponent<RawImage>().texture == null)
             {
                 gl.ChangeMessageTemporary("Загрузите изображение, чтобы продолжить", 5);
                 return false;
@@ -315,8 +488,9 @@ public class MenuTeacherTaskChange : MonoBehaviour
                 //вопрос
                 toggleTextOrPicture.isOn = questionWithAnswersInfo.isQuestionText;
                 inputText.transform.GetComponent<InputField>().text = questionWithAnswersInfo.questionText;
-                //возвращение текстуры
-                
+                image.GetComponent<RawImage>().texture = questionWithAnswersInfo.questionTexture;
+
+
             }
             else
             {
@@ -324,7 +498,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
                 toggleTextOrPicture.isOn = questionWithAnswersInfo.isAnswersTexts[step - 1];
                 toggleCheckRightAnswer.isOn = questionWithAnswersInfo.isAnswersRight[step - 1];
                 inputText.transform.GetComponent<InputField>().text = questionWithAnswersInfo.answersTexts[step - 1];
-                //возвращение текстуры
+                image.GetComponent<RawImage>().texture = questionWithAnswersInfo.answersTexture[step - 1];
             }         
         }
         else
@@ -333,7 +507,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
             toggleTextOrPicture.isOn = true;
             toggleCheckRightAnswer.isOn = false;
             inputText.transform.GetComponent<InputField>().text = "";
-            //возвращение текстуры
+            image.GetComponent<RawImage>().texture = null;
         }        
     }
 }
