@@ -16,10 +16,13 @@ public class List_element_admin : MonoBehaviour
     [SerializeField] private Button m_ActionButton;
     [Space]
     [SerializeField] private string m_SomeId;
+    [Space]
+    [SerializeField] private Image m_image;
 
     public void SetSomeId(string someId) => this.m_SomeId = someId;
     public string GetSomeId() => this.m_SomeId;
     public void SetTitle(string title) => m_title.text=title;
+    public void SetImage(Sprite image) => m_image.sprite = image;
     public void SetDescription(string description) => m_description.text = description;
     public float Width() => m_transform.rect.width;
     public float Height() => m_transform.rect.height;
