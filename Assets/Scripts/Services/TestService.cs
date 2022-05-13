@@ -305,4 +305,26 @@ public static class TestService
         var result = await httpClient.Get<List<ResponseStudentTestResult>>(url);
         return result;
     }
+
+    /// <summary>
+    /// Получение максимального количества очков за тест
+    /// </summary>
+    /// <param name="jwt">Токен</param>
+    /// <param name="_testId">Идентификатор теста</param>
+    /// <returns></returns>
+    public async static Task<Response<int>> getMaxScoresForTestByTestId(string jwt, int _testId)
+    {
+        // Задаем URL
+        string url = "https://educationalquest.herokuapp.com/test/getMaxScoresForTestByTestId?testId=" + _testId;
+        // Инициализируем http client
+        var httpClient = new HttpClient(new JsonSerializationOption());
+        // Устанавливаем заголовки
+        httpClient.headers = new List<Header>()
+        {
+            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+        };
+        // Отправляем запрос и ждем ответа
+        var result = await httpClient.Get<int>(url);
+        return result;
+    }
 }
