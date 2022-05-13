@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Key_appearance : MonoBehaviour
 {
+    /*
     private Key parentKey;
     CsGlobals gl;
     
@@ -42,4 +43,5 @@ public class Key_appearance : MonoBehaviour
             playerIsCloseEnough = false;
         }
     }
+    */
 }

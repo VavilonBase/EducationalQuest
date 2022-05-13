@@ -125,12 +125,4 @@ public class Player_answer : MonoBehaviour
         }  
         */
     }
-
-    private byte Check_rank(int points)
-    {
-        if (points < 10) return 0;
-        if (points < 30) return 1;        
-        if (points >= 30 + 40 * (gl.playerInfo.cur_rank - 1)) return (byte)(gl.playerInfo.cur_rank + 1);
-        else return gl.playerInfo.cur_rank;
-    }
 }

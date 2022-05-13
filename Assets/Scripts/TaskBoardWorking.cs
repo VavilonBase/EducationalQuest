@@ -5,6 +5,7 @@ using TMPro;
 
 public class TaskBoardWorking : MonoBehaviour
 {
+    
     private CsGlobals gl;
     public byte boardNum;
     GameObject attachedFrontPlane;
@@ -23,6 +24,7 @@ public class TaskBoardWorking : MonoBehaviour
     
     public bool IsStandingOnPlatform { get { return isStandingOnPlatform; } set { isStandingOnPlatform = value; } }
     public bool IsAnswerUp { get { return isAnswerUp; } set { isAnswerUp = value; } }
+
 
     public void AttachMaterial(GameObject obj, Material mat)
     {
@@ -79,7 +81,7 @@ public class TaskBoardWorking : MonoBehaviour
             foreach (GameObject plate in attachedAnswerPlates) { plate.SetActive(false); }            
 
             thisBoardInformation.NumberOfCorrectAnswers = thisBoardInformation.CountRightAnswers();
-            gl.playerInfo.SetNumOfRightAnswers(thisBoardInformation.RoomNumber, thisBoardInformation.NumberOfCorrectAnswers);
+            //gl.playerInfo.SetNumOfRightAnswers(thisBoardInformation.RoomNumber, thisBoardInformation.NumberOfCorrectAnswers);
 
             if (!thisBoardInformation.KeyWasGiven && thisBoardInformation.NumberOfCorrectAnswers >= thisBoardInformation.NumberOfQuestions * 0.5)
             {
@@ -98,6 +100,7 @@ public class TaskBoardWorking : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        /*
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
         attachedKey = gl.key.GetComponent<Key>();
 
@@ -119,11 +122,13 @@ public class TaskBoardWorking : MonoBehaviour
         for (int i = 0; i < 3; i++) thisPlatesObjectMaterials[i] = new ObjectMaterials();
 
         WriteOnBoard("Добро пожаловать!\nВстань на платформу, чтобы начать!");
+        */
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*
         if (gl.RELOAD)
         {
             gl.RELOADcount++;
@@ -163,7 +168,7 @@ public class TaskBoardWorking : MonoBehaviour
                         WriteOnBoard("Верных ответов: 0.");
                         thisBoardInformation.OnlyMistakesMode = false;
                         thisBoardInformation.Restart();
-                        gl.playerInfo.SetNumOfRightAnswers(thisBoardInformation.RoomNumber, thisBoardInformation.NumberOfCorrectAnswers);
+                        //gl.playerInfo.SetNumOfRightAnswers(thisBoardInformation.RoomNumber, thisBoardInformation.NumberOfCorrectAnswers);
                     }
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
@@ -203,6 +208,7 @@ public class TaskBoardWorking : MonoBehaviour
                 AttachNextQandA();
             }
         }
-        
+        */        
     }
+    
 }

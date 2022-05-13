@@ -11,7 +11,7 @@ namespace Assets.Scripts.TaskScripts
         [Header("Components")]
         [SerializeField] private Transform _transform;
         [SerializeField] private RectTransform _contectRectTransform;
-        [SerializeField] private Text _listEmptyText;
+        //[SerializeField] private Text _listEmptyText;
 
         [Header("Settings")]
         [SerializeField] private List<GameObject> _elements;
@@ -27,7 +27,7 @@ namespace Assets.Scripts.TaskScripts
         public GameObject Add(GameObject element)
         {
             //Убираем текст _listEmptyText
-            _listEmptyText.gameObject.SetActive(false);
+            //_listEmptyText.gameObject.SetActive(false);
             //Создаем элемент
             GameObject createdElement = Instantiate(element, this._transform);
 
@@ -85,7 +85,7 @@ namespace Assets.Scripts.TaskScripts
             }
             //Изменяем высоту контента на 0
             this._contectRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0);
-            _listEmptyText.gameObject.SetActive(true);
+            //_listEmptyText.gameObject.SetActive(true);
         }
 
         void ChangeContentHeight(float changeHeight)

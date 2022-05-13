@@ -5,11 +5,10 @@ using UnityEngine;
 public class Door_open : MonoBehaviour
 {
     public byte numDoor;
-    private CsGlobals gl;
+    private bool isLocked = false;
 
-    public bool isLocked = false;
-    public int max_amplitude = 100;
-    //public GameObject textUI; // <- добавить в globals
+    /*
+    public int max_amplitude = 100;    
 
     private bool isOpen = false;
     private bool action = false;
@@ -21,21 +20,24 @@ public class Door_open : MonoBehaviour
     private float smoothing = 2f;
 
     private GameObject leaf;
+    */
+
     // Start is called before the first frame update
     void Start()
     {
-        gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
-        
+        /*
         leaf = transform.parent.transform.Find("rotation_point").gameObject;
 
         close_position = new Vector3(0, 0, 0);
         open_position = new Vector3(0, max_amplitude, 0);
-        cur_position = leaf.transform.localEulerAngles;         
+        cur_position = leaf.transform.localEulerAngles;     
+        */
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*
         if (use_key && Input.GetKeyDown(KeyCode.F))
         {
             isLocked = false;
@@ -60,10 +62,12 @@ public class Door_open : MonoBehaviour
             leaf.transform.localEulerAngles = cur_position;
             if (cur_position == close_position) action = false;
         }
+        */
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        /*
         if (gl.playerInfo.roomsOpen[numDoor] == true) isLocked = false;
         else isLocked = true;
 
@@ -81,10 +85,12 @@ public class Door_open : MonoBehaviour
             }
             else gl.PrintLabel("Дверь заперта. Нужен ключ");
         }
+        */
     }
 
     private void OnTriggerExit(Collider other)
     {
+        /*
         if (!isLocked)
         {
             isOpen = false;
@@ -92,5 +98,6 @@ public class Door_open : MonoBehaviour
         }
         use_key = false;
         gl.HideLabel();
+        */
     }
 }
