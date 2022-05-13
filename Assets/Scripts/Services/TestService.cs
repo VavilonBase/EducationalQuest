@@ -293,7 +293,7 @@ public static class TestService
     public async static Task<Response<List<ResponseStudentTestResult>>> getAllResultsTestsForStudents(string jwt, int _testId)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/test/getAllResultsTestForStudent?testId=" + _testId;
+        string url = "https://educationalquest.herokuapp.com/test/getAllResultsTestForStudents?testId=" + _testId;
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
