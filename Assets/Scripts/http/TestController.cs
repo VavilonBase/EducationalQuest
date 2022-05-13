@@ -378,4 +378,19 @@ public class TestController : MonoBehaviour
             Debug.Log(response.data.question);
         }
     }
+
+    [ContextMenu("Получение максимального количества очков за тест")]
+    public async void getMaxScoresTest()
+    {
+        var response = await TestService.getMaxScoresForTestByTestId("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYW55LXNpdGUub3JnIiwiYXVkIjoiaHR0cDovL2FueS1zaXRlLmNvbSIsImV4cCI6MTY1MjQ1MzU3MiwiaWF0IjoxMzU2OTk5NTI0LCJuYmYiOjEzNTcwMDAwMDAsImRhdGEiOnsiaWQiOjg1LCJmaXJzdE5hbWUiOiJcdTA0MTBcdTA0NDBcdTA0NDJcdTA0MzVcdTA0M2MiLCJsYXN0TmFtZSI6Ilx1MDQxNVx1MDQzYlx1MDQ0Y1x1MDQzNFx1MDQzNVx1MDQzZFx1MDQzNVx1MDQzMiIsImxvZ2luIjoic2RzZCIsInJvbGUiOiJURUFDSEVSIiwiaXNBY3RpdmF0ZWQiOnRydWV9fQ.HVeY7W3ZZUih8FRj50R9R1HeseKVI1dQgxYBzxxxbVk",
+            46);
+        if (response.isError)
+        {
+            Debug.Log(response.message);
+        }
+        else
+        {
+            Debug.Log($"{response.data}");
+        }
+    }
 }
