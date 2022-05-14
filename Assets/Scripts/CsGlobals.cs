@@ -35,17 +35,10 @@ public class CsGlobals : MonoBehaviour
     public GameObject messageTemporary; //временно появляющаяся табличка (внизу)
     public GameObject menuStart;
 
-    public TaskBoardInformation[] boardsInfo;
+    
     public bool RELOAD = false;
     public byte RELOADcount = 0;
-
-    private int questionsCount = 30;
-    public int QuestionsCount { get { return questionsCount; } }
-    public void RefreshQuestionsCount()
-    {
-        questionsCount = 0;
-        for (byte i = 0; i < boardsInfo.Length; i++) questionsCount += boardsInfo[i].NumberOfQuestions;
-    }
+ 
 
     //public int rooms = 3; // количество доступных в игре комнат с вопросами
     //public int max_answers = 30; // максимально возможное число ответов

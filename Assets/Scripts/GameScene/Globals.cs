@@ -29,7 +29,7 @@ public static class DataHolder
 public class Globals : MonoBehaviour
 {
     string jwt;
-    List<GameObject> classes;
+    List<Class> classes;
     
     private async void Awake()
     {
@@ -38,8 +38,11 @@ public class Globals : MonoBehaviour
             //настройка глобальных данных        
             DataHolder.MessageTemporary = this.transform.Find("Canvas").Find("Message_Temporary").gameObject;
             jwt = DataHolder.PlayerInfo.responseUserData.jwt;
+
+            //ищем все комнаты и приклепляем к ним классы, сохраняем
+            classes = new List<Class>();
             for (int i = 0; i < 8; i++)
-                classes.Add(this.transform.Find("school").Find("Class" + (i + 1)).gameObject);
+                classes.Add(this.transform.Find("school").Find("Class" + (i + 1)).gameObject.AddComponent<Class>());                         
 
             //настройка сцены в зависимости от групп ученика
             var response = await GroupService.getStudentGroups(jwt);
@@ -59,10 +62,8 @@ public class Globals : MonoBehaviour
             {
                 for (int i = 0; i < response.data.Count && i < 8; i++)
                 {
-                    DataHolder.PlayerInfo.roomsOpen[i] = true;
-                    
-                    DataHolder.PlayerInfo.roomsTitle[i] = response.data[i].title;
-                    DataHolder.PlayerInfo.roomsGroupID[i] = response.data[i].groupId;
+                    //если комната открыта, загружаем полученную информацию
+                    classes[i].AssignInformation(response.data[i].title, response.data[i].groupId);
                 }
             }
             DataHolder.ChangeMessageTemporary("Начало положено");
