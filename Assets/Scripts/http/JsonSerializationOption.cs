@@ -6,7 +6,7 @@ public class JsonSerializationOption : ISerializationOption
 {
     // Заголовок Content-Type
     public string ContentType => "application/json";
-    // Перевод текста в объект
+    // Преобразование текста в формате JSON в объект
     public T Deserialize<T>(string text)
     {
         try
@@ -22,6 +22,7 @@ public class JsonSerializationOption : ISerializationOption
         }
     }
 
+    // Преобразование объекта, определенного типа в строку формата JSON
     public string Serialize<T>(T data)
     {
         try

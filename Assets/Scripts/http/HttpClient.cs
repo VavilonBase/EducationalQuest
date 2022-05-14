@@ -8,6 +8,7 @@ public class HttpClient
 {
     // Интерфейс для сериализации данных
     private readonly ISerializationOption _serializationOption;
+    // Список заголовков, необходимых добавить к запросу
     public List<Header> headers { get; set; }
 
     // Конструктор
@@ -143,7 +144,7 @@ public class HttpClient
         }
     }
 
-    // POST запрос
+    // POST запрос c возможностью добавления медиа-файлов
     public async Task<Response<TResultType>> PostMultipart<TResultType>(List<IMultipartFormSection> data, string url)
     {
         try
