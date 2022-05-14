@@ -326,7 +326,7 @@ MonoBehaviour:
   _title: {fileID: 8819546074165697011}
   _editBtn: {fileID: 8819546073841818928}
   _deleteBtn: {fileID: 8819546074599102172}
-  _taskListManager: {fileID: 0}
+  _parentManager: {fileID: 0}
 --- !u!1 &8819546074044858034
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,8 +440,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -380, y: 146}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: -0.000021219, y: 155.84}
+  m_SizeDelta: {x: 955.5283, y: 70.327}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8819546074165697010
 CanvasRenderer:
@@ -473,17 +473,17 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 31898104b81321a4ab30de388fe27c27, type: 3}
-    m_FontSize: 40
+    m_FontSize: 25
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 4
+    m_MinSize: 2
     m_MaxSize: 40
     m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1
+    m_LineSpacing: 1.2
   m_Text: "\u0412\u043E\u043F\u0440\u043E\u0441 1"
 --- !u!1 &8819546074240403483
 GameObject:

@@ -90,7 +90,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
     {
         selectedGroup = -1;
         selectedTest = -1;
-        ChangeTextStatus();
+        //ChangeTextStatus();
         UpdateGroupsList();
         UpdateTestsList();
     }

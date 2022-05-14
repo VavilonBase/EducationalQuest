@@ -5,6 +5,7 @@ using TMPro;
 
 public class Progress : MonoBehaviour
 {
+    /*
     CsGlobals gl;
 
     private GameObject textPoints;
@@ -25,4 +26,5 @@ public class Progress : MonoBehaviour
         textProgress.GetComponent<TextMeshProUGUI>().text = "Прогресс: " + gl.playerInfo.NumRightAnswersTotal + " из " + gl.QuestionsCount;
         //textRank.GetComponent<TextMeshProUGUI>().text = "Звание: " + gl.ranks[gl.playerInfo.cur_rank];
     }
+    */
 }

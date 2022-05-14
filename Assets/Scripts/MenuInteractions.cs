@@ -76,10 +76,11 @@ public class MenuInteractions : MonoBehaviour
         else
         {
             gl.playerInfo.responseUserData = response.data;
-            Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);
+            Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);            
 
             gl.ChangeMessageDurable(true, "Здравствуй, " + gl.playerInfo.responseUserData.user.firstName);
             gl.playerInfo.isAuthorized = true;
+            DataHolder.PlayerInfo = gl.playerInfo;
             SelectWorkingMenu(gl.playerInfo.responseUserData.user.role);
         }
     }

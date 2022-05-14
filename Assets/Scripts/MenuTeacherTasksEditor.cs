@@ -4,6 +4,7 @@ using UnityEngine;
 using Assets.Scripts.TaskScripts;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using System;
 
 public class MenuTeacherTasksEditor : MonoBehaviour
 {
@@ -17,10 +18,14 @@ public class MenuTeacherTasksEditor : MonoBehaviour
     private List<ResponseQuestionForTest> questions;
 
     private GameObject menuTasksList;
-    private GameObject menuAddTask;
-    private GameObject menuEditTask;
+    private GameObject menuAddTask;    
+    private GameObject menuRenameTest;
 
     private GameObject buttonCreateTask;
+    private GameObject buttonChangeTestName;    
+
+    private Text textTestTitle;
+    private InputField inputNewTestTitle;
 
     [Header("Components")]
     [SerializeField] private TaskListView m_ListViewTasksList;
@@ -35,21 +40,44 @@ public class MenuTeacherTasksEditor : MonoBehaviour
 
         menuTasksList = this.transform.Find("UI Task List").gameObject;
         menuAddTask = this.transform.Find("UI Task Add").gameObject;
-        menuEditTask = this.transform.Find("UI Task Edit").gameObject;
+        menuRenameTest = this.transform.Find("menuRenameTest").gameObject;
 
-        buttonCreateTask = menuTasksList.transform.Find("Add New Task Btn").gameObject;
-        buttonCreateTask.GetComponent<Button>().onClick.AddListener(delegate
-        {
-            AddTask();
-        });    
+        buttonCreateTask = menuTasksList.transform.Find("Add New Task Btn").gameObject;        
+        buttonChangeTestName = menuRenameTest.transform.Find("Rename").gameObject;
+
+        textTestTitle = menuTasksList.transform.Find("textTitle").GetComponent<Text>();
+        inputNewTestTitle = menuRenameTest.transform.Find("InputField").GetComponent<InputField>();
+
+        buttonCreateTask.GetComponent<Button>().onClick.AddListener(delegate { AddTask(); });
+        buttonChangeTestName.GetComponent<Button>().onClick.AddListener(delegate { ChangeTestName(); });
     }
-
+    
     private void OnEnable()
     {
         group = parentInfo.GetSelectedGroup();
         test = parentInfo.GetSelectedTest();
+        textTestTitle.text = "Редактор теста \"" + test.title + "\"";
 
         UpdateQuestionsList();
+    }
+
+    private async void ChangeTestName()
+    {
+        string newTitle = inputNewTestTitle.text;
+        if (newTitle == "")
+            gl.ChangeMessageTemporary("Введите новое название теста", 5);
+        else
+        {
+            var response = await TestService.update(jwt, test.testId, newTitle, test.canViewResults);
+            if (response.isError)
+                gl.ChangeMessageTemporary(response.message.ToString(), 5);
+            else
+            {
+                textTestTitle.text = "Редактор теста \"" + newTitle + "\"";
+                menuRenameTest.SetActive(false);
+                gl.ChangeMessageTemporary("Название успешно обновлено", 5);
+            }              
+        }        
     }
 
     async Task<List<ResponseQuestionForTest>> GetQuestionsList()

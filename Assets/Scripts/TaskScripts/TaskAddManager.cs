@@ -23,7 +23,7 @@ public class TaskAddManager : MonoBehaviour
     [Header("Task Manager")]
     [SerializeField] private TaskManager _taskManager;
 
-    private TaskBoardInformation _taskBoardInformation;
+    //private TaskBoardInformation _taskBoardInformation;
     private CsGlobals _globalOptions;
     private Dropdown _directionDropdown; //Выпадающее поле для выбора направления
     private byte _step = 0; //Этап на котором сейчас находится добавление
@@ -186,6 +186,7 @@ public class TaskAddManager : MonoBehaviour
                 }
             }
             byte rightAnswer = this.GetRightAnswer();
+            /*
             if (this._taskBoardInformation != null)
             {
                 if (!this._taskBoardInformation.AddQuestion(rightAnswer))
@@ -193,6 +194,7 @@ public class TaskAddManager : MonoBehaviour
                     Debug.Log("Нифига не добавилось!");
                 }
             }
+            */
             ViewTaskList();
         }
         else
@@ -374,17 +376,17 @@ public class TaskAddManager : MonoBehaviour
             case "Механика":
                 pathFolder = Application.dataPath + "/Resources/Mechanics";
                 if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
-                this._taskBoardInformation = this._globalOptions.boardsInfo[0];
+                //this._taskBoardInformation = this._globalOptions.boardsInfo[0];
                 break;
             case "Молекулярная физика":
                 pathFolder = Application.dataPath + "/Resources/Molecular";
                 if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
-                this._taskBoardInformation = this._globalOptions.boardsInfo[2];
+                //this._taskBoardInformation = this._globalOptions.boardsInfo[2];
                 break;
             case "Электричество":
                 pathFolder = Application.dataPath + "/Resources/Electricity";
                 if (!Directory.Exists(pathFolder)) Directory.CreateDirectory(pathFolder);
-                this._taskBoardInformation = this._globalOptions.boardsInfo[1];
+                //this._taskBoardInformation = this._globalOptions.boardsInfo[1];
                 break;
             default:
                 pathFolder = "";

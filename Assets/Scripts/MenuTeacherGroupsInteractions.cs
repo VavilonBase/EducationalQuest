@@ -184,18 +184,21 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
         listStudentsInGroup = await GetGroupStudentsList();
         if (listStudentsInGroup != null)
         {
+            int studentId;
             for (int i=0; i < listStudentsInGroup.Count; i++)
             {
                 GameObject element = m_ListViewGroupContent.Add(m_PrefabGroupContent);
 
                 List_element_admin elementMeta = element.GetComponent<List_element_admin>();
                 elementMeta.SetTitle(i + 1 + ". " + listStudentsInGroup[i].lastName + " " + listStudentsInGroup[i].firstName + " " + listStudentsInGroup[i].middleName);
-                
+
                 //string id_button = listStudentsInGroup[i].userId.ToString();              
                 //elementMeta.SetSomeId(id_button);
+                
+                studentId = listStudentsInGroup[i].userId;
 
                 Button actionButton = elementMeta.GetActionButton();
-                actionButton.onClick.AddListener( delegate { ExcludeStudentYesNo(listStudentsInGroup[i].userId); } );
+                actionButton.onClick.AddListener( delegate { ExcludeStudentYesNo(studentId); } );
                 actionButton.gameObject.SetActive(true);                    
             }
         }
@@ -203,6 +206,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
 
     private void ExcludeStudentYesNo(int studentId)
     {
+        Debug.Log("Student ID: " + studentId);
         bufStudentIdToExclude = studentId;
         menuExcludeStudentYesNo.SetActive(true);
     }
