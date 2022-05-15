@@ -227,7 +227,7 @@ public static class TestService
     /// NotFoundRequiredData
     /// NotFoundResult
     /// </returns>
-    public async static Task<Response<List<ResponseTestWithQuestion>>> getStudentTestResult(string jwt, int _studentId, int _testId)
+    public async static Task<Response<List<Result>>> getStudentTestResult(string jwt, int _studentId, int _testId)
     {
         // Задаем URL
         string url = "https://educationalquest.herokuapp.com/test/getStudentTestResult?studentId=" + _studentId + "&testId=" + _testId;
@@ -239,7 +239,7 @@ public static class TestService
             new Header() {name = "Authorization", value=$"Bearer {jwt}"}
         };
         // Отправляем запрос и ждем ответа
-        var result = await httpClient.Get<List<ResponseTestWithQuestion>>(url);
+        var result = await httpClient.Get<List<Result>>(url);
         return result;
     }
 
