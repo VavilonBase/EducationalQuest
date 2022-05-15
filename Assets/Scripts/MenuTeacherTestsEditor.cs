@@ -23,11 +23,13 @@ public class MenuTeacherTestsEditor : MonoBehaviour
     private GameObject buttonCreateTest;
     private GameObject buttonYesCreateTest;
     private GameObject buttonChangeStatus;
+    private GameObject buttonChangeCanViewRes;
     private GameObject buttonEditTest;
     private GameObject buttonDeleteTest;
     private GameObject buttonYesDeleteTest;
 
-    private InputField textStatus;
+    private GameObject textStatus;
+    private GameObject textCanViewRes;
     private InputField inputCreateTestTitle;
 
     private int selectedGroup;
@@ -50,6 +52,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         ddTests = menuTestsEditor.transform.Find("DropdownTests").GetComponent<Dropdown>();
 
         buttonChangeStatus = menuTestsEditor.transform.Find("ButtonChangeStatus").gameObject;
+        buttonChangeCanViewRes = menuTestsEditor.transform.Find("ButtonChangeCanViewRes").gameObject;
         buttonEditTest = menuTestsEditor.transform.Find("ButtonEditTest").gameObject;
         buttonCreateTest = menuTestsEditor.transform.Find("ButtonCreateTest").gameObject;
         buttonDeleteTest = menuTestsEditor.transform.Find("ButtonDeleteTest").gameObject;
@@ -59,15 +62,15 @@ public class MenuTeacherTestsEditor : MonoBehaviour
 
         inputCreateTestTitle = menuCreateTest.transform.Find("TestName").GetComponent<InputField>();
 
-        textStatus = menuTestsEditor.transform.Find("TextStatus").GetComponent<InputField>();
+        textStatus = menuTestsEditor.transform.Find("TextStatus").gameObject;
+        textCanViewRes = menuTestsEditor.transform.Find("TextCanViewRes").gameObject;
 
         ddGroups.onValueChanged.AddListener(delegate {
             DropdownGroupsValueChanged();            
         });        
 
         ddTests.onValueChanged.AddListener(delegate {            
-            DropdownTestsValueChanged();
-            ChangeTextStatus();
+            DropdownTestsValueChanged();            
         });        
 
         buttonYesCreateTest.GetComponent<Button>().onClick.AddListener(delegate
@@ -83,7 +86,12 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         buttonChangeStatus.GetComponent<Button>().onClick.AddListener(delegate
         {
             ChangeStatus();
-        });     
+        });
+
+        buttonChangeCanViewRes.GetComponent<Button>().onClick.AddListener(delegate
+        {
+            ChangeCanViewRes();
+        });
     }    
 
     void OnEnable()
@@ -164,9 +172,6 @@ public class MenuTeacherTestsEditor : MonoBehaviour
     private async void UpdateTestsList()
     {
         ddTests.ClearOptions();
-        buttonEditTest.SetActive(false);
-        buttonDeleteTest.SetActive(false);
-        buttonChangeStatus.SetActive(false);
         if (selectedGroup >= 0)
         {
             listTests = await GetTestsList(listGroups[selectedGroup].groupId);
@@ -181,7 +186,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
             }
         }
         selectedTest = -1;
-        ChangeTextStatus();
+        DropdownTestsValueChanged();
     }
 
     async void CreateTest()
@@ -192,7 +197,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
             gl.ChangeMessageTemporary("Введите название теста", 5);
         else
         {
-            var response = await TestService.create(jwt, listGroups[selectedGroup].groupId, title, true);
+            var response = await TestService.create(jwt, listGroups[selectedGroup].groupId, title, false);
 
             if (response.isError)
                 gl.ChangeMessageTemporary(response.message.ToString(), 5);
@@ -234,12 +239,23 @@ public class MenuTeacherTestsEditor : MonoBehaviour
                     gl.ChangeMessageTemporary(response.message.ToString(), 5);
                 else
                 {
-                    listTests[selectedTest] = response.data;
-                    ChangeTextStatus();
+                    listTests[selectedTest] = response.data;                    
                     DropdownTestsValueChanged();
                 }
             }
         }        
+    }
+
+    async void ChangeCanViewRes()
+    {
+        var response = await TestService.update(jwt, listTests[selectedTest].testId, listTests[selectedTest].title, !listTests[selectedTest].canViewResults);
+        if (response.isError)
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        else
+        {
+            listTests[selectedTest] = response.data;            
+            DropdownTestsValueChanged();
+        }
     }
 
     void ChangeTextStatus()
@@ -247,13 +263,14 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         Debug.Log("SelectedTest"+selectedTest);
         if (selectedTest >= 0)
         {
-            if (listTests[selectedTest].isOpened)
-                textStatus.text = "Открыт";
-            else
-                textStatus.text = "Закрыт";
+            textStatus.GetComponent<InputField>().text = listTests[selectedTest].isOpened ? "Открыт" : "Закрыт";
+            textCanViewRes.GetComponent<InputField>().text = listTests[selectedTest].canViewResults ? "Ответы ВИДНО" : "Ответы НЕ ВИДНО";
         }
         else
-            textStatus.text = "Статус";
+        {
+            textStatus.GetComponent<InputField>().text = "Статус";
+            textCanViewRes.GetComponent<InputField>().text = "---";
+        }            
     }
 
     async void DeleteTest()
@@ -298,14 +315,22 @@ public class MenuTeacherTestsEditor : MonoBehaviour
                 buttonEditTest.GetComponent<Button>().interactable = true;
                 buttonDeleteTest.GetComponent<Button>().interactable = true;
             }              
-            buttonChangeStatus.SetActive(true);            
+            
+            buttonChangeStatus.SetActive(true);
+            buttonChangeCanViewRes.SetActive(true);
+            textStatus.SetActive(true);
+            textCanViewRes.SetActive(true);
         }
         else
         {
             buttonEditTest.SetActive(false);
             buttonDeleteTest.SetActive(false);
             buttonChangeStatus.SetActive(false);
+            buttonChangeCanViewRes.SetActive(false);
+            textStatus.SetActive(false);
+            textCanViewRes.SetActive(false);
         }
+        ChangeTextStatus();
     }
 
     public Group GetSelectedGroup()
