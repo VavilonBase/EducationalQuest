@@ -25,6 +25,7 @@ public class Board : MonoBehaviour
     Material defaultPlateMaterial;
 
     List<Test> tests;
+    List<bool> testsCheckIfResultExists;
     ResponseTestWithQuestion testWithQuestion;
 
     private int boardMode;
@@ -32,6 +33,7 @@ public class Board : MonoBehaviour
     public bool IsStandingOnThePlatform { set { isStandingOnThePlatform = value; } get { return isStandingOnThePlatform; } }
     private bool isWaitingAction; // --- ожидается ли действие (выбор таблички) со стороны игрока
     private int cursor;
+    private List<int> chosenAnswers;
 
     private void Awake()
     {
@@ -61,12 +63,18 @@ public class Board : MonoBehaviour
         if (response.data != null)
         {
             tests = new List<Test>();
+            testsCheckIfResultExists = new List<bool>();
             foreach (Test t in response.data)
+            {
                 if (t.isOpened) tests.Add(t);
+                var checkResult = await TestService.getStudentTestResult(jwt, DataHolder.PlayerInfo.responseUserData.user.userId, t.testId);
+                testsCheckIfResultExists.Add(!checkResult.isError);
+            }
+                
             if (tests.Count > 0)
             {
-                SwitchModeTo(1); // выбор теста
                 WriteOnBoard(Info.text, "Доступных тестов: " + tests.Count + "\nВстань на платформу, чтобы начать");
+                SwitchModeTo(1); // выбор теста
                 return;
             }
         }
@@ -178,6 +186,12 @@ public class Board : MonoBehaviour
                 case 3:
                     DataHolder.ChangeMessageTemporary("Используй таблички, чтобы выбрать правильный ответ");
                     break;
+                ///сброс
+                case 666:
+                    DataHolder.ChangeMessageTemporary("Нажми F, чтобы перезагрузить доску");
+                    if (Input.GetKeyDown(KeyCode.F))
+                        Reset_MODE();
+                    break;
                 default:
                     break;
             }
@@ -191,6 +205,11 @@ public class Board : MonoBehaviour
                 case 2:
                     if (Input.GetKeyDown(KeyCode.F))
                         ChooseTest_CHECK();
+                    break;
+                // последовательный выбор ответов
+                case 3:
+                    if (Input.GetKeyDown(KeyCode.F))
+                        ShowQuestion_CHECK();
                     break;
                 default:
                     break;
@@ -220,8 +239,14 @@ public class Board : MonoBehaviour
                 break;
             case 3:
                 boardMode = 3;
+                chosenAnswers = new List<int>();
                 ShowAllPlates();
                 isWaitingAction = true;
+                break;
+            case 666:
+                boardMode = 666;
+                HideAllPlates();
+                isWaitingAction = false;
                 break;
             default:
                 boardMode = 0;
@@ -248,7 +273,8 @@ public class Board : MonoBehaviour
         if (cursor < 0) cursor = tests.Count - 1;
         if (cursor >= tests.Count) cursor = 0;
 
-        WriteOnBoard(Info.text, tests[cursor].title + "\nНачать?");
+        string addString = testsCheckIfResultExists[cursor]? "\nТест уже пройден" : "\nТест не пройден";
+        WriteOnBoard(Info.text, tests[cursor].title + addString + "\nНачать?");
     }
 
     async Task<bool> LoadTestQuestions()
@@ -258,18 +284,78 @@ public class Board : MonoBehaviour
         {
             testWithQuestion = response.data;            
             return true;
-        }
-
-        WriteOnBoard(Info.text, "Упс, что-то пошло не так");
-        SwitchModeTo(1);
+        }        
         return false;
     }
 
     void ShowQuestion()
     {
         //загрузка вопроса на доску и ответов на таблички
-        Debug.Log(testWithQuestion.questions[cursor].question);
+        Info info = testWithQuestion.questions[cursor].isText ? Info.text : Info.image;
+        WriteOnBoard(info, testWithQuestion.questions[cursor].question);
 
+        for (byte i=0; i<3; i++)
+        {
+            info = testWithQuestion.questions[cursor].answers[i].isText ? Info.text : Info.image;
+            WriteOnPlate(i, info, testWithQuestion.questions[cursor].answers[i].answer);
+        }
+    }
+
+    void ShowQuestion_CHECK()
+    {
+        bool check = false;
+        byte i = 0;
+        while (!check && i < 3)
+        {
+            if (attachedAnswerPlates_UpBlocks[i].IsPlateUp)
+            {
+                chosenAnswers.Add(i);
+                check = true;
+            }
+            i++;   
+        }
+        if (check)
+        {
+            cursor++;
+            if (cursor == testWithQuestion.questions.Count)
+                FinishTest(); // даны ответы на все вопросы, завершить тест
+            else ShowQuestion(); // показать следующий вопрос
+        }        
+    }
+
+    async void FinishTest()
+    {        
+        if (chosenAnswers.Count == testWithQuestion.questions.Count)
+        {
+            List<AnswerResultQuestionDto> answers = new List<AnswerResultQuestionDto>();
+            for (byte i = 0; i < testWithQuestion.questions.Count; i++)
+                answers.Add(new AnswerResultQuestionDto(testWithQuestion.questions[i].questionId, testWithQuestion.questions[i].answers[chosenAnswers[i]].answerId));
+
+            var response = await ResultService.createResult(jwt, testWithQuestion.testId, answers);
+            if (response.isError)
+            {
+                switch (response.message)
+                {
+                    case Message.AccessDenied:
+                        WriteOnBoard(Info.text, "Тест закрыт, невозможно отправить ответы");                        
+                        break;
+                    default:
+                        Debug.LogError(response.message.ToString());
+                        break;
+                }                
+            }
+            else
+            {
+                var maxScores = await TestService.getMaxScoresForTestByTestId(jwt, testWithQuestion.testId);
+                WriteOnBoard(Info.text, "Результат теста: " + response.data.totalScores + " баллов из " + maxScores?.data);                
+            }
+        }
+        else
+        {
+            WriteOnBoard(Info.text, "Упс, что-то пошло не так");
+            Debug.Log("chosenAnswers: " + chosenAnswers.Count + "/" + testWithQuestion.questions.Count);            
+        }
+        SwitchModeTo(666);
     }
 
     async void ChooseTest_CHECK()
@@ -284,7 +370,12 @@ public class Board : MonoBehaviour
                 cursor = 0;
                 ShowQuestion();
                 SwitchModeTo(3);
-            }            
+            }
+            else
+            {
+                WriteOnBoard(Info.text, "Упс, что-то пошло не так");
+                SwitchModeTo(666);                
+            }                
             return;
         }
 
@@ -295,5 +386,11 @@ public class Board : MonoBehaviour
         if (attachedAnswerPlates_UpBlocks[2].IsPlateUp)
             cursor++;
         ShowTestInfoOnBoard();
+    }
+
+    void Reset_MODE()
+    {
+        // ждём ОК и перезагружаемся
+        LoadGroupTests(groupID); //перезагрузить тесты группы
     }
 }
