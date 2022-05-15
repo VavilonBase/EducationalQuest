@@ -183,12 +183,41 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
 
     async void ShowGroupResults()
     {
-        Debug.Log("It's working");
+        m_ListViewGroupResults.CleanList();
+        //m_PrefabGroupResults
+
+        Response<List<Result>> response;
+        //List<Result> results;
+
+        //results = new List<Result>();
+
+        int count = 0;
+        for (int i = 0; i < listTests.Count; i++)
+        {                        
+            //проверить наличие результатов по каждому тесту и вывести, если имеются
+            response = await TestService.getStudentTestResult(gl.playerInfo.responseUserData.jwt, gl.playerInfo.responseUserData.user.userId, listTests[i].testId);
+            if (!response.isError)
+            {
+                var maxScores = await TestService.getMaxScoresForTestByTestId(gl.playerInfo.responseUserData.jwt, listTests[i].testId);
+                foreach (Result res in response.data)
+                {
+                    Debug.Log("РЕЗУЛЬТАТ НАЙДЕН (тест" + listTests[i].title + ")");
+                    GameObject element = m_ListViewGroupResults.Add(m_PrefabGroupResults);
+                    List_element_admin elementMeta = element.GetComponent<List_element_admin>();
+
+                    elementMeta.SetTitle(i + 1 + ". " + listTests[i].title);
+                    elementMeta.SetDescription("Набрано " + res.totalScores + " из " + maxScores?.data);
+                    count++;
+                    //results.Add(res);
+                }
+            }                                    
+        }
+        if (count == 0) gl.ChangeMessageTemporary("Результаты не найдены", 5);
     }
 
-    async void UpdateGroupResults()
+    void UpdateGroupResults()
     {
-
+        ShowGroupResults();
     }
 
     async void ExitGroup()
