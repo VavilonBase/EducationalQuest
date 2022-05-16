@@ -35,7 +35,7 @@ public class ComponentsRes_for_teachers : MonoBehaviour
             {
                 actionButton.onClick.AddListener(elementMeta.ActivateTeacher);
 
-                string id_button = listTeachers[i].userId.ToString(); // надо придать значение такое же как и у id учителя, чтобы по нажатию активировался нужный учитель                
+                string id_button = listTeachers[i].id.ToString(); // надо придать значение такое же как и у id учителя, чтобы по нажатию активировался нужный учитель                
                 elementMeta.SetSomeId(id_button);
             }
             else

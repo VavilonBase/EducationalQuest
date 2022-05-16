@@ -67,7 +67,7 @@ public class Board : MonoBehaviour
             foreach (Test t in response.data)
             {
                 if (t.isOpened) tests.Add(t);
-                var checkResult = await TestService.getStudentTestResult(jwt, DataHolder.PlayerInfo.responseUserData.user.userId, t.testId);
+                var checkResult = await TestService.getStudentTestResult(jwt, DataHolder.PlayerInfo.responseUserData.user.id, t.testId);
                 testsCheckIfResultExists.Add(!checkResult.isError);
             }
                 

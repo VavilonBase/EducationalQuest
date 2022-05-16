@@ -185,7 +185,7 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
         for (int i = 0; i < listTests.Count; i++)
         {                        
             //проверить наличие результатов по каждому тесту и вывести, если имеются
-            response = await TestService.getStudentTestResult(gl.playerInfo.responseUserData.jwt, gl.playerInfo.responseUserData.user.userId, listTests[i].testId);
+            response = await TestService.getStudentTestResult(gl.playerInfo.responseUserData.jwt, gl.playerInfo.responseUserData.user.id, listTests[i].testId);
             if (!response.isError)
             {
                 var maxScores = await TestService.getMaxScoresForTestByTestId(gl.playerInfo.responseUserData.jwt, listTests[i].testId);
