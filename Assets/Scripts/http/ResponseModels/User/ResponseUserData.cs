@@ -5,6 +5,6 @@
 
     public ResponseUserData()
     {
-        jwt = "guest";
+        jwt = "0";
     }
 }

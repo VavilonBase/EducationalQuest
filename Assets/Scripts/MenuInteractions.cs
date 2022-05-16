@@ -7,16 +7,19 @@ using UnityEngine.UIElements;
 
 public class MenuInteractions : MonoBehaviour
 {   
-    public GameObject menuInput;
-    public GameObject menuRegistration;
-    public GameObject menuChangePassword;
-    public GameObject menuAdmin;
-    public GameObject menuTeacher;
-    public GameObject menuStudent;
-    public GameObject menuTeacherGroupsList;
-    public GameObject menuJoinStudent;
+    public GameObject menuInput; // --- меню ввода логина и пароля
+    public GameObject menuRegistration; // --- меню регистрации
+    public GameObject menuChangePassword; // --- меню смены пароля
+    public GameObject menuAdmin; // --- главное меню администратора
+    public GameObject menuTeacher; // --- главное меню учителя
+    public GameObject menuStudent; // --- главное меню ученика
 
     private CsGlobals gl;
+
+    void Awake()
+    {
+        gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
+    }
 
     void SelectWorkingMenu(string role)
     {        
@@ -55,34 +58,36 @@ public class MenuInteractions : MonoBehaviour
     public async void login()
     {       
         string log = menuInput.transform.Find("In_log").Find("Text").GetComponent<Text>().text;
-        string pass = menuInput.transform.Find("In_pas").Find("Text").GetComponent<Text>().text;    
-        
-        var response = await UserService.login(log, pass);
-        if (response.isError)
+        string pass = menuInput.transform.Find("In_pas").Find("Text").GetComponent<Text>().text;
+        if (log != "" && pass != "")
         {
-            switch (response.message)
+            var response = await UserService.login(log, pass);
+            if (response.isError)
             {
-                case Message.IncorrectPassword:
-                    gl.ChangeMessageTemporary("Неправильный логин или пароль", 5);                    
-                    break;
-                case Message.UserNotExist:
-                    gl.ChangeMessageTemporary("Такого пользователя не существует", 5);                    
-                    break;
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }            
+                switch (response.message)
+                {
+                    case Message.IncorrectPassword:
+                        gl.ChangeMessageTemporary("Неправильный логин или пароль", 5);
+                        break;
+                    case Message.UserNotExist:
+                        gl.ChangeMessageTemporary("Такого пользователя не существует", 5);
+                        break;
+                    default:
+                        gl.ChangeMessageTemporary(response.message.ToString(), 5);
+                        break;
+                }
+            }
+            else
+            {
+                gl.playerInfo.responseUserData = response.data;
+                Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);               
+                gl.ChangeMessageDurable(true, "Добро пожаловать, " + gl.playerInfo.responseUserData.user.firstName);
+                gl.playerInfo.isAuthorized = true;
+                DataHolder.PlayerInfo = gl.playerInfo; // сохранение в статический класс для использования на игровой сцене
+                SelectWorkingMenu(gl.playerInfo.responseUserData.user.role);
+            }
         }
-        else
-        {
-            gl.playerInfo.responseUserData = response.data;
-            Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);            
-
-            gl.ChangeMessageDurable(true, "Здравствуй, " + gl.playerInfo.responseUserData.user.firstName);
-            gl.playerInfo.isAuthorized = true;
-            DataHolder.PlayerInfo = gl.playerInfo;
-            SelectWorkingMenu(gl.playerInfo.responseUserData.user.role);
-        }
+        else gl.ChangeMessageTemporary("Заполните требуемые поля", 5);
     }
 
     public async void registration()
@@ -118,7 +123,10 @@ public class MenuInteractions : MonoBehaviour
             {
                 case Message.UserExist:
                     gl.ChangeMessageTemporary("Пользователь уже существует", 5);                    
-                    break;                
+                    break;
+                case Message.NotFoundRequiredData:
+                    gl.ChangeMessageTemporary("Заполните требуемые поля", 5);
+                    break;
                 default:
                     gl.ChangeMessageTemporary(response.message.ToString(), 5);
                     break;
@@ -127,64 +135,35 @@ public class MenuInteractions : MonoBehaviour
         else
         {
             gl.ChangeMessageTemporary("Регистрация прошла успешно", 5);                       
+            //сразу заполняем поля в форме входа, чтобы пользователю не пришлось вводить их вручную
             menuInput.transform.Find("In_log").GetComponent<InputField>().text = login;
             menuInput.transform.Find("In_pas").GetComponent<InputField>().text = password;
-            menuInput.SetActive(true);
-            menuRegistration.SetActive(false);
+            menuInput.SetActive(true); // возвращаем меню входа
+            menuRegistration.SetActive(false); // скрываем меню регистрации
         }        
     }
 
     public async void ChangePassword()
     {
-        string oldPassword = menuChangePassword.transform.Find("oldPassword").GetComponent<InputField>().text;
-        string newPassword = menuChangePassword.transform.Find("newPassword").GetComponent<InputField>().text;
-        var response = await UserService.changePassword(oldPassword, newPassword, gl.playerInfo.responseUserData.jwt);
-
-        if (response.isError)
-            switch (response.message)
-            {
-                case Message.NotFoundRequiredData:
-                    gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
-                    break;
-                case Message.PasswordNotEquals:
-                    gl.ChangeMessageTemporary("Неверный старый пароль", 5);
-                    break;
-            }            
-        else
+        if (gl.playerInfo.isAuthorized)
         {
-            gl.ChangeMessageTemporary("Пароль успешно изменен", 5);
-        }
-    }
+            string oldPassword = menuChangePassword.transform.Find("oldPassword").GetComponent<InputField>().text;
+            string newPassword = menuChangePassword.transform.Find("newPassword").GetComponent<InputField>().text;
+            var response = await UserService.changePassword(oldPassword, newPassword, gl.playerInfo.responseUserData.jwt);
 
-    public async void JoinGroup()
-    {
-        string codeWord = menuJoinStudent.transform.Find("InputField").GetComponent<InputField>().text;
-        var response = await GroupService.joinStudentToTheGroup(gl.playerInfo.responseUserData.jwt, codeWord);
-        if (response.isError)
-            switch (response.message)
-            {
-                case Message.StudentIsInAGroup:
-                    gl.ChangeMessageTemporary("Ты уже числишься в этой группе", 5);
-                    break;                
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }
-        else
-        {
-            gl.ChangeMessageTemporary("Успешное вступление в группу", 5);
+            if (response.isError)
+                switch (response.message)
+                {
+                    case Message.NotFoundRequiredData:
+                        gl.ChangeMessageTemporary("Проверьте правильность заполнения полей", 5);
+                        break;
+                    case Message.PasswordNotEquals:
+                        gl.ChangeMessageTemporary("Неверный старый пароль", 5);
+                        break;
+                }
+            else
+                gl.ChangeMessageTemporary("Пароль успешно изменен", 5);
         }
-    }
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {       
-        
-    }
+        else gl.ChangeMessageTemporary("Войдите в аккаунт, чтобы совершить это действие", 5);
+    }    
 }

@@ -11,10 +11,10 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
     private List<Test> listTests;
     
     private GameObject menuTests;
-    private GameObject menuResults;
+    private GameObject menuResults;    
     private GameObject menuExitGroup;
     private Dropdown dd;
-    private GameObject buttonShowResults;
+    private GameObject buttonShowResults;    
     private GameObject buttonExitGroup;
     private GameObject buttonUpdate;    
     private GameObject buttonYesExitGroup;
@@ -35,35 +35,23 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
         menuTests = this.transform.Find("menuTests").gameObject;
         menuResults = this.transform.Find("Results_group_student").gameObject;
-        menuExitGroup = this.transform.Find("ExitGroup_Student").gameObject;
+        menuExitGroup = this.transform.Find("ExitGroup_Student").gameObject;        
+        
 
         dd = menuTests.transform.Find("GroupsDropdown").GetComponent<Dropdown>();
-        buttonShowResults = menuTests.transform.Find("But_res").gameObject;
+        buttonShowResults = menuTests.transform.Find("But_res").gameObject;        
         buttonExitGroup = menuTests.transform.Find("But_quit").gameObject;
         buttonUpdate = menuResults.transform.Find("Update").gameObject;        
         buttonYesExitGroup = menuExitGroup.transform.Find("Button_Yes").gameObject;
 
         groupTitle = menuTests.transform.Find("GroupTitle").GetComponent<Text>();
 
-        dd.onValueChanged.AddListener(delegate {
-            DropdownValueChanged();
-        });
+        dd.onValueChanged.AddListener(delegate { DropdownValueChanged(); });
         dd.value = 0;
 
-        buttonShowResults.GetComponent<Button>().onClick.AddListener(delegate
-        {
-            ShowGroupResults();
-        });
-
-        buttonUpdate.GetComponent<Button>().onClick.AddListener(delegate
-        {
-            UpdateGroupResults();
-        });
-
-        buttonYesExitGroup.GetComponent<Button>().onClick.AddListener(delegate
-        {
-            ExitGroup();
-        });
+        buttonShowResults.GetComponent<Button>().onClick.AddListener(delegate { ShowGroupResults(); });
+        buttonUpdate.GetComponent<Button>().onClick.AddListener(delegate { UpdateGroupResults(); });        
+        buttonYesExitGroup.GetComponent<Button>().onClick.AddListener(delegate { ExitGroup(); });
     }
 
     void OnEnable()
@@ -191,6 +179,8 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
 
         //results = new List<Result>();
 
+        Debug.Log("id ученика: " + gl.playerInfo.responseUserData.user.userId);
+
         int count = 0;
         for (int i = 0; i < listTests.Count; i++)
         {                        
@@ -218,7 +208,7 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
     void UpdateGroupResults()
     {
         ShowGroupResults();
-    }
+    }    
 
     async void ExitGroup()
     {

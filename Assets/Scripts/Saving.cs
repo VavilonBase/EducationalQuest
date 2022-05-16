@@ -150,32 +150,4 @@ public class Saving : MonoBehaviour
     {
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;        
     }
-
-    public void Update()
-    {
-        
-    }
-
-    public void onClickToSave()
-    {
-        saveSerial = new SaveSerial(gl.playerInfo, gl.key.transform.position);
-        saveSerial.SaveGame();
-    }
-
-    public void onClickToLoad()
-    {
-        if (saveSerial.LoadGame())
-        {
-            gl.playerInfo = saveSerial.PlayerInfo;
-            //gl.boardsInfo = saveSerial.BoardsInfo;
-            Vector3 newKeyPos = new Vector3(saveSerial.KeyPosition[0], saveSerial.KeyPosition[1], saveSerial.KeyPosition[2]);            
-            gl.key.transform.position = newKeyPos;
-            gl.RELOAD = true;            
-        }
-    }
-
-    public void onClickToReset()
-    {
-        SaveSerial.ResetGame();
-    }
 }
