@@ -178,7 +178,7 @@ public class MenuTeacherResults : MonoBehaviour
                     elementMeta.SetTitle((i + 1) + ". " + listResults[i].lastName + " " + listResults[i].firstName + " " + listResults[i].middleName);
                     elementMeta.SetDescription("Баллы: " + listResults[i].results[j].totalScores);
                     //int resID = listResults[i].results[j].resultId;
-                    //int studentID = listResults[i].userId;
+                    //int studentID = listResults[i].id;
                     //elementMeta.GetActionButton().onClick.AddListener(delegate { ShowDetailedRes(resID, studentID); });
                     elementMeta.GetActionButton().gameObject.SetActive(false);
                 }                    

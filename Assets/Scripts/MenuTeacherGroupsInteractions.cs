@@ -192,7 +192,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
                 List_element_admin elementMeta = element.GetComponent<List_element_admin>();
                 elementMeta.SetTitle(i + 1 + ". " + listStudentsInGroup[i].lastName + " " + listStudentsInGroup[i].firstName + " " + listStudentsInGroup[i].middleName);
 
-                //string id_button = listStudentsInGroup[i].userId.ToString();              
+                //string id_button = listStudentsInGroup[i].id.ToString();              
                 //elementMeta.SetSomeId(id_button);
                 
                 studentId = listStudentsInGroup[i].userId;
