@@ -13,6 +13,8 @@ public class MenuTeacherResults : MonoBehaviour
     [Header("Components")]
     [SerializeField] private List_view_admin m_ListView;
     [SerializeField] private GameObject m_Prefab;
+    [SerializeField] private List_view_admin m_ListViewDetailedRes;
+    [SerializeField] private GameObject m_PrefabDetailedRes;
 
     private Dropdown ddGroups;
     private Dropdown ddTests;
@@ -23,6 +25,8 @@ public class MenuTeacherResults : MonoBehaviour
     private List<Test> listTests;
     private int selectedGroup;
     private int selectedTest;
+
+    private GameObject menuShowDetailedRes;
 
     private void Awake()
     {
@@ -36,7 +40,9 @@ public class MenuTeacherResults : MonoBehaviour
         buttonShowResults.onClick.AddListener(delegate { ShowResults(); });
 
         ddGroups.onValueChanged.AddListener(delegate { DropdownGroupsValueChanged(); });        
-        ddTests.onValueChanged.AddListener(delegate { DropdownTestsValueChanged(); });       
+        ddTests.onValueChanged.AddListener(delegate { DropdownTestsValueChanged(); });
+
+        menuShowDetailedRes = this.transform.Find("Detailed_res").gameObject;
     }
 
     private void OnEnable()
@@ -171,8 +177,23 @@ public class MenuTeacherResults : MonoBehaviour
                     List_element_admin elementMeta = element.GetComponent<List_element_admin>();
                     elementMeta.SetTitle((i + 1) + ". " + listResults[i].lastName + " " + listResults[i].firstName + " " + listResults[i].middleName);
                     elementMeta.SetDescription("Баллы: " + listResults[i].results[j].totalScores);
+                    //int resID = listResults[i].results[j].resultId;
+                    //int studentID = listResults[i].userId;
+                    //elementMeta.GetActionButton().onClick.AddListener(delegate { ShowDetailedRes(resID, studentID); });
+                    elementMeta.GetActionButton().gameObject.SetActive(false);
                 }                    
             }
         }            
+    }
+
+    private async void ShowDetailedRes(int resID, int studentID)
+    {
+        m_ListViewDetailedRes.CleanList(); 
+        
+        /*
+        var response = await TestService.getStudentTestResultWithRightAnswer(jwt, 1, 1);
+        response.data.resultsData[1].results[1].
+        */
+
     }
 }
