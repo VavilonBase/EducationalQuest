@@ -65,9 +65,7 @@ public class Globals : MonoBehaviour
                     //если комната открыта, загружаем полученную информацию
                     classes[i].AssignInformation(response.data[i].title, response.data[i].groupId);
                 }
-            }
-            DataHolder.ChangeMessageTemporary("Ќачало положено");
-
+            }          
         }        
         catch (Exception e)
         {
