@@ -190,7 +190,7 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
                     GameObject element = m_ListViewGroupResults.Add(m_PrefabGroupResults);
                     List_element_admin elementMeta = element.GetComponent<List_element_admin>();
 
-                    elementMeta.SetTitle(i + 1 + ". " + listTests[i].title);
+                    elementMeta.SetTitle(count + 1 + ". " + listTests[i].title);
                     elementMeta.SetDescription("Набрано " + res.totalScores + " из " + maxScores?.data);
                     count++;                    
                 }
