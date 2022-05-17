@@ -175,12 +175,6 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
         //m_PrefabGroupResults
 
         Response<List<Result>> response;
-        //List<Result> results;
-
-        //results = new List<Result>();
-
-        Debug.Log("id ó÷åíèêà: " + gl.playerInfo.responseUserData.user.userId);
-
         int count = 0;
         for (int i = 0; i < listTests.Count; i++)
         {                        
@@ -188,6 +182,7 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
             response = await TestService.getStudentTestResult(gl.playerInfo.responseUserData.jwt, gl.playerInfo.responseUserData.user.id, listTests[i].testId);
             if (!response.isError)
             {
+                Debug.Log("ÍÀÉÄÅÍ ÒÅÑÒ, Â ÊÎÒÎĞÎÌ ÅÑÒÜ ĞÅÇÓËÜÒÀÒÛ (òåñò" + listTests[i].title + ")");
                 var maxScores = await TestService.getMaxScoresForTestByTestId(gl.playerInfo.responseUserData.jwt, listTests[i].testId);
                 foreach (Result res in response.data)
                 {
@@ -197,8 +192,7 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
 
                     elementMeta.SetTitle(i + 1 + ". " + listTests[i].title);
                     elementMeta.SetDescription("Íàáğàíî " + res.totalScores + " èç " + maxScores?.data);
-                    count++;
-                    //results.Add(res);
+                    count++;                    
                 }
             }                                    
         }

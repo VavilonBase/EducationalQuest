@@ -69,9 +69,7 @@ public class CsGlobals : MonoBehaviour
                 var response = await UserService.refresh(accountData.jwt);
                 if (response != null && !response.isError)
                 {
-                    Saving.SaveSerial.SaveAccountSettings(playerInfo.responseUserData = response.data); //сохраняем обновленный токен и данные о пользователе
-                    Debug.Log("Имя игрока: " + playerInfo.responseUserData.user.firstName);
-                    Debug.Log("id игрока: " + playerInfo.responseUserData.user.userId);
+                    Saving.SaveSerial.SaveAccountSettings(playerInfo.responseUserData = response.data); //сохраняем обновленный токен и данные о пользователе                    
                     playerInfo.isAuthorized = true; //считаем, что пользователь зашёл в аккаунт
                     DataHolder.PlayerInfo = playerInfo; //сохраняем данные о пользователе в статический класс (используется на игровой сцене)
                 }

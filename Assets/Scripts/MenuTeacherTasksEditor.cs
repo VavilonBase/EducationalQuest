@@ -122,7 +122,7 @@ public class MenuTeacherTasksEditor : MonoBehaviour
         //Заполняем содержимое элемента        
         if (question.isText)
         {
-            elementMeta.SetTitle("Вопрос " + (num + 1) + ":" + question.question);
+            elementMeta.SetTitle("Вопрос " + (num + 1) + ":" + question.question);          
         }
         else
         {
