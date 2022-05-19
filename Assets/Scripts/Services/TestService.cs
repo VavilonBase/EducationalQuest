@@ -259,11 +259,10 @@ public static class TestService
     /// NotFoundResult
     /// NotFoundQuestion
     /// </returns>
-    public async static Task<Response<ResponseStudentResultWithRightAnswer>> getStudentTestResultWithRightAnswer(string jwt, int _studentId, int _testId, int _resultId)
+    public async static Task<Response<ResponseStudentResultWithRightAnswer>> getStudentTestResultWithRightAnswer(string jwt, int _resultId)
     {
         // Задаем URL
-        string url = "https://educationalquest.herokuapp.com/test/getStudentTestResultWithRightAnswer?studentId=" 
-            + _studentId + "&testId=" + _testId + "&resultId=" + _resultId;
+        string url = "https://educationalquest.herokuapp.com/test/getStudentTestResultWithRightAnswer?resultId=" + _resultId;
         // Инициализируем http client
         var httpClient = new HttpClient(new JsonSerializationOption());
         // Устанавливаем заголовки
