@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class MenuInteractions : MonoBehaviour
 {   
@@ -22,7 +18,8 @@ public class MenuInteractions : MonoBehaviour
     }
 
     void SelectWorkingMenu(string role)
-    {        
+    {
+        // активация рабочего меню в зависимости от роли
         switch (role)
         {
             case "ADMIN":
@@ -35,11 +32,12 @@ public class MenuInteractions : MonoBehaviour
                 menuStudent.SetActive(true);
                 break;
         }
-        menuInput.SetActive(false);
+        menuInput.SetActive(false); // отключаем главное меню
     }
 
     public void StartSession()
     {
+        // если пользователь авторизован, показать сразу рабочее меню
         if (gl.playerInfo.isAuthorized) 
             SelectWorkingMenu(gl.playerInfo.responseUserData.user.role);
         else 
@@ -48,10 +46,10 @@ public class MenuInteractions : MonoBehaviour
     }
 
     public void LeaveSession()
-    {
+    {        
         gl.playerInfo.isAuthorized = false;
         gl.playerInfo.responseUserData = new ResponseUserData();
-        Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);        
+        Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData); // стираем сохранённые данные в локальном файле       
         gl.menuStart.SetActive(false); gl.menuStart.SetActive(true); //перезагрузка меню
     }
 
