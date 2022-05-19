@@ -76,9 +76,9 @@ public class HttpClient
             // Инициализируем соединение
             using var www = UnityWebRequest.Post(url, formData);
             // Сериализованную строку превращаем в массив байт в кодировке UTF8
-            byte[] loginBytes = System.Text.Encoding.UTF8.GetBytes(serializedData);
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(serializedData);
             // Создаем обработчик обновления и помещаем массив байт в него
-            UploadHandler uploadHandler = new UploadHandlerRaw(loginBytes);
+            UploadHandler uploadHandler = new UploadHandlerRaw(bytes);
             // Для созданного ранее соединения обновляем обработчик обновления, на созданный ранее
             www.uploadHandler = uploadHandler;
             // Устанавливаем заголовки
