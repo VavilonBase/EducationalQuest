@@ -80,7 +80,7 @@ public class Board : MonoBehaviour
         }
 
         SwitchModeTo(0); // доска неактивна
-        WriteOnBoard(Info.text, "В группе нет активных тестов.\nПриходи в следующий раз!");
+        WriteOnBoard(Info.text, "В группе нет активных тестов.");
     }
 
     private void WriteOnBoard(Info type, string text)
@@ -117,21 +117,28 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void SetPlateActive(byte num, bool setActive)
-    {
-        attachedAnswerPlates[num].SetActive(setActive);
-    }
-
-    private void HideAllPlates()
+    private void HidePlates()
     {
         foreach (GameObject plate in attachedAnswerPlates)
             plate.SetActive(false);
     }
 
-    private void ShowAllPlates()
+    private void HidePlates(byte[] nums)
+    {
+        foreach (byte num in nums)
+            attachedAnswerPlates[num].SetActive(false);
+    }
+
+    private void ShowPlates()
     {
         foreach (GameObject plate in attachedAnswerPlates)
             plate.SetActive(true);
+    }
+
+    private void ShowPlates(byte[] nums)
+    {
+        foreach (byte num in nums)
+            attachedAnswerPlates[num].SetActive(true);
     }
 
     private Texture LoadTexture(string url)
@@ -170,7 +177,9 @@ public class Board : MonoBehaviour
             {
                 // доска неактивна
                 case 0:
-                    DataHolder.ChangeMessageTemporary("Взаимодействие недоступно");
+                    DataHolder.ChangeMessageTemporary("Тесты не найдены. Нажми F, чтобы обновить список");
+                    if (Input.GetKeyDown(KeyCode.F))
+                        LoadGroupTests(groupID); //перезагрузить тесты группы
                     break;
                 // начать выбор теста
                 case 1:
@@ -180,7 +189,11 @@ public class Board : MonoBehaviour
                     break;
                 // выбор теста
                 case 2:
-                    DataHolder.ChangeMessageTemporary("Используй таблички, чтобы листать список");
+                    string s = tests.Count > 1 ? "Используй таблички, чтобы листать и выбрать тест." : "Используй табличку, чтобы выбрать тест.";
+                    s += " Нажми F, чтобы обновить список";
+                    DataHolder.ChangeMessageTemporary(s);
+                    if (Input.GetKeyDown(KeyCode.F))
+                        LoadGroupTests(groupID); //перезагрузить тесты группы
                     break;
                 // прохождение теста
                 case 3:
@@ -195,9 +208,8 @@ public class Board : MonoBehaviour
                 default:
                     break;
             }
-        } 
-        
-        if (isWaitingAction)
+        }
+        else if (isWaitingAction)
         {
             switch (boardMode)
             {
@@ -214,7 +226,6 @@ public class Board : MonoBehaviour
                 default:
                     break;
             }
-
         }
     }
 
@@ -223,34 +234,38 @@ public class Board : MonoBehaviour
         switch (newMode)
         {
             case 0:
+                // тесты не найдены
                 boardMode = 0;
-                HideAllPlates();
+                HidePlates();
                 isWaitingAction = false;
                 break;
             case 1:
+                // показать количество тестов и начать выбор
                 boardMode = 1;
-                HideAllPlates();
+                HidePlates();
                 isWaitingAction = false;
                 break;
             case 2:
+                // режим выбора теста
                 boardMode = 2;
-                ShowAllPlates();
+                if (tests.Count > 1) ShowPlates(); else ShowPlates(new byte[1] { 1 });
                 isWaitingAction = true;
                 break;
             case 3:
+                // режим решения теста
                 boardMode = 3;
                 chosenAnswers = new List<int>();
-                ShowAllPlates();
+                ShowPlates();
                 isWaitingAction = true;
                 break;
             case 666:
                 boardMode = 666;
-                HideAllPlates();
+                HidePlates();
                 isWaitingAction = false;
                 break;
             default:
                 boardMode = 0;
-                HideAllPlates();
+                HidePlates();
                 isWaitingAction = false;
                 break;
         }

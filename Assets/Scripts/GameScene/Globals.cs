@@ -30,13 +30,35 @@ public class Globals : MonoBehaviour
 {
     string jwt;
     List<Class> classes;
-    
+
+    void RememberChoice()
+    {
+        DataHolder.PlayerInfo.needToHideInfo = true;
+        Saving.SaveAccountSettings(DataHolder.PlayerInfo);
+        Debug.Log("Больше не покажем эту табличку");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Scenes.NextScene(0);
+    }
+
     private async void Awake()
     {
         try
         {
             //настройка глобальных данных        
             DataHolder.MessageTemporary = this.transform.Find("Canvas").Find("Message_Temporary").gameObject;
+            GameObject info = this.transform.Find("Canvas").Find("Info").gameObject;
+            if (DataHolder.PlayerInfo.needToHideInfo)
+                info.SetActive(false);
+            else
+            {
+                info.transform.Find("But_close").GetComponent<Button>().onClick.AddListener(RememberChoice);
+                info.SetActive(true);
+            }
+
             jwt = DataHolder.PlayerInfo.responseUserData.jwt;
 
             //ищем все комнаты и приклепляем к ним классы, сохраняем
@@ -71,18 +93,5 @@ public class Globals : MonoBehaviour
         {
             Debug.LogError(e);
         }
-    }
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

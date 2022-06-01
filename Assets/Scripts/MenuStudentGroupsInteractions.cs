@@ -96,12 +96,13 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
                 m_DropOptions.Add(g.title);
             dd.AddOptions(m_DropOptions);
         }
+        dd.value = 0;        
     }
 
     void DropdownValueChanged()
     {
-        selectedGroup = dd.value - 1;
-        if (dd.value > 0)
+        selectedGroup = dd.value - 1;        
+        if (selectedGroup >= 0)
         {            
             buttonShowResults.SetActive(true);
             buttonExitGroup.SetActive(true);                        
@@ -211,6 +212,8 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
             gl.ChangeMessageTemporary(response.message.ToString(), 5);
         else
         {
+            UpdateGroupsList();
+            DropdownValueChanged();
             gl.ChangeMessageTemporary("Успешный выход из группы", 5);
             menuExitGroup.SetActive(false);
             menuResults.SetActive(false);

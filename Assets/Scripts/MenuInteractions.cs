@@ -49,7 +49,7 @@ public class MenuInteractions : MonoBehaviour
     {        
         gl.playerInfo.isAuthorized = false;
         gl.playerInfo.responseUserData = new ResponseUserData();
-        Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData); // стираем сохранённые данные в локальном файле       
+        Saving.SaveAccountSettings(gl.playerInfo); // стираем сохранённые данные в локальном файле       
         gl.menuStart.SetActive(false); gl.menuStart.SetActive(true); //перезагрузка меню
     }
 
@@ -78,7 +78,7 @@ public class MenuInteractions : MonoBehaviour
             else
             {
                 gl.playerInfo.responseUserData = response.data;
-                Saving.SaveSerial.SaveAccountSettings(gl.playerInfo.responseUserData);               
+                Saving.SaveAccountSettings(gl.playerInfo);               
                 gl.ChangeMessageDurable(true, "Добро пожаловать, " + gl.playerInfo.responseUserData.user.firstName);
                 gl.playerInfo.isAuthorized = true;
                 DataHolder.PlayerInfo = gl.playerInfo; // сохранение в статический класс для использования на игровой сцене
