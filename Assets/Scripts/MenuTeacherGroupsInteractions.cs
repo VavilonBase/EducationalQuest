@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuTeacherGroupsInteractions : MonoBehaviour
+public class MenuTeacherGroupsInteractions : TeacherGroupsInfo
 {
     private CsGlobals gl;
     private string jwt;
@@ -33,8 +31,6 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
     private Button buttonUpdateGroupContent;
     private Button buttonExcludeStudent;
 
-    private List<Group> listGroups;
-    private int selectedGroup;
     private int bufStudentIdToExclude;
 
     private List<ResponseUserGroupData> listStudentsInGroup;
@@ -45,6 +41,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
 
     void Awake()
     {
+        // поиск необходимых объектов и указание событий
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
         jwt = gl.playerInfo.responseUserData.jwt;
 
@@ -88,29 +85,6 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
         ShowGroupsList();        
     }
 
-    async Task<List<Group>> GetGroupsList()
-    {
-        var response = await GroupService.getAllTeacherGroups(jwt);
-        if (response.isError)
-        {
-            switch (response.message)
-            {
-                case Message.TeacherHasNotGroups:
-                    gl.ChangeMessageTemporary("Создайте группу для начала работы", 5);
-                    break;
-                case Message.AccessDenied:
-                    gl.ChangeMessageTemporary("Доступ ограничен. Дождитесь подтверждения регистрации", 5);
-                    break;
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }
-            return null;
-        }
-        else
-            return response.data;
-    }
-
     async Task<List<ResponseUserGroupData>> GetGroupStudentsList()
     {
         var response = await GroupService.getGroupStudents(jwt, listGroups[selectedGroup].groupId);
@@ -141,7 +115,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
         buttonCopyCodeWord.SetActive(false);
         codeWord.text = null;
 
-        listGroups = await GetGroupsList();
+        listGroups = await GetGroupsList(jwt, gl);
         if (listGroups != null)
         {
             //Вывод названий групп в Dropdown. Это визуализация, в дальнейшем выбранная группа определяется по индексу в списке - 1.
@@ -188,15 +162,9 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
             for (int i=0; i < listStudentsInGroup.Count; i++)
             {
                 GameObject element = m_ListViewGroupContent.Add(m_PrefabGroupContent);
-
                 List_element_admin elementMeta = element.GetComponent<List_element_admin>();
                 elementMeta.SetTitle(i + 1 + ". " + listStudentsInGroup[i].lastName + " " + listStudentsInGroup[i].firstName + " " + listStudentsInGroup[i].middleName);
-
-                //string id_button = listStudentsInGroup[i].id.ToString();              
-                //elementMeta.SetSomeId(id_button);
-                
-                studentId = listStudentsInGroup[i].userId;
-
+                studentId = listStudentsInGroup[i].userId; //сохраняем ID ученика, которого хотят исключить
                 Button actionButton = elementMeta.GetActionButton();
                 actionButton.onClick.AddListener( delegate { ExcludeStudentYesNo(studentId); } );
                 actionButton.gameObject.SetActive(true);                    
@@ -252,6 +220,7 @@ public class MenuTeacherGroupsInteractions : MonoBehaviour
 
     bool CheckIfTitleExists(string groupTitle)
     {
+        // проверка, есть в списке групп группа с названием groupTitle
         bool compare = false;
         int i = 0;
         while (!compare && i < listGroups.Count)

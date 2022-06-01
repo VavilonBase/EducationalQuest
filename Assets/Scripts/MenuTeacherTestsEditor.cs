@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuTeacherTestsEditor : MonoBehaviour
+public class MenuTeacherTestsEditor : TeacherGroupsInfo
 {
     private CsGlobals gl;
     string jwt;
-    private List<Group> listGroups;
-    private List<Test> listTests;
 
     private GameObject menuTestsEditor;
     private GameObject menuCreateTest;
@@ -32,11 +30,6 @@ public class MenuTeacherTestsEditor : MonoBehaviour
     private GameObject textCanViewRes;
     private InputField inputCreateTestTitle;
 
-    private int selectedGroup;
-    public int SelectedGroup { get { return selectedGroup; } }
-
-    private int selectedTest;
-    public int SelectedTest { get { return selectedGroup; } }
 
     // Start is called before the first frame update
     void Awake()
@@ -109,54 +102,12 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         listTests = null;
     }
 
-    async Task<List<Group>> GetGroupsList()
-    {
-        var response = await GroupService.getAllTeacherGroups(jwt);
-
-        if (response.isError)
-        {
-            switch (response.message)
-            {
-                case Message.TeacherHasNotGroups:
-                    gl.ChangeMessageTemporary("Создайте группу для начала работы", 5);
-                    break;
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }
-            return null;
-        }
-        else
-            return response.data;
-    }
-
-    async Task<List<Test>> GetTestsList(int groupID)
-    {
-        var response = await TestService.getAllGroupTests(jwt, groupID);
-
-        if (response.isError)
-        {
-            switch (response.message)
-            {
-                case Message.GroupHasNotTests:
-                    gl.ChangeMessageTemporary("Создайте тест для начала работы", 5);
-                    break;
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }
-            return null;
-        }
-        else
-            return response.data;
-    }
-
     private async void UpdateGroupsList()
     {
         ddGroups.ClearOptions();
         buttonCreateTest.SetActive(false);
 
-        listGroups = await GetGroupsList();
+        listGroups = await GetGroupsList(jwt, gl);
         if (listGroups != null)
         {
             //Вывод названий групп в Dropdown. Это визуализация, в дальнейшем выбранная группа определяется по индексу в списке - 1.
@@ -174,7 +125,7 @@ public class MenuTeacherTestsEditor : MonoBehaviour
         ddTests.ClearOptions();
         if (selectedGroup >= 0)
         {
-            listTests = await GetTestsList(listGroups[selectedGroup].groupId);
+            listTests = await GetTestsList(listGroups[selectedGroup].groupId, jwt, gl);
             if (listTests != null)
             {
                 //Вывод названий групп в Dropdown. Это визуализация, в дальнейшем выбранный тест определяется по индексу в списке - 1.
@@ -331,15 +282,5 @@ public class MenuTeacherTestsEditor : MonoBehaviour
             textCanViewRes.SetActive(false);
         }
         ChangeTextStatus();
-    }
-
-    public Group GetSelectedGroup()
-    {
-        return listGroups[selectedGroup];
-    }
-
-    public Test GetSelectedTest()
-    {
-        return listTests[selectedTest];
     }
 }
