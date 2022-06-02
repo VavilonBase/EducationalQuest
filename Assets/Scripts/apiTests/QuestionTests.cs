@@ -41,6 +41,7 @@ class QuestionTests : MonoBehaviour
             {
                 texture = responseTexture.data;
             }
+            Debug.Log(data.ToString());
         }
     }
 

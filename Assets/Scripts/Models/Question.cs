@@ -22,4 +22,13 @@ public class Question
         }
         return null;
     }
+
+    public override string ToString()
+    {
+        return $"ID: {questionId}\n" +
+            $"testID: {testId}\n" +
+            $"question: {question}\n" +
+            $"isText: {isText}\n" +
+            $"scores: {scores}";
+    }
 }

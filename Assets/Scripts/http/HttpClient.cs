@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+Назначение: Главный класс программы, отвечающий за вызов всех методов взаимодействия с сетью интернет
+Входные данные: адрес в сети интернет (url), вызываемый метод, данные (если необходимо), класс переданных данные, класс ожидаемых данных
+Результат: отправка запроса необходимым методом и получение ответа
+ФИО: Ельденев Артем Тавросович
+Дата написания: 15.10.2022 г
+Версия: 2.0
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -40,14 +49,14 @@ public class HttpClient
                 await Task.Yield();
 
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
                 return ReturnedNetworkErrors<TResultType>(www.result);
 
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
-            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+            return _serializationOption.Deserialize<TResultType>(jsonResponse);
         }
         catch (Exception ex)
         {
@@ -91,14 +100,14 @@ public class HttpClient
                 await Task.Yield();
 
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
                 return ReturnedNetworkErrors<TResultType>(www.result);
 
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
-            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+            return _serializationOption.Deserialize<TResultType>(jsonResponse);
         }
         catch (Exception ex)
         {
@@ -134,14 +143,14 @@ public class HttpClient
                 await Task.Yield();
 
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
                 return ReturnedNetworkErrors<TResultType>(www.result);
 
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
-            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+            return _serializationOption.Deserialize<TResultType>(jsonResponse);
         }
         catch (Exception ex)
         {
@@ -175,11 +184,11 @@ public class HttpClient
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
                 return ReturnedNetworkErrors<TResultType>(www.result);
 
             // Переводим текст в объект
-            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+            return _serializationOption.Deserialize<TResultType>(jsonResponse);
         }
         catch (Exception ex)
         {
@@ -213,7 +222,7 @@ public class HttpClient
                 await Task.Yield();
 
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
                     return ReturnedNetworkErrors<Texture2D>(www.result);
 
             Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;

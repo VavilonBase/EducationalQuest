@@ -136,6 +136,7 @@ public static class TestService
     /// AccessDenied
     /// NotFoundRequiredData
     /// TestNotExist
+    /// TestHasNotQuestion
     /// UserIsNotCreatorGroup
     /// TestIsClosed
     /// </returns>
