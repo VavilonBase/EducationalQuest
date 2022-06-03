@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HttpClient">
+    <Position X="4.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAACAAAAAABAAAAIAAAACAEAgAAgAAAAAAAAgAA=</HashCode>
+      <FileName>Assets\Scripts\http\HttpClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JsonSerializationOption">
+    <Position X="6.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACBAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\http\JsonSerializationOption.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.183" />
+  </Class>
+  <Class Name="Header">
+    <Position X="2.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\http\Header.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Response&lt;T&gt;">
+    <Position X="2.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAQAAAAACA=</HashCode>
+      <FileName>Assets\Scripts\http\Response.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="ISerializationOption">
+    <Position X="6.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACBAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\http\ISerializationOption.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Message" Collapsed="true">
+    <Position X="8.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gEESAAgAMETAAgCAoBYBAAIICEAAAAAADEDAgCSoAAA=</HashCode>
+      <FileName>Assets\Scripts\http\Message.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
