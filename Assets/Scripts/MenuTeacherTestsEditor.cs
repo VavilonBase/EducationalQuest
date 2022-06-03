@@ -163,38 +163,29 @@ public class MenuTeacherTestsEditor : TeacherGroupsInfo
 
     async void ChangeStatus()
     {
-        var check = await TestService.getTestWithQuestion(jwt, listTests[selectedTest].testId);
-        if (check.isError)
+        Response<Test> response;
+        if (listTests[selectedTest].isOpened)
+            response = await TestService.closeTest(jwt, listTests[selectedTest].testId);
+        else
+            response = await TestService.openTest(jwt, listTests[selectedTest].testId);
+
+        if (response.isError)
         {
-            switch (check.message)
+            switch (response.message)
             {
                 case Message.TestHasNotQuestions:
                     gl.ChangeMessageTemporary("В тесте нет вопросов. Создайте вопросы, прежде чем открывать тест", 5);
                     break;
                 default:
-                    gl.ChangeMessageTemporary(check.message.ToString(), 5);
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
                     break;
             }
-        }            
+        }
         else
         {
-            if (check.data.questions != null)
-            {
-                Response<Test> response;
-                if (listTests[selectedTest].isOpened)
-                    response = await TestService.closeTest(jwt, listTests[selectedTest].testId);
-                else
-                    response = await TestService.openTest(jwt, listTests[selectedTest].testId);
-
-                if (response.isError)
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                else
-                {
-                    listTests[selectedTest] = response.data;                    
-                    DropdownTestsValueChanged();
-                }
-            }
-        }        
+            listTests[selectedTest] = response.data;
+            DropdownTestsValueChanged();
+        }
     }
 
     async void ChangeCanViewRes()

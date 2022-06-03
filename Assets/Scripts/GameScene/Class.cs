@@ -10,11 +10,13 @@ public class Class : MonoBehaviour
 
     private Door thisDoor;
     private Board thisBoard;
+    private TextMesh thisPlate;
 
     public void AssignInformation(string groupTitle, int groupID)
-    {        
-        roomTitle = groupTitle;
+    {
         roomGroupID = groupID;
+        roomTitle = groupTitle;
+        thisPlate.text = "Класс " + roomTitle;        
         OpenRoom();        
     }
     public void OpenRoom()
@@ -28,22 +30,11 @@ public class Class : MonoBehaviour
     {
         thisDoor = this.transform.Find("Interior").Find("door").Find("trigger").gameObject.AddComponent<Door>();
         thisBoard = this.transform.Find("Board").gameObject.AddComponent<Board>();
+        thisPlate = this.transform.Find("Interior").Find("Table").Find("Text").GetComponent<TextMesh>();
     }
 
-    private void Awake()
+    private void Start()
     {        
         FindObjects();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

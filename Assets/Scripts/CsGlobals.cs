@@ -8,6 +8,7 @@ public class PlayerInfo
 {   
     public ResponseUserData responseUserData; // --- информация о пользователе из БД
     public bool isAuthorized; // --- вошёл ли пользователь в аккаунт
+    public bool needToHideInfo; // --- нужно ли спрятать окно со справкой (если пользователь входит не первый раз)
 }
 
 public class CsGlobals : MonoBehaviour
@@ -55,19 +56,25 @@ public class CsGlobals : MonoBehaviour
         //Saving.SaveSerial.DeleteAccountSettings();
 
         playerInfo = new PlayerInfo(); //начальная инициализация игрока
-        Saving.AccountSettingsData accountData = Saving.SaveSerial.LoadAccountSettings(); //пробуем загрузить данные пользователя
+        Saving.AccountSettingsData accountData = Saving.LoadAccountSettings(); //пробуем загрузить данные пользователя
         if (accountData != null)
         {
             try
             {
+                //возвращаем сохраненные в настройках флаги
+                playerInfo.needToHideInfo = accountData.hideInfo;
+                Debug.Log("Need to hide info? " + playerInfo.needToHideInfo);
+
                 //если удалось загрузить данные, обновляем токен пользователя
                 var response = await UserService.refresh(accountData.jwt);
                 if (response != null && !response.isError)
                 {
-                    Saving.SaveSerial.SaveAccountSettings(playerInfo.responseUserData = response.data); //сохраняем обновленный токен и данные о пользователе                    
-                    playerInfo.isAuthorized = true; //считаем, что пользователь зашёл в аккаунт
-                    DataHolder.PlayerInfo = playerInfo; //сохраняем данные о пользователе в статический класс (используется на игровой сцене)
+                    playerInfo.responseUserData = response.data;
+                    Saving.SaveAccountSettings(playerInfo); //сохраняем обновленный токен и данные о пользователе                    
+                    playerInfo.isAuthorized = true; //считаем, что пользователь зашёл в аккаунт                    
                 }
+
+                DataHolder.PlayerInfo = playerInfo; //сохраняем данные о пользователе в статический класс (используется на игровой сцене)
             }
             catch (Exception e) { Debug.LogError(e); }
         }
