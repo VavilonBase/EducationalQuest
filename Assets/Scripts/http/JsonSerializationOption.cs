@@ -1,4 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿/*
+Назначение: Класс, отвечающий за сериализацию и десериализацию
+Входные данные: данные, которые необходимо сериализовать и десериализовать, а так же тип этих данных
+Результат: либо объект, необходимого типа (при десериализации), либо строка (при сериализации)
+ФИО: Ельденев Артем Тавросович
+Дата написания: 15.10.2022 г
+Версия: 2.0
+*/
+
+using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
@@ -7,18 +16,23 @@ public class JsonSerializationOption : ISerializationOption
     // Заголовок Content-Type
     public string ContentType => "application/json";
     // Преобразование текста в формате JSON в объект
-    public T Deserialize<T>(string text)
+    public Response<T> Deserialize<T>(string text)
     {
         try
         {
-            var result = JsonConvert.DeserializeObject<T>(text);
+            var result = JsonConvert.DeserializeObject<Response<T>>(text);
             Debug.Log($"Success: {text}");
             return result;
         }
         catch (Exception ex)
         {
             Debug.LogError($"Could not parse response {text}.{ex.Message}");
-            return default;
+            return new Response<T>()
+            {
+                isError = true,
+                message = Message.CouldNotParseResponse,
+                data = default(T)
+            };
         }
     }
 

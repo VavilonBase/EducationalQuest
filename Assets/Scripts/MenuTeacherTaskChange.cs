@@ -21,6 +21,8 @@ public class MenuTeacherTaskChange : MonoBehaviour
 
     private GameObject image;
     private GameObject inputText;
+    private GameObject textScores;
+    private GameObject inputScores;
 
     private Toggle toggleTextOrPicture;
     private Toggle toggleCheckRightAnswer;
@@ -34,6 +36,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
         public string questionImagePath;
         public bool isQuestionText;
         public Texture questionTexture;
+        public int questionScores;
 
         public string[] answersTexts;
         public string[] answersImagePath;
@@ -51,6 +54,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
         {
             AllocateMemory();
             isNew = true;
+            questionScores = 10;
         }
 
         public QuestionWithAnswersInfo(ResponseQuestionWithAnswers question)
@@ -75,6 +79,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
                 questionTexture = www.texture; 
             }
             questionId = question.questionId;
+            questionScores = question.scores;
             isFieldSet[0] = true;
 
             for (int i=0; i<3; i++)
@@ -191,6 +196,9 @@ public class MenuTeacherTaskChange : MonoBehaviour
 
         image = this.transform.Find("image").gameObject;
         inputText = this.transform.Find("inputText").gameObject;
+        textScores = this.transform.Find("TextVes").gameObject;
+        inputScores = this.transform.Find("Ves").gameObject;
+
         toggleTextOrPicture = this.transform.Find("toggleTextOrPicture").GetComponent<Toggle>();
         toggleCheckRightAnswer = this.transform.Find("toggleCheckRightAnswer").GetComponent<Toggle>();
 
@@ -284,7 +292,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
     {
         int testId = this.gameObject.GetComponentInParent<MenuTeacherTasksEditor>().GetTestId();
         var responseQuestion = await QuestionService.createQuestion(jwt, testId,
-            questionWithAnswersInfo.isQuestionText, questionWithAnswersInfo.GetQuestionString(), 10);
+            questionWithAnswersInfo.isQuestionText, questionWithAnswersInfo.GetQuestionString(), questionWithAnswersInfo.questionScores);
         if (responseQuestion.isError)
         {
             switch (responseQuestion.message)
@@ -341,7 +349,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
     {        
         //пока сохранение только текстовых
         var responseQuestion = await QuestionService.updateQuestion(jwt, questionWithAnswersInfo.questionId,
-                    questionWithAnswersInfo.isQuestionText, questionWithAnswersInfo.GetQuestionString(), 10);
+                    questionWithAnswersInfo.isQuestionText, questionWithAnswersInfo.GetQuestionString(), questionWithAnswersInfo.questionScores);
         if (responseQuestion.isError)
         {
             switch (responseQuestion.message)
@@ -395,7 +403,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
 
     private async Task<bool> SaveToServer()
     {
-        gl.ChangeMessageTemporary("Ждите...", 30);
+        gl.ChangeMessageTemporary("Ждите...", 60);
         if (questionWithAnswersInfo.isNew)
             return await NewQuestion();
         else
@@ -413,12 +421,20 @@ public class MenuTeacherTaskChange : MonoBehaviour
     {
         step = 0;
         toggleTextOrPicture.isOn = true;
+        inputScores.transform.GetComponent<InputField>().text = "10";
         RefreshFields();
         SetFieldsContent();
     }
 
     private bool SaveFields(bool mandatoryInput)
     {
+        if (step == 0)
+        {
+            string check = inputScores.transform.GetComponent<InputField>().text;
+            int scores = (check == "") ? 10 : Convert.ToInt32(check);
+            questionWithAnswersInfo.questionScores = scores;
+        }
+
         if (toggleTextOrPicture.isOn)
         {
             //текстовый ввод
@@ -430,7 +446,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
             }
             else
             {
-                if (step==0)
+                if (step == 0)
                     questionWithAnswersInfo.SetQuestionInfo(input);
                 else
                     questionWithAnswersInfo.SetAnswerInfo(input, step, toggleCheckRightAnswer.isOn);
@@ -464,6 +480,8 @@ public class MenuTeacherTaskChange : MonoBehaviour
             toggleCheckRightAnswer.transform.gameObject.SetActive(false);
             buttonBack.SetActive(false);
             buttonNext.transform.Find("Text").GetComponent<Text>().text = "Далее";
+            textScores.SetActive(true);
+            inputScores.SetActive(true);
         }
         else
         {
@@ -471,10 +489,9 @@ public class MenuTeacherTaskChange : MonoBehaviour
             textTitleType.text = "Ответ "+ step + ":";
             toggleCheckRightAnswer.transform.gameObject.SetActive(true);
             buttonBack.SetActive(true);
-            if (step == 3)
-                buttonNext.transform.Find("Text").GetComponent<Text>().text = "Сохранить";
-            else
-                buttonNext.transform.Find("Text").GetComponent<Text>().text = "Далее";
+            buttonNext.transform.Find("Text").GetComponent<Text>().text = (step == 3) ? "Сохранить" : "Далее";
+            textScores.SetActive(false);
+            inputScores.SetActive(false);
         }
     }
 
@@ -489,8 +506,7 @@ public class MenuTeacherTaskChange : MonoBehaviour
                 toggleTextOrPicture.isOn = questionWithAnswersInfo.isQuestionText;
                 inputText.transform.GetComponent<InputField>().text = questionWithAnswersInfo.questionText;
                 image.GetComponent<RawImage>().texture = questionWithAnswersInfo.questionTexture;
-
-
+                inputScores.transform.GetComponent<InputField>().text = questionWithAnswersInfo.questionScores.ToString();
             }
             else
             {

@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-using System.Threading.Tasks;
 using UnityEngine.UI;
 
 [System.Serializable]
@@ -25,10 +22,8 @@ public class CsGlobals : MonoBehaviour
         //показываем табличку с сообщением
         messageTemporary.transform.Find("Text").GetComponent<Text>().text = newMessage;
         messageTemporary.SetActive(true);
-
         //ждём заданное время
         yield return new WaitForSeconds(time);
-
         //убираем табличку
         messageTemporary.SetActive(false);
     }
@@ -74,10 +69,7 @@ public class CsGlobals : MonoBehaviour
                     DataHolder.PlayerInfo = playerInfo; //сохраняем данные о пользователе в статический класс (используется на игровой сцене)
                 }
             }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-            }
+            catch (Exception e) { Debug.LogError(e); }
         }
         else Debug.Log("Account data doesn't exist");   
         menuStart.SetActive(true); // активируем главное меню 

@@ -1,10 +1,15 @@
-﻿
+﻿/*
+Назначение: Интерфейс, определяющий какие поля и методы должен содержать класс сериализатор
+ФИО: Ельденев Артем Тавросович
+Дата написания: 15.10.2022 г
+Версия: 2.0
+*/
 public interface ISerializationOption
 {
     // Тип передаваемых данных, в нашем случае application/json или multipart, при передачи данных с медиа-файлами
     string ContentType { get; }
     // Метод преобразование строки формата JSON в объект типа T
-    T Deserialize<T>(string text);
+    Response<T> Deserialize<T>(string text);
     // Метод преобразования объекта, типа T в строку формата JSON
     string Serialize<T>(T data);
 }

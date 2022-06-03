@@ -115,13 +115,13 @@ class AnswerService
             // Если ответ ввиде файла
             // Получаем ответ в виде картинки
             var httpClientGetTexture = new HttpClient();
-            UnityEngine.Texture2D texture = await httpClientGetTexture.GetTexture(_answerOrFilePath);
-            if (texture == null)
+            var textureResponse = await httpClientGetTexture.GetTexture(_answerOrFilePath);
+            if (textureResponse.data == null)
             {
                 return new Response<Answer>() { data = null, isError = true, message = Message.CanNotLoadFile };
             }
             // Кодируем его в байты
-            byte[] answerBytes = texture.EncodeToPNG();
+            byte[] answerBytes = textureResponse.data.EncodeToPNG();
             // Добавляем в форму картинку
             formData.Add(new MultipartFormFileSection("answer", answerBytes, "Answer.jpg", "image/jpg"));
         }

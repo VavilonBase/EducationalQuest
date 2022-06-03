@@ -165,7 +165,7 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
             }
 
             if (count > 0)
-                gl.ChangeMessageTemporary("Активных тестов в группе:" + count + " . Пройди их в классе с помощью доски", 15);
+                gl.ChangeMessageTemporary("Активных тестов в группе: " + count + ". Пройди их в классе с помощью доски", 15);
         }     
     }
 

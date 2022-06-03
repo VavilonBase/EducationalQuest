@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+Назначение: Главный класс программы, отвечающий за вызов всех методов взаимодействия с сетью интернет
+Входные данные: адрес в сети интернет (url), вызываемый метод, данные (если необходимо), класс переданных данные, класс ожидаемых данных
+Результат: отправка запроса необходимым методом и получение ответа
+ФИО: Ельденев Артем Тавросович
+Дата написания: 15.10.2022 г
+Версия: 2.0
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -17,7 +26,7 @@ public class HttpClient
 
     }
 
-    // Конструктор с сериализацией
+    // Конструктор с параметром интерфейса для сериализации и десериализации
     public HttpClient(ISerializationOption serializationOption)
     {
         this._serializationOption = serializationOption;
@@ -40,19 +49,24 @@ public class HttpClient
                 await Task.Yield();
 
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
-                Debug.Log($"Failed: {www.error}");
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
+                return ReturnedNetworkErrors<TResultType>(www.result);
 
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
-            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+            return _serializationOption.Deserialize<TResultType>(jsonResponse);
         }
         catch (Exception ex)
         {
             Debug.LogError($"[{nameof(Get)}].{ex.Message}");
-            return default;
+            return new Response<TResultType>()
+            {
+                isError = true,
+                message = Message.UndefinedError,
+                data = default(TResultType)
+            };
         } finally
         {
             ClearHeaders();
@@ -71,9 +85,9 @@ public class HttpClient
             // Инициализируем соединение
             using var www = UnityWebRequest.Post(url, formData);
             // Сериализованную строку превращаем в массив байт в кодировке UTF8
-            byte[] loginBytes = System.Text.Encoding.UTF8.GetBytes(serializedData);
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(serializedData);
             // Создаем обработчик обновления и помещаем массив байт в него
-            UploadHandler uploadHandler = new UploadHandlerRaw(loginBytes);
+            UploadHandler uploadHandler = new UploadHandlerRaw(bytes);
             // Для созданного ранее соединения обновляем обработчик обновления, на созданный ранее
             www.uploadHandler = uploadHandler;
             // Устанавливаем заголовки
@@ -86,19 +100,24 @@ public class HttpClient
                 await Task.Yield();
 
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
-                Debug.Log($"Failed: {www.error}. Result: {www.result}");
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
+                return ReturnedNetworkErrors<TResultType>(www.result);
 
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
-            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+            return _serializationOption.Deserialize<TResultType>(jsonResponse);
         }
         catch (Exception ex)
         {
             Debug.LogError($"[{nameof(Post)}].{ex.Message}");
-            return default;
+            return new Response<TResultType>()
+            {
+                isError = true,
+                message = Message.UndefinedError,
+                data = default(TResultType)
+            };
         } finally
         {
             ClearHeaders();
@@ -124,19 +143,24 @@ public class HttpClient
                 await Task.Yield();
 
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
-                Debug.Log($"Failed: {www.error}");
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
+                return ReturnedNetworkErrors<TResultType>(www.result);
 
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
 
             // Переводим текст в объект
-            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+            return _serializationOption.Deserialize<TResultType>(jsonResponse);
         }
         catch (Exception ex)
         {
             Debug.LogError($"[{nameof(Delete)}].{ex.Message}");
-            return default;
+            return new Response<TResultType>()
+            {
+                isError = true,
+                message = Message.UndefinedError,
+                data = default(TResultType)
+            };
         }
         finally
         {
@@ -160,16 +184,21 @@ public class HttpClient
             // Получаем текст ответа
             var jsonResponse = www.downloadHandler.text;
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
-                Debug.Log($"Failed: {www.error}");
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
+                return ReturnedNetworkErrors<TResultType>(www.result);
 
             // Переводим текст в объект
-            return _serializationOption.Deserialize<Response<TResultType>>(jsonResponse);
+            return _serializationOption.Deserialize<TResultType>(jsonResponse);
         }
         catch (Exception ex)
         {
             Debug.LogError($"[{nameof(Post)}].{ex.Message}");
-            return default;
+            return new Response<TResultType>()
+            {
+                isError = true,
+                message = Message.UndefinedError,
+                data = default(TResultType)
+            };
         }
         finally
         {
@@ -178,7 +207,7 @@ public class HttpClient
     }
 
     // Получение изображения
-    public async Task<Texture2D> GetTexture(string url)
+    public async Task<Response<Texture2D>> GetTexture(string url)
     {
         try
         {
@@ -193,16 +222,26 @@ public class HttpClient
                 await Task.Yield();
 
             // Если возникла ошибка, выведем ее
-            if (www.result != UnityWebRequest.Result.Success)
-                Debug.Log($"Failed: {www.error}");
+            if (www.result != UnityWebRequest.Result.Success && www.downloadHandler.text == "")
+                    return ReturnedNetworkErrors<Texture2D>(www.result);
 
             Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
-            return texture;
+            return new Response<Texture2D>()
+            {
+                isError = false,
+                message = Message.NotError,
+                data = texture
+            };
         }
         catch (Exception ex)
         {
             Debug.LogError($"[{nameof(Post)}].{ex.Message}");
-            return default;
+            return new Response<Texture2D>()
+            {
+                isError = true,
+                message = Message.UndefinedError,
+                data = default(Texture2D)
+            };
         }
         finally
         {
@@ -226,5 +265,33 @@ public class HttpClient
     private void ClearHeaders()
     {
         headers = null;
+    }
+
+    // Метод по обработке ошибок, возникших при отправке запроса
+    private Response<TResultType> ReturnedNetworkErrors<TResultType>(UnityWebRequest.Result result)
+    {
+        // Создаем ответ с ошибкой
+        Response<TResultType> response = new Response<TResultType>()
+        {
+            isError = true,
+            data = default(TResultType)
+        };
+
+        // Вычисляем какая ошибка произошла
+        switch (result)
+        {
+            case UnityWebRequest.Result.ConnectionError:
+                response.message = Message.ConnectionError;
+                break;
+            case UnityWebRequest.Result.ProtocolError:
+                response.message = Message.ProtocolError;
+                break;
+            default:
+                response.message = Message.UndefinedError;
+                break;
+        }
+
+        // Возвращаем ответ
+        return response;
     }
 }

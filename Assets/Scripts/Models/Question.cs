@@ -12,14 +12,23 @@ public class Question
     /// Получение картинки с вопросом
     /// </summary>
     /// <returns>Если вопрос является картинкой, то вернется картинка, иначе вернется null</returns>
-    public async Task<UnityEngine.Texture2D> GetTexture()
+    public async Task<Response<UnityEngine.Texture2D>> GetTexture()
     {
         if (!isText)
         {
             var httpClient = new HttpClient();
-            UnityEngine.Texture2D texture = await httpClient.GetTexture(question);
-            return texture;
+            var response = await httpClient.GetTexture(question);
+            return response;
         }
         return null;
+    }
+
+    public override string ToString()
+    {
+        return $"ID: {questionId}\n" +
+            $"testID: {testId}\n" +
+            $"question: {question}\n" +
+            $"isText: {isText}\n" +
+            $"scores: {scores}";
     }
 }

@@ -32,7 +32,16 @@ class QuestionTests : MonoBehaviour
             isText = data.isText;
             scores = data.scores;
 
-            texture = await data.GetTexture();
+            var responseTexture = await data.GetTexture();
+            if (responseTexture.isError)
+            {
+                Debug.Log(response.message);
+            }
+            else
+            {
+                texture = responseTexture.data;
+            }
+            Debug.Log(data.ToString());
         }
     }
 

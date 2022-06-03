@@ -1,11 +1,65 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuTeacherResults : MonoBehaviour
+public class TeacherGroupsInfo : MonoBehaviour
+{
+    public List<Group> listGroups; // список групп учителя
+    public List<Test> listTests; // список тестов в выбранной группе
+    public int selectedGroup; // выбранная (в выпадающем списке) группа ; -1 = не выбрана ни одна
+    public int selectedTest; // выбранный (в выпадающем списке) тест ; -1 = не выбран ни один
+
+    public async Task<List<Group>> GetGroupsList(string jwt, CsGlobals gl)
+    {
+        var response = await GroupService.getAllTeacherGroups(jwt);
+        if (response.isError)
+        {
+            switch (response.message)
+            {
+                case Message.TeacherHasNotGroups:
+                    gl.ChangeMessageTemporary("Группы отсутствуют", 5);
+                    break;
+                case Message.AccessDenied:
+                    gl.ChangeMessageTemporary("Доступ ограничен. Дождитесь подтверждения регистрации", 5);
+                    break;
+                default:
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
+                    break;
+            }
+            return null;
+        }
+        else
+            return response.data;
+    }
+
+    public async Task<List<Test>> GetTestsList(int groupID, string jwt, CsGlobals gl)
+    {
+        var response = await TestService.getAllGroupTests(jwt, groupID);
+        if (response.isError)
+        {
+            switch (response.message)
+            {
+                case Message.GroupHasNotTests:
+                    gl.ChangeMessageTemporary("Тесты в группе отсутствуют", 5);
+                    break;
+                default:
+                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
+                    break;
+            }
+            return null;
+        }
+        else
+            return response.data;
+    }
+
+    public Group GetSelectedGroup() { return listGroups[selectedGroup]; }
+
+    public Test GetSelectedTest() { return listTests[selectedTest]; }
+}
+
+
+public class MenuTeacherResults : TeacherGroupsInfo
 {
     private CsGlobals gl;
     private string jwt;
@@ -20,11 +74,6 @@ public class MenuTeacherResults : MonoBehaviour
     private Dropdown ddTests;
 
     private Button buttonShowResults;
-
-    private List<Group> listGroups;
-    private List<Test> listTests;
-    private int selectedGroup;
-    private int selectedTest;
 
     private GameObject menuShowDetailedRes;
 
@@ -59,51 +108,12 @@ public class MenuTeacherResults : MonoBehaviour
         listTests = null;
     }
 
-    async Task<List<Group>> GetGroupsList()
-    {
-        var response = await GroupService.getAllTeacherGroups(jwt);
-        if (response.isError)
-        {
-            switch (response.message)
-            {
-                case Message.TeacherHasNotGroups:
-                    gl.ChangeMessageTemporary("Группы отсутствуют", 5);
-                    break;
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }
-            return null;
-        }
-        else
-            return response.data;
-    }
-
-    async Task<List<Test>> GetTestsList(int groupID)
-    {
-        var response = await TestService.getAllGroupTests(jwt, groupID);
-
-        if (response.isError)
-        {
-            switch (response.message)
-            {
-                case Message.GroupHasNotTests:
-                    gl.ChangeMessageTemporary("Тесты в группе отсутствуют", 5);
-                    break;
-                default:
-                    gl.ChangeMessageTemporary(response.message.ToString(), 5);
-                    break;
-            }
-            return null;
-        }
-        else
-            return response.data;
-    }
+    
 
     private async void UpdateGroupsList()
     {
         ddGroups.ClearOptions();
-        listGroups = await GetGroupsList();
+        listGroups = await GetGroupsList(jwt, gl);
         if (listGroups != null)
         {
             //Вывод названий групп в Dropdown. Это визуализация, в дальнейшем выбранная группа определяется по индексу в списке - 1.
@@ -121,7 +131,7 @@ public class MenuTeacherResults : MonoBehaviour
         ddTests.ClearOptions();
         if (selectedGroup >= 0)
         {
-            listTests = await GetTestsList(listGroups[selectedGroup].groupId);
+            listTests = await GetTestsList(listGroups[selectedGroup].groupId, jwt, gl);
             if (listTests != null)
             {
                 //Вывод названий групп в Dropdown. Это визуализация, в дальнейшем выбранный тест определяется по индексу в списке - 1.
@@ -168,15 +178,18 @@ public class MenuTeacherResults : MonoBehaviour
         }
         else
         {
-            List<ResponseStudentTestResult> listResults = response.data;
+            
+            List<ResponseStudentTestResult> listResults = response.data;            
+            var max = await TestService.getMaxScoresForTestByTestId(jwt, listTests[selectedTest].testId);
+            int count = 0;
             for (int i=0; i < listResults.Count; i++)
-            {
+            {                
                 for (int j = 0; j < listResults[i].results.Count; j++)
                 {
                     GameObject element = m_ListView.Add(m_Prefab);
                     List_element_admin elementMeta = element.GetComponent<List_element_admin>();
-                    elementMeta.SetTitle((i + 1) + ". " + listResults[i].lastName + " " + listResults[i].firstName + " " + listResults[i].middleName);
-                    elementMeta.SetDescription("Баллы: " + listResults[i].results[j].totalScores);
+                    elementMeta.SetTitle((count++ + 1) + ". " + listResults[i].lastName + " " + listResults[i].firstName + " " + listResults[i].middleName);
+                    elementMeta.SetDescription("Баллы: " + listResults[i].results[j].totalScores + " из "+ max?.data);                    
                     //int resID = listResults[i].results[j].resultId;
                     //int studentID = listResults[i].id;
                     //elementMeta.GetActionButton().onClick.AddListener(delegate { ShowDetailedRes(resID, studentID); });
@@ -188,8 +201,11 @@ public class MenuTeacherResults : MonoBehaviour
 
     private async void ShowDetailedRes(int resID, int studentID)
     {
-        m_ListViewDetailedRes.CleanList(); 
-        
+        m_ListViewDetailedRes.CleanList();
+        //var response = await TestService
+
+
+
         /*
         var response = await TestService.getStudentTestResultWithRightAnswer(jwt, 1, 1);
         response.data.resultsData[1].results[1].
