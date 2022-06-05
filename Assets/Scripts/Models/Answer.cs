@@ -10,13 +10,13 @@
     /// Получение картинки с ответом
     /// </summary>
     /// <returns>Если ответ является картинкой, то вернется картинка, иначе вернется null</returns>
-    public async System.Threading.Tasks.Task<UnityEngine.Texture2D> GetTexture()
+    public async System.Threading.Tasks.Task<Response<UnityEngine.Texture2D>> GetTexture()
     {
         if (!isText)
         {
             var httpClient = new HttpClient();
-            UnityEngine.Texture2D texture = await httpClient.GetTexture(answer);
-            return texture;
+            var response = await httpClient.GetTexture(answer);
+            return response;
         }
         return null;
     }

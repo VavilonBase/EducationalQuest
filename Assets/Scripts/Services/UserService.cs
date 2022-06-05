@@ -90,7 +90,7 @@ public static class UserService
         // Подготавливаем данные (устанавливаем заголовки)
         httpClient.headers = new List<Header>()
         {
-            new Header() {name = "Authorization", value=$"Bearer {jwt}"}
+            new Header() {name = "Authorization", value = $"Bearer {jwt}"}
         };
         var result = await httpClient.Get<ResponseUserData>(url);
         return result;
