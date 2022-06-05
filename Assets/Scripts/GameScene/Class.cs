@@ -16,7 +16,7 @@ public class Class : MonoBehaviour
     {
         roomGroupID = groupID;
         roomTitle = groupTitle;
-        thisPlate.text = "Класс " + roomTitle;        
+        thisPlate.text = roomTitle.Length > 25 ? roomTitle.Substring(0, 25) : roomTitle;        
         OpenRoom();        
     }
     public void OpenRoom()
