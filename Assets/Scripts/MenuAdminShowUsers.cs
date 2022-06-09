@@ -32,7 +32,7 @@ public class MenuAdminShowUsers : MonoBehaviour
         var response = await UserService.getAllUsers(gl.playerInfo.responseUserData.jwt, role);
         if (response.isError)
         {
-            Debug.LogError(response.message.ToString());
+            Debug.Log(response.message.ToString());
             return null;
         }
         else
