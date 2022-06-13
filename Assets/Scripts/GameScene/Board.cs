@@ -16,10 +16,30 @@ public class Board : MonoBehaviour
     Renderer attachedFrontPlane;
     TextMeshPro attachedBoardText;
 
+    class AnswerPlate
+    {
+        public GameObject answerPlate;
+        public Renderer attachedFrontPlate;
+        public TextMeshPro attachedText;
+        public UpBlock attachedUpBlock;
+
+        public AnswerPlate(GameObject plate)
+        {
+            answerPlate = plate;
+            attachedFrontPlate = plate.transform.Find("FrontPlate").GetComponent<Renderer>();
+            attachedText = plate.transform.Find("frontPlateText").GetComponent<TextMeshPro>();
+            attachedUpBlock = plate.transform.Find("plateTrigger").GetComponent<UpBlock>();
+        }
+    }
+
+    List<AnswerPlate> attachedAnswerPlates;
+
+    /*
     List<GameObject> attachedAnswerPlates;
     List<Renderer> attachedAnswerPlates_FrontPlates;    
     List<TextMeshPro> attachedAnswerPlates_Texts;
     List<UpBlock> attachedAnswerPlates_UpBlocks;
+    */
 
     Material defaultBoardMaterial;
     Material defaultPlateMaterial;
@@ -41,16 +61,11 @@ public class Board : MonoBehaviour
         attachedFrontPlane = this.transform.Find("frontPlane").gameObject.GetComponent<Renderer>();
         attachedBoardText = this.transform.Find("BoardText").gameObject.GetComponent<TextMeshPro>();
 
-        attachedAnswerPlates = new List<GameObject>();
-        attachedAnswerPlates_FrontPlates = new List<Renderer>();
-        attachedAnswerPlates_Texts = new List<TextMeshPro>();
-        attachedAnswerPlates_UpBlocks = new List<UpBlock>();
+        attachedAnswerPlates = new List<AnswerPlate>();
         for (byte i = 0; i < 3; i++)
         {
-            attachedAnswerPlates.Add(this.transform.Find("AnswerPlate" + (i + 1)).gameObject);
-            attachedAnswerPlates_FrontPlates.Add(attachedAnswerPlates[i].transform.Find("FrontPlate").GetComponent<Renderer>());
-            attachedAnswerPlates_Texts.Add(attachedAnswerPlates[i].transform.Find("frontPlateText").GetComponent<TextMeshPro>());
-            attachedAnswerPlates_UpBlocks.Add(attachedAnswerPlates[i].transform.Find("plateTrigger").GetComponent<UpBlock>());            
+            AnswerPlate newPlate = new AnswerPlate(this.transform.Find("AnswerPlate" + (i + 1)).gameObject);           
+            attachedAnswerPlates.Add(newPlate);         
         }
         LoadDefaultMaterials();
         SwitchModeTo(0); // доска неактивна                
@@ -105,12 +120,12 @@ public class Board : MonoBehaviour
         switch (type)
         {
             case Info.text:
-                attachedAnswerPlates_FrontPlates[num].material = defaultPlateMaterial;
-                attachedAnswerPlates_Texts[num].text = text;
+                attachedAnswerPlates[num].attachedFrontPlate.material = defaultPlateMaterial;
+                attachedAnswerPlates[num].attachedText.text = text;
                 break;
             case Info.image:
-                attachedAnswerPlates_Texts[num].text = "";
-                attachedAnswerPlates_FrontPlates[num].material.mainTexture = LoadTexture(text);
+                attachedAnswerPlates[num].attachedFrontPlate.material.mainTexture = LoadTexture(text);
+                attachedAnswerPlates[num].attachedText.text = "";                
                 break;
             default:
                 break;
@@ -119,26 +134,26 @@ public class Board : MonoBehaviour
 
     private void HidePlates()
     {
-        foreach (GameObject plate in attachedAnswerPlates)
-            plate.SetActive(false);
+        foreach (AnswerPlate plate in attachedAnswerPlates)
+            plate.answerPlate.SetActive(false);
     }
 
     private void HidePlates(byte[] nums)
     {
         foreach (byte num in nums)
-            attachedAnswerPlates[num].SetActive(false);
+            attachedAnswerPlates[num].answerPlate.SetActive(false);
     }
 
     private void ShowPlates()
     {
-        foreach (GameObject plate in attachedAnswerPlates)
-            plate.SetActive(true);
+        foreach (AnswerPlate plate in attachedAnswerPlates)
+            plate.answerPlate.SetActive(true);
     }
 
     private void ShowPlates(byte[] nums)
     {
         foreach (byte num in nums)
-            attachedAnswerPlates[num].SetActive(true);
+            attachedAnswerPlates[num].answerPlate.SetActive(true);
     }
 
     private Texture LoadTexture(string url)
@@ -179,7 +194,7 @@ public class Board : MonoBehaviour
                 case 0:
                     DataHolder.ChangeMessageTemporary("Тесты не найдены. Нажми F, чтобы обновить список");
                     if (Input.GetKeyDown(KeyCode.F))
-                        LoadGroupTests(groupID); //перезагрузить тесты группы
+                        Reset_MODE(); //перезагрузить тесты группы
                     break;
                 // начать выбор теста
                 case 1:
@@ -193,17 +208,17 @@ public class Board : MonoBehaviour
                     s += " Нажми F, чтобы обновить список";
                     DataHolder.ChangeMessageTemporary(s);
                     if (Input.GetKeyDown(KeyCode.F))
-                        LoadGroupTests(groupID); //перезагрузить тесты группы
+                        Reset_MODE(); //перезагрузить тесты группы
                     break;
                 // прохождение теста
                 case 3:
                     DataHolder.ChangeMessageTemporary("Используй таблички, чтобы выбрать правильный ответ");
                     break;
                 ///сброс
-                case 666:
+                case 100:
                     DataHolder.ChangeMessageTemporary("Нажми F, чтобы перезагрузить доску");
                     if (Input.GetKeyDown(KeyCode.F))
-                        Reset_MODE();
+                        Reset_MODE(); //перезагрузить тесты группы
                     break;
                 default:
                     break;
@@ -258,8 +273,8 @@ public class Board : MonoBehaviour
                 ShowPlates();
                 isWaitingAction = true;
                 break;
-            case 666:
-                boardMode = 666;
+            case 100:
+                boardMode = 100;
                 HidePlates();
                 isWaitingAction = false;
                 break;
@@ -322,7 +337,7 @@ public class Board : MonoBehaviour
         byte i = 0;
         while (!check && i < 3)
         {
-            if (attachedAnswerPlates_UpBlocks[i].IsPlateUp)
+            if (attachedAnswerPlates[i].attachedUpBlock.IsPlateUp)
             {
                 chosenAnswers.Add(i);
                 check = true;
@@ -370,13 +385,13 @@ public class Board : MonoBehaviour
             WriteOnBoard(Info.text, "Упс, что-то пошло не так");
             Debug.Log("chosenAnswers: " + chosenAnswers.Count + "/" + testWithQuestion.questions.Count);            
         }
-        SwitchModeTo(666);
+        SwitchModeTo(100);
     }
 
     async void ChooseTest_CHECK()
     {
         // начать тест
-        if (attachedAnswerPlates_UpBlocks[1].IsPlateUp)
+        if (attachedAnswerPlates[1].attachedUpBlock.IsPlateUp)
         {
             SwitchModeTo(0); // на время загрузки
             if (await LoadTestQuestions())
@@ -389,16 +404,16 @@ public class Board : MonoBehaviour
             else
             {
                 WriteOnBoard(Info.text, "Упс, что-то пошло не так");
-                SwitchModeTo(666);                
+                SwitchModeTo(100);                
             }                
             return;
         }
 
         // <---
-        if (attachedAnswerPlates_UpBlocks[0].IsPlateUp)
+        if (attachedAnswerPlates[0].attachedUpBlock.IsPlateUp)
             cursor--;
         // --->
-        if (attachedAnswerPlates_UpBlocks[2].IsPlateUp)
+        if (attachedAnswerPlates[2].attachedUpBlock.IsPlateUp)
             cursor++;
         ShowTestInfoOnBoard();
     }

@@ -222,11 +222,14 @@ public class MenuTeacherGroupsInteractions : TeacherGroupsInfo
     {
         // проверка, есть в списке групп группа с названием groupTitle
         bool compare = false;
-        int i = 0;
-        while (!compare && i < listGroups.Count)
-        {
-            if (groupTitle == listGroups[i].title) compare = true;
-            else i++;
+        if (listGroups != null)
+        {            
+            int i = 0;
+            while (!compare && i < listGroups.Count)
+            {
+                if (groupTitle == listGroups[i].title) compare = true;
+                else i++;
+            }            
         }
         return compare;
     }

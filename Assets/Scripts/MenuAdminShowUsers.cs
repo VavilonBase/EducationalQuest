@@ -40,7 +40,8 @@ public class MenuAdminShowUsers : MonoBehaviour
     }
 
     async void PrepareUserList(UserService.RolesEnum role, List<User> list, List_view_admin m_ListView, GameObject m_Prefab)
-    {       
+    {
+        m_ListView.CleanList();
         list = await GetUsersList(role);
         if (list != null)
         {
@@ -68,27 +69,13 @@ public class MenuAdminShowUsers : MonoBehaviour
 
         }        
     }
-
+ 
     public void UpdateTeachersList()
-    {
-        m_ListViewTeacher.CleanList();
-        //CleanList(m_ListViewTeacher);
+    {              
         PrepareUserList(UserService.RolesEnum.Teacher, listTeachers, m_ListViewTeacher, m_PrefabTeacher);
     }
     public void UpdateStudentsList()
-    {
-        m_ListViewStudent.CleanList();
-        //CleanList(m_ListViewStudent);
+    {               
         PrepareUserList(UserService.RolesEnum.Student, listStudents, m_ListViewStudent, m_PrefabStudent);
     }
-
-    /*
-    void CleanList(List_view_admin m_ListView)
-    {       
-        var elements = m_ListView.Elements;
-        foreach (GameObject element in elements)
-            DestroyImmediate(element);
-        m_ListView.Elements = new List<GameObject>();
-    }
-    */
 }
