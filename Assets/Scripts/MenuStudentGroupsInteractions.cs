@@ -156,11 +156,7 @@ public class MenuStudentGroupsInteractions : MonoBehaviour
                 else
                     status = "«акрыт";
 
-                if (listTests[i].canViewResults)
-                    status += ", результаты доступны";
-                else
-                    status += ", результаты недоступны";
-
+                status += listTests[i].canViewResults ? ", подробности доступны" : ", подробности недоступны";
                 elementMeta.SetTitle(i + 1 + ". " + listTests[i].title);
                 elementMeta.SetDescription(status);
             }

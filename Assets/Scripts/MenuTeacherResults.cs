@@ -190,26 +190,33 @@ public class MenuTeacherResults : TeacherGroupsInfo
                     List_element_admin elementMeta = element.GetComponent<List_element_admin>();
                     elementMeta.SetTitle((count++ + 1) + ". " + listResults[i].lastName + " " + listResults[i].firstName + " " + listResults[i].middleName);
                     elementMeta.SetDescription("Баллы: " + listResults[i].results[j].totalScores + " из "+ max?.data);                    
-                    //int resID = listResults[i].results[j].resultId;
+                    int resID = listResults[i].results[j].resultId;
                     //int studentID = listResults[i].id;
-                    //elementMeta.GetActionButton().onClick.AddListener(delegate { ShowDetailedRes(resID, studentID); });
-                    elementMeta.GetActionButton().gameObject.SetActive(false);
+                    elementMeta.GetActionButton().onClick.AddListener(delegate { ShowDetailedRes(resID); });
+                    elementMeta.GetActionButton().gameObject.SetActive(true);
                 }                    
             }
         }            
     }
 
-    private async void ShowDetailedRes(int resID, int studentID)
+    private async void ShowDetailedRes(int resID)
     {
         m_ListViewDetailedRes.CleanList();
-        //var response = await TestService
-
-
-
-        /*
-        var response = await TestService.getStudentTestResultWithRightAnswer(jwt, 1, 1);
-        response.data.resultsData[1].results[1].
-        */
-
+        var response = await TestService.getStudentTestResultWithRightAnswer(jwt, resID);
+        if (response.isError)
+            gl.ChangeMessageTemporary(response.message.ToString(), 5);
+        else
+        {
+            var data = response.data;
+            for (int i=0; i < data.resultsData.Count; i++)
+            {
+                GameObject element = m_ListViewDetailedRes.Add(m_PrefabDetailedRes);
+                List_element_admin elementMeta = element.GetComponent<List_element_admin>();
+                // пока только текстовый вывод
+                elementMeta.SetTitle("Ответ ученика: " + data.resultsData[i].answer);
+                elementMeta.SetDescription("Правильный ответ: " + data.resultsData[i].rightAnswer);               
+            }
+            menuShowDetailedRes.SetActive(true);
+        }
     }
 }

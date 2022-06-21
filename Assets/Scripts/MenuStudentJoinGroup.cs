@@ -14,7 +14,7 @@ public class MenuStudentJoinGroup : MonoBehaviour
         gl = FindObjectOfType(typeof(CsGlobals)) as CsGlobals;
         buttonJoinGroup = this.transform.Find("Join").gameObject;
         inputCodeWord = this.transform.Find("InputField").GetComponent<InputField>();
-        buttonJoinGroup.GetComponent<Button>().onClick.AddListener(delegate { JoinGroup(); });
+        buttonJoinGroup.GetComponent<Button>().onClick.AddListener(JoinGroup);
     }
 
     async void JoinGroup()
